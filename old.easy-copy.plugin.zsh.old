@@ -1,0 +1,28 @@
+easy-copy() {
+	if (( $# < 2 )); then
+		echo "Usage: cp SOURCE ... DESTINATION"
+		echo ""
+		echo "You can specify multiple source files."
+		echo "If the given destination is a directory, all source files will be copied into this directory."
+		return 255
+	fi
+
+	files=()
+	# options to do
+	for arg in "${@[@]}"; do
+		if [[ $arg == --* ]]; then
+			echo "long arg"
+		elif [[ $arg == -* ]]; then
+			for 
+		else
+			files+=($arg)
+		fi
+	done
+
+	echo $files
+
+	echo "got these files:"
+	for val in "${files[@]}"; do
+		echo $val
+	done
+}
