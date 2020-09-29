@@ -1,2 +1,9 @@
 *.img
 a.out
+test/
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
