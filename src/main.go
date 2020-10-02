@@ -4,9 +4,14 @@ import "fmt"
 import "os"
 
 var unsearchedPaths []string;
-var files map[string]string = make(map[string]string);
 var pwd string;
 var target string;
+
+var targets map[string]string = make(map[string]string);
+var fileOrder []string;
+var filesLock = sync.RWMutex{}; // read/write exclusion lock
+
+// all copying is done:
 var done bool = false;
 
 var done_amount uint64 = 0;
@@ -20,39 +25,62 @@ var full_size uint64 = 0;
 // TODO: check if enough space is free
 // settable buffer width
 // dry run
+// config file
+// follow symlinks?
+// backup
+// sync
 
 func iteratePaths() {
-	for len(unsearchedPaths) >= 0 {
+	for len(unsearchedPaths) > 0 {
 		var next string = unsearchedPaths[0];
 		unsearchedPaths = unsearchedPaths[1:]; // discard first element
 
-		fmt.Println("search ", next, ":");
-		file, err := os.Stat(next);
-		fmt.Printf("%T\n", file);
+		fmt.Println("search", next + ":");
+		stat, err := os.Stat(next);
 		if err != nil {
 			fmt.Println(err);
 			return;
 		}
 		if (os.IsNotExist(err)) {
-			fmt.Println(file, " does not exist");
-		} else if (file.IsDir()) {
-			fmt.Println(file, " is a dir");
-		} else if(file.Mode().IsRegular()) {
-			fmt.Println(file, " is regular");
+			if verbose {
+				fmt.Println(fmtFile(next), "does not exist");
+			}
+			// handle non existent file
+		} else if (stat.IsDir()) {
+			if verbose { fmt.Println(fmtFile(next), "is a dir"); }
+			// handle directory
+		} else if (stat.Mode().IsRegular()) {
+			if verbose { fmt.Println(fmtFile(next), "is regular"); }
+		} else if (stat.Mode() & os.ModeDevice != 0) {
+			if verbose { fmt.Println(fmtFile(next), "is a device file"); }
+		} else if (stat.Mode() & os.ModeSymlink != 0) {
+			if verbose { fmt.Println(fmtFile(next), "is a symlink"); }
 		} else {
-			fmt.Println(file, " is weird");
+			if verbose { fmt.Println(fmtFile(next), "is weird"); }
 		}
-
-		fmt.Println("end of loop");
 	}
 }
 
+// copy works as follows:
+// 1. open source for reading
+// 2. stat target,
+// 		if it is file, open it for writing (check if it exists & we want to overwrite)
+//		if it is directory, create a new file in it with the same name as source
+// 3. copy it over
+// 4. eventually delete the source file
+
 func main() {
 	parseArgs();
+	pwd, err := os.Getwd();
+	if (err != nil) {
+		errInvalidWD(err);
+	}
 
 	if verbose {
 		printVersion();
 		verboseFlags();
+		fmt.Println("Working directory", pwd)
+		fmt.Println("Have to search", unsearchedPaths);
 	}
 
 	if len(unsearchedPaths) < 2 {
@@ -60,13 +88,13 @@ func main() {
 	}
 
 	target = unsearchedPaths[len(unsearchedPaths) - 1];
-	unsearchedPaths = unsearchedPaths[0:len(unsearchedPaths) - 2];
+	unsearchedPaths = unsearchedPaths[0:len(unsearchedPaths) - 1];
 
 	if verbose {
-		fmt.Println("Have to search ", unsearchedPaths);
-		fmt.Println("Target is ", target);
+		fmt.Println("Have to search", unsearchedPaths);
+		fmt.Println("Target is", target);
 	}
 
-	go iteratePaths();
+	iteratePaths();
 	//copyFiles();
 }

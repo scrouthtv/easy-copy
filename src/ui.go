@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "strings"
 import "os"
+import "path/filepath"
 
 func printUsage() {
 	fmt.Println("Usage:");
@@ -31,6 +32,15 @@ func printVersion() {
 	fmt.Println(EASYCOPY_NAME, "v" + EASYCOPY_VERSION);
 }
 
+func fmtFile(file string) string {
+	path, err := filepath.Abs(file);
+	if (err != nil) {
+		fmt.Println("Can't reda file:", err);
+		os.Exit(8);
+	}
+	return path;
+}
+
 func errUnknownOption(option string) {
 	fmt.Println("unrecognized option:", option);
 	printUsage();
@@ -41,6 +51,11 @@ func errEmptySource() {
 	fmt.Println("No sources specified.")
 	printUsage();
 	os.Exit(1);
+}
+
+func errInvalidWD(err error) {
+	fmt.Println("The current directory is invalid:", err);
+	os.Exit(4);
 }
 
 func parseArgs() {

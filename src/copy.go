@@ -7,7 +7,9 @@ import "strings"
 
 func copyFiles() {
 	for !done {
-		var source string = nextMapPair(files);
+		lock.RLock();
+		defer lock.RUnlock();
+		var source string = targets[0];
 		var dest string = files[source];
 		fmt.Println("src: ", source, "dest: ", dest);
 		delete(files, source);
