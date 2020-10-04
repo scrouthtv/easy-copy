@@ -61,6 +61,7 @@ func parseFlag(prefix string, flag string) {
 		os.Exit(0);
 	case "V", "verbose":
 		verbose = true;
+		verboseVerboseEnabled();
 		break;
 	case "f", "force":
 		onExistingFile = 1;

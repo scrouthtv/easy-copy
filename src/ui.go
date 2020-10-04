@@ -52,12 +52,16 @@ func printVersion() {
 	fmt.Println(Textstyle.Reset);
 }
 
+func verboseVerboseEnabled() {
+	fmt.Print(FGColors.Yellow);
+	fmt.Print("Verbose mode enabled.");
+	fmt.Println(Textstyle.Reset);
+}
+
 func verboseDisablingColors(shellname string) {
-	if verbose {
-		fmt.Println("Color support for", shellname, "is currently not ipmlemented.");
-		fmt.Println("If your terminal does support colors, open an issue at");
-		fmt.Println(" " + EASYCOPY_ISSUES);
-	}
+	fmt.Println("Color support for", shellname, "is currently not ipmlemented.");
+	fmt.Println("If your terminal does support colors, open an issue at");
+	fmt.Println(" " + EASYCOPY_ISSUES);
 }
 
 func verboseTargets() {
