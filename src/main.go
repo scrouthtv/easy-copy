@@ -59,12 +59,14 @@ func iteratePaths() {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
 				if verbose { fmt.Println("found", filepath.Join(next, fileInFolder)); }
 			}
+			full_size += folder_size;
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
 			targets[next] = rebasePathOntoTarget(next);
 			filesLock.Unlock();
+			full_amount += stat.Size();
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
@@ -77,6 +79,7 @@ func iteratePaths() {
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
+				full_size += symlink_sze;
 			} else if followSymlinks == 2 {
 				nextResolved, err := os.Readlink(next);
 				if err != nil { errReadingSymlink(err, next); }
