@@ -5,7 +5,7 @@ import "os/exec";
 import "bytes";
 import "strconv";
 import "strings";
-import "path/filepath"
+import "path/filepath";
 
 func WindowsParentProcessName() (string, error) {
 	cmd := exec.Command("tasklist");//, "/fi \"pid eq " + strconv.Itoa(ppid) + "\" /nh", "") does not work

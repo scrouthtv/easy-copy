@@ -1,8 +1,8 @@
-package main
+package main;
 
-import "fmt"
-import "strings"
-import "os"
+import "fmt";
+import "strings";
+import "os";
 
 func printUsage() {
 	fmt.Print(FGColors.LBlue);
@@ -59,6 +59,7 @@ func verboseVerboseEnabled() {
 }
 
 func verboseDisablingColors(shellname string) {
+	// as this is called from the init function where verbose isn't set yet
 	fmt.Println("Color support for", shellname, "is currently not ipmlemented.");
 	fmt.Println("If your terminal does support colors, open an issue at");
 	fmt.Println(" " + EASYCOPY_ISSUES);

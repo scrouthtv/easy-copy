@@ -1,10 +1,10 @@
-package main
+package main;
 
-import "io"
-import "fmt"
-import "os"
-import "errors"
-import "strconv"
+import "io";
+import "fmt";
+import "os";
+import "errors";
+import "strconv";
 
 const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);

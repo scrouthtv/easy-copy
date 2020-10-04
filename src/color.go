@@ -1,6 +1,6 @@
 package main;
 
-import "runtime"
+import "runtime";
 
 func init() {
 	if (runtime.GOOS == "windows") {

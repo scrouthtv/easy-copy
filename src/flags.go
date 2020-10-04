@@ -1,7 +1,7 @@
-package main
+package main;
 
-import "fmt"
-import "os"
+import "fmt";
+import "os";
 
 import "github.com/spf13/viper"
 
@@ -16,9 +16,11 @@ var followSymlinks uint8 = 1;
 // 2 fully dereference
 
 func verboseFlags() {
-	fmt.Println("Verbose:", verbose);
-	fmt.Println("Overwrite Mode:", onExistingFile);
-	fmt.Println("Follow symlinks:", followSymlinks);
+	fmt.Printf(FGColors.Green)
+	fmt.Println(" Verbose:", verbose);
+	fmt.Println(" Overwrite Mode:", onExistingFile);
+	fmt.Print(" Follow symlinks:", followSymlinks);
+	fmt.Println(Textstyle.Reset);
 }
 
 func readConfig() {

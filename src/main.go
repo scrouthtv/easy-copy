@@ -1,9 +1,9 @@
-package main
+package main;
 
-import "fmt"
-import "os"
-import "sync"
-import "path/filepath"
+import "fmt";
+import "os";
+import "sync";
+import "path/filepath";
 
 var unsearchedPaths []string;
 var pwd string;
@@ -24,15 +24,6 @@ var full_size uint64 = 0;
 // Maybe these are too small:
 // uint64 goes up to 18446744073709551615
 // or 2097152 TB
-
-// TODO: check if enough space is free
-// settable buffer width
-// dry run
-// backup
-// sync
-// cow
-// missing files as warning
-// TODO remove dependencies
 
 func iteratePaths() {
 	filesLock.RLock();
