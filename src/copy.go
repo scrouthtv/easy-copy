@@ -11,13 +11,11 @@ const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);
 
 func copyFiles() {
-	fmt.Println("thread started");
 	var i int = 0;
 	for !done {
-		fmt.Println("looping");
 		filesLock.RLock();
 		if (len(folders) > 0) {
-			fmt.Println("creating folders");
+			if verbose { fmt.Println("creating folders"); }
 			var localFolders []string = append([]string(nil), folders...);
 			folders = nil;
 			filesLock.RUnlock();
@@ -28,11 +26,16 @@ func copyFiles() {
 				var err error = os.Mkdir(folderInTarget, 0755);
 				if err != nil { errCreatingFile(err, folderInTarget); }
 			}
+		} else {
+			filesLock.RUnlock();
 		}
 		filesLock.RLock();
 		for len(fileOrder) <= i {
 			filesLock.RUnlock();
-			if iteratorDone { return; }
+			if iteratorDone {
+				if verbose { fmt.Println("done iterating, no more files"); }
+				return;
+			}
 			time.Sleep(100 * time.Millisecond);
 			filesLock.RLock();
 		}

@@ -54,9 +54,11 @@ func iteratePaths() {
 
 			filesLock.Lock();
 			folders = append(folders, next);
+			fmt.Println("appended folder");
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
+				fmt.Println("found", fileInFolder);
 			}
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
