@@ -5,26 +5,21 @@ import "io"
 import "fmt"
 import "strings"
 
+var currentfile int = 0;
+
 func copyFiles() {
-	for !done {
-		lock.RLock();
-		defer lock.RUnlock();
-		var source string = targets[0];
-		var dest string = files[source];
+	for i := 0; i < len(fileOrder); i++ {
+		filesLock.RLock();
+		defer filesLock.RUnlock();
+		var source string = fileOrder[i];
+		var dest string = targets[source];
 		fmt.Println("src: ", source, "dest: ", dest);
-		delete(files, source);
 
 		var reader io.Reader = strings.NewReader("test");
 		reader = io.TeeReader(reader, LogProcessWriter{});
 
 		var buf bytes.Buffer;
 		io.Copy(&buf, reader);
-
-
-		// check if done:
-		if len(unsearchedPaths) == 0 && len(files) == 0 {
-			done = true;
-		}
 	}
 }
 

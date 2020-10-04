@@ -1,6 +1,7 @@
 *.img
 a.out
 test/
+foo/
 
 *.exe
 *.exe~

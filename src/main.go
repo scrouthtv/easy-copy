@@ -2,17 +2,17 @@ package main
 
 import "fmt"
 import "os"
+import "sync"
+import "path/filepath"
 
 var unsearchedPaths []string;
 var pwd string;
 var target string;
 
-var targets map[string]string = make(map[string]string);
 var fileOrder []string;
+var folders []string;
+var targets map[string]string = make(map[string]string);
 var filesLock = sync.RWMutex{}; // read/write exclusion lock
-
-// all copying is done:
-var done bool = false;
 
 var done_amount uint64 = 0;
 var full_amount uint64 = 0;
@@ -25,10 +25,12 @@ var full_size uint64 = 0;
 // TODO: check if enough space is free
 // settable buffer width
 // dry run
-// config file
+// config file, no config option
 // follow symlinks?
 // backup
 // sync
+// cow
+// missing files as warning
 
 func iteratePaths() {
 	for len(unsearchedPaths) > 0 {
@@ -36,29 +38,71 @@ func iteratePaths() {
 		unsearchedPaths = unsearchedPaths[1:]; // discard first element
 
 		fmt.Println("search", next + ":");
-		stat, err := os.Stat(next);
-		if err != nil {
-			fmt.Println(err);
-			return;
-		}
+		var err error;
+		var stat os.FileInfo;
+		stat, err = os.Lstat(next);
+		if err != nil { errMissingFile(err, next); }
 		if (os.IsNotExist(err)) {
-			if verbose {
-				fmt.Println(fmtFile(next), "does not exist");
-			}
-			// handle non existent file
+			errMissingFile(err, next);
+			// TODO don't exit on missing file, coreutils cp doesnt do that
 		} else if (stat.IsDir()) {
-			if verbose { fmt.Println(fmtFile(next), "is a dir"); }
-			// handle directory
+			if verbose { fmt.Println(next, "is a dir"); }
+
+			dir, err := os.Open(next);
+			if err != nil { errMissingFile(err, next); }
+			folders = append(folders, next);
+			var names []string;
+			// TODO dont read all files at once, specify an amount of files to read
+			//  and recall Readdirnames until io.EOF is returned (I guess)
+			names, err = dir.Readdirnames(0);
+			if err != nil { errMissingFile(err, next); }
+			// merge target + folder name + file in folder name
+
+			var fileInFolder string;
+			for _, fileInFolder = range names {
+				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
+				if verbose { fmt.Println("found", filepath.Join(next, fileInFolder)); }
+			}
 		} else if (stat.Mode().IsRegular()) {
-			if verbose { fmt.Println(fmtFile(next), "is regular"); }
+			fileOrder = append(fileOrder, next);
+			targets[next] = rebasePathOntoTarget(next);
 		} else if (stat.Mode() & os.ModeDevice != 0) {
-			if verbose { fmt.Println(fmtFile(next), "is a device file"); }
+			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
-			if verbose { fmt.Println(fmtFile(next), "is a symlink"); }
+			if verbose { fmt.Println(next, "is a symlink"); }
+
+			var nextTarget string = rebasePathOntoTarget(next);
+
+			if followSymlinks == 1 {
+				fileOrder = append(fileOrder, next);
+				targets[next] = nextTarget;
+			} else if followSymlinks == 2 {
+				nextResolved, err := os.Readlink(next);
+				if err != nil { errReadingSymlink(err, next); }
+				fileOrder = append(fileOrder, nextResolved);
+				targets[nextResolved] = nextTarget;
+			}
 		} else {
-			if verbose { fmt.Println(fmtFile(next), "is weird"); }
+			warnBadFile(next);
 		}
 	}
+	if verbose { verboseTargets(); }
+}
+
+// calculate the actual target by rebasing next's dir
+// onto the target directory
+func rebasePathOntoTarget(path string) string {
+	path = filepath.Clean(path);
+	if filepath.IsAbs(path) {
+		path = path[1:];
+		// remove the first path sep
+		//  the path separator is a rune, or unicode character, and as such always
+		//  1 character long
+		// TODO: test what happens if there is a space at the very beginning
+		//  it should get removed by Clean(), if not, the path separator will
+		//  also not get removed
+	}
+	return filepath.Join(target, path);
 }
 
 // copy works as follows:
@@ -71,6 +115,7 @@ func iteratePaths() {
 
 func main() {
 	parseArgs();
+	readConfig();
 	pwd, err := os.Getwd();
 	if (err != nil) {
 		errInvalidWD(err);
@@ -80,15 +125,28 @@ func main() {
 		printVersion();
 		verboseFlags();
 		fmt.Println("Working directory", pwd)
-		fmt.Println("Have to search", unsearchedPaths);
 	}
 
 	if len(unsearchedPaths) < 2 {
 		errEmptySource();
 	}
 
-	target = unsearchedPaths[len(unsearchedPaths) - 1];
+	target, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths) - 1]);
+	if err != nil {
+		errResolvingTarget(unsearchedPaths[len(unsearchedPaths) - 1], err);
+	}
 	unsearchedPaths = unsearchedPaths[0:len(unsearchedPaths) - 1];
+	if len(unsearchedPaths) > 1 {
+		stat, err := os.Stat(target);
+		if err != nil {
+			errMissingFile(err, target);
+		}
+		if (os.IsNotExist(err)) {
+			errMissingFile(err, target);
+		} else if !stat.IsDir() {
+			errTargetNoDir(target)
+		}
+	}
 
 	if verbose {
 		fmt.Println("Have to search", unsearchedPaths);
