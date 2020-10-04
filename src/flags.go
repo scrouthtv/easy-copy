@@ -3,8 +3,6 @@ package main;
 import "fmt";
 import "os";
 
-import "github.com/spf13/viper"
-
 var verbose bool;
 var onExistingFile uint8 = 2;
 // 0 skip
@@ -19,37 +17,28 @@ func verboseFlags() {
 	fmt.Printf(FGColors.Green)
 	fmt.Println(" Verbose:", verbose);
 	fmt.Println(" Overwrite Mode:", onExistingFile);
-	fmt.Print(" Follow symlinks:", followSymlinks);
+	fmt.Print(" Follow symlinks: ", followSymlinks);
 	fmt.Println(Textstyle.Reset);
 }
 
-func readConfig() {
-	viper.SetDefault("verbose", false);
-	viper.SetDefault("overwrite", 2);
-	viper.SetDefault("followSymlinks", 1);
-
-	viper.AddConfigPath("$XDG_CONFIG_DIR/");
-	viper.AddConfigPath("$XDG_CONFIG_DIR/ec/");
-	viper.AddConfigPath("$HOME/.config/");
-	viper.AddConfigPath("$HOME/.config/ec/");
-	viper.SetConfigName("ec");
-	viper.SetConfigType("toml");
-	err := viper.ReadInConfig();
-	if err != nil {
-		warnConfig(err);
-	}
-	viper.WriteConfig();
-
-	verbose = viper.GetBool("verbose");
-	onExistingFile = uint8(viper.GetInt("overwrite"));
-	followSymlinks = uint8(viper.GetInt("followSymlinks"));
-	if onExistingFile > 2 {
-		warnBadConfig("overwrite", onExistingFile, "0, 1, 2");
-		onExistingFile = 2;
-	}
-	if followSymlinks > 2 {
-		warnBadConfig("followSymlinks", followSymlinks, "0, 1, 2");
-		followSymlinks = 2;
+func parseOption(key string, value string) {
+	switch(key) {
+		case "verbose":
+			verbose = configInterpretBoolean(value);
+		case "overwrite":
+			switch (value) {
+				case "skip": onExistingFile = 0;
+				case "overwrite": onExistingFile = 1;
+				case "ask": onExistingFile = 2;
+			}
+		case "symlinks":
+			switch (value) {
+				case "ignore": followSymlinks = 0;
+				case "link": followSymlinks = 1;
+				case "dereference": followSymlinks = 2;
+			}
+		default:
+			fmt.Println("Unknown config key", key);
 	}
 }
 
@@ -76,5 +65,12 @@ func parseFlag(prefix string, flag string) {
 		break;
 	default:
 		errUnknownOption(prefix + flag);
+	}
+}
+
+func configInterpretBoolean(v string) bool {
+	switch(v) {
+		case "true", "on", "yes": return true;
+		default: return false;
 	}
 }
