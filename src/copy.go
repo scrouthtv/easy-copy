@@ -57,7 +57,8 @@ func copyFiles() {
 		// check if we are done:
 		if iteratorDone {
 			filesLock.RLock();
-			if len(folders) == 0 && len(fileOrder) == 0 {
+			// all folders are created & we copied all files up to this point
+			if len(folders) == 0 && len(fileOrder) == i {
 				done = true;
 			}
 			filesLock.RUnlock();
@@ -75,10 +76,13 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var readAmount, writtenAmount int;
 	var err error;
 	for {
+		readAmount, err = source.Read(buf);
 		if err != nil && err != io.EOF {
+			fmt.Println("error: ", err)
 			return err;
 		}
 		if readAmount == 0 {
+			fmt.Println(source.Name(), "read 0 bytes");
 			break;
 		}
 		writtenAmount, err = dest.Write(buf[:readAmount]);

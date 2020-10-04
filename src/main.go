@@ -54,11 +54,9 @@ func iteratePaths() {
 
 			filesLock.Lock();
 			folders = append(folders, next);
-			fmt.Println("appended folder");
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
-				fmt.Println("found", fileInFolder);
 			}
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
@@ -67,7 +65,7 @@ func iteratePaths() {
 			fileOrder = append(fileOrder, next);
 			targets[next] = rebasePathOntoTarget(next);
 			filesLock.Unlock();
-			full_amount += uint64(stat.Size());
+			full_size += uint64(stat.Size());
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
