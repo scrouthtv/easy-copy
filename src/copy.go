@@ -10,25 +10,26 @@ import "time";
 const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);
 
+func createFolders() {
+	filesLock.RLock();
+	if (len(folders) > 0) {
+		if verbose { fmt.Println("creating folders"); }
+		var localFolders []string = append([]string(nil), folders...);
+		folders = nil;
+		filesLock.RUnlock();
+		var folder string;
+		for _, folder = range localFolders {
+			var folderInTarget string = rebasePathOntoTarget(folder)
+			if verbose { fmt.Println("creating", folderInTarget + ":"); }
+			var err error = os.MkdirAll(folderInTarget, 0755);
+			if err != nil { errCreatingFile(err, folderInTarget); }
+		}
+	}
+}
+
 func copyFiles() {
 	var i int = 0;
 	for !done {
-		filesLock.RLock();
-		if (len(folders) > 0) {
-			if verbose { fmt.Println("creating folders"); }
-			var localFolders []string = append([]string(nil), folders...);
-			folders = nil;
-			filesLock.RUnlock();
-			var folder string;
-			for _, folder = range localFolders {
-				var folderInTarget string = rebasePathOntoTarget(folder)
-				if verbose { fmt.Println("creating", folderInTarget + ":"); }
-				var err error = os.MkdirAll(folderInTarget, 0755);
-				if err != nil { errCreatingFile(err, folderInTarget); }
-			}
-		} else {
-			filesLock.RUnlock();
-		}
 		filesLock.RLock();
 		for len(fileOrder) <= i {
 			filesLock.RUnlock();
@@ -49,6 +50,7 @@ func copyFiles() {
 		var err error;
 		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0755);
 		if err != nil { errMissingFile(err, sourcePath); }
+		createFolders();
 		dest, err = os.OpenFile(destPath, os.O_WRONLY | os.O_CREATE, 0755);
 		copyFile(source, dest, &done_size);
 		i += 1;
@@ -82,7 +84,7 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 			return err;
 		}
 		if readAmount == 0 {
-			fmt.Println(source.Name(), "read 0 bytes");
+			// when the file is fully read
 			break;
 		}
 		writtenAmount, err = dest.Write(buf[:readAmount]);

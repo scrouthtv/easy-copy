@@ -9,6 +9,7 @@ const BAR_WIDTH int = 60;
 var drawBar bool = true;
 
 func drawLoop() {
+	fmt.Println();
 	for !done {
 		if drawBar {
 			var BAR_FILLED int;
@@ -22,7 +23,11 @@ func drawLoop() {
 			fmt.Print("  [");
 			var i int;
 			for i = 0; i < BAR_FILLED - 1; i++ { fmt.Print("="); }
-			fmt.Print(">");
+			if BAR_FILLED == BAR_WIDTH {
+				fmt.Print("=");
+			} else {
+				fmt.Print(">");
+			}
 			for i = BAR_FILLED; i < BAR_WIDTH; i++ { fmt.Print(" "); }
 			fmt.Print("] ")
 			fmt.Print(done_size / 1024);
@@ -31,6 +36,6 @@ func drawLoop() {
 			fmt.Println("k");
 		}
 
-		time.Sleep(100 * time.Millisecond);
+		time.Sleep(10 * time.Millisecond);
 	}
 }
