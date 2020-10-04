@@ -12,7 +12,10 @@ var target string;
 var fileOrder []string;
 var folders []string;
 var targets map[string]string = make(map[string]string);
-var filesLock = sync.RWMutex{}; // read/write exclusion lock
+var filesLock = sync.RWMutex{};
+// read/write exclusion lock for the three arrays above
+
+var iteratorDone, done bool = false, false;
 
 var done_amount uint64 = 0;
 var full_amount uint64 = 0;
@@ -25,19 +28,19 @@ var full_size uint64 = 0;
 // TODO: check if enough space is free
 // settable buffer width
 // dry run
-// config file, no config option
-// follow symlinks?
 // backup
 // sync
 // cow
 // missing files as warning
 
 func iteratePaths() {
-	for len(unsearchedPaths) > 0 {
+	filesLock.RLock();
+	var uPlen int = len(unsearchedPaths);
+	for uPlen > 0 {
 		var next string = unsearchedPaths[0];
 		unsearchedPaths = unsearchedPaths[1:]; // discard first element
+		filesLock.RUnlock();
 
-		fmt.Println("search", next + ":");
 		var err error;
 		var stat os.FileInfo;
 		stat, err = os.Lstat(next);
@@ -50,7 +53,6 @@ func iteratePaths() {
 
 			dir, err := os.Open(next);
 			if err != nil { errMissingFile(err, next); }
-			folders = append(folders, next);
 			var names []string;
 			// TODO dont read all files at once, specify an amount of files to read
 			//  and recall Readdirnames until io.EOF is returned (I guess)
@@ -58,21 +60,28 @@ func iteratePaths() {
 			if err != nil { errMissingFile(err, next); }
 			// merge target + folder name + file in folder name
 
+			filesLock.Lock();
+			folders = append(folders, next);
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
 				if verbose { fmt.Println("found", filepath.Join(next, fileInFolder)); }
 			}
+			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
+			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
 			targets[next] = rebasePathOntoTarget(next);
+			filesLock.Unlock();
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
 			if verbose { fmt.Println(next, "is a symlink"); }
 
 			var nextTarget string = rebasePathOntoTarget(next);
+			// TODO what if the symlink points to a directory
 
+			filesLock.Lock();
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
@@ -82,10 +91,16 @@ func iteratePaths() {
 				fileOrder = append(fileOrder, nextResolved);
 				targets[nextResolved] = nextTarget;
 			}
+			filesLock.Unlock();
 		} else {
 			warnBadFile(next);
 		}
+		filesLock.RLock();
+		uPlen = len(unsearchedPaths);
 	}
+	filesLock.RUnlock();
+	iteratorDone = true;
+	full_amount = uint64(len(fileOrder));
 	if verbose { verboseTargets(); }
 }
 
@@ -141,7 +156,7 @@ func main() {
 		if err != nil {
 			errMissingFile(err, target);
 		}
-		if (os.IsNotExist(err)) {
+		if os.IsNotExist(err) {
 			errMissingFile(err, target);
 		} else if !stat.IsDir() {
 			errTargetNoDir(target)
@@ -154,5 +169,5 @@ func main() {
 	}
 
 	iteratePaths();
-	//copyFiles();
+	copyFiles();
 }
