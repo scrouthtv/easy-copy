@@ -32,6 +32,7 @@ var full_size uint64 = 0;
 // sync
 // cow
 // missing files as warning
+// TODO remove dependencies
 
 func iteratePaths() {
 	filesLock.RLock();

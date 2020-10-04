@@ -1,9 +1,15 @@
 *.img
 a.out
 test/
+
+# test folders:
 foo/
+foo2/
+bar/
 
 *.exe
+*.app
+easycopy*.zip
 *.exe~
 *.dll
 *.so

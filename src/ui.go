@@ -52,22 +52,32 @@ func printVersion() {
 	fmt.Println(Textstyle.Reset);
 }
 
+func verboseDisablingColors(shellname string) {
+	if verbose {
+		fmt.Println("Color support for", shellname, "is currently not ipmlemented.");
+		fmt.Println("If your terminal does support colors, open an issue at");
+		fmt.Println(" " + EASYCOPY_ISSUES);
+	}
+}
+
 func verboseTargets() {
-	fmt.Print(FGColors.Yellow);
-	fmt.Println("-------------------------");
-	fmt.Println("these tasks will be done:");
-	filesLock.RLock();
-	var v string;
-	for _, v = range folders {
-		fmt.Println("need to create folder", v);
+	if verbose {
+		fmt.Print(FGColors.Yellow);
+		fmt.Println("-------------------------");
+		fmt.Println("these tasks will be done:");
+		filesLock.RLock();
+		var v string;
+		for _, v = range folders {
+			fmt.Println("need to create folder", v);
+		}
+		for _, v = range fileOrder {
+			var target string = targets[v];
+			fmt.Println(v, "will be copied to", target);
+		}
+		filesLock.RUnlock();
+		fmt.Println("-------------------------");
+		fmt.Print(Textstyle.Reset);
 	}
-	for _, v = range fileOrder {
-		var target string = targets[v];
-		fmt.Println(v, "will be copied to", target);
-	}
-	filesLock.RUnlock();
-	fmt.Println("-------------------------");
-	fmt.Print(Textstyle.Reset);
 }
 
 func errCreatingFile(err error, file string) {
