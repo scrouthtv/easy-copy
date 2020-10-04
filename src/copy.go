@@ -5,16 +5,22 @@ import "fmt";
 import "os";
 import "errors";
 import "strconv";
+import "time";
 
 const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);
 
 func copyFiles() {
+	fmt.Println("thread started");
 	var i int = 0;
 	for !done {
+		fmt.Println("looping");
 		filesLock.RLock();
 		if (len(folders) > 0) {
+			fmt.Println("creating folders");
 			var localFolders []string = append([]string(nil), folders...);
+			folders = nil;
+			filesLock.RUnlock();
 			var folder string;
 			for _, folder = range localFolders {
 				var folderInTarget string = rebasePathOntoTarget(folder)
@@ -23,9 +29,17 @@ func copyFiles() {
 				if err != nil { errCreatingFile(err, folderInTarget); }
 			}
 		}
+		filesLock.RLock();
+		for len(fileOrder) <= i {
+			filesLock.RUnlock();
+			if iteratorDone { return; }
+			time.Sleep(100 * time.Millisecond);
+			filesLock.RLock();
+		}
 		var sourcePath string = fileOrder[i];
 		var destPath string = targets[sourcePath];
 		filesLock.RUnlock();
+
 		if verbose { fmt.Println("src: ", sourcePath, "dest: ", destPath); }
 
 		var source, dest *os.File;

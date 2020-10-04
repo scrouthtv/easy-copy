@@ -57,30 +57,30 @@ func iteratePaths() {
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
-				if verbose { fmt.Println("found", filepath.Join(next, fileInFolder)); }
 			}
-			full_size += folder_size;
+			full_size += uint64(folder_size);
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
 			targets[next] = rebasePathOntoTarget(next);
 			filesLock.Unlock();
-			full_amount += stat.Size();
+			full_amount += uint64(stat.Size());
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
 			if verbose { fmt.Println(next, "is a symlink"); }
 
 			var nextTarget string = rebasePathOntoTarget(next);
-			// TODO what if the symlink points to a directory
 
 			filesLock.Lock();
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
-				full_size += symlink_sze;
+				full_size += uint64(symlink_size);
 			} else if followSymlinks == 2 {
+				// TODO what if the symlink points to a directory:
+				//  don't add this to file order but to unsearched paths
 				nextResolved, err := os.Readlink(next);
 				if err != nil { errReadingSymlink(err, next); }
 				fileOrder = append(fileOrder, nextResolved);
@@ -97,6 +97,8 @@ func iteratePaths() {
 	iteratorDone = true;
 	full_amount = uint64(len(fileOrder));
 	if verbose { verboseTargets(); }
+	// as this function is forked anyways we can directly call this:
+	drawLoop();
 }
 
 // calculate the actual target by rebasing next's dir
@@ -163,6 +165,6 @@ func main() {
 		fmt.Println("Target is", target);
 	}
 
-	iteratePaths();
+	go iteratePaths();
 	copyFiles();
 }
