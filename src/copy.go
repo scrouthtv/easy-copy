@@ -23,7 +23,7 @@ func copyFiles() {
 			for _, folder = range localFolders {
 				var folderInTarget string = rebasePathOntoTarget(folder)
 				if verbose { fmt.Println("creating", folderInTarget + ":"); }
-				var err error = os.Mkdir(folderInTarget, 0755);
+				var err error = os.MkdirAll(folderInTarget, 0755);
 				if err != nil { errCreatingFile(err, folderInTarget); }
 			}
 		} else {
