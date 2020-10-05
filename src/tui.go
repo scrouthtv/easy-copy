@@ -6,19 +6,20 @@ import "time";
 
 const BAR_WIDTH int = 60;
 
-var drawBar bool = false;
+var drawBar bool = true;
 var drawAskOverwriteDialog bool = false;
 
 // contains ids to files that should be recopied after the
 //  dialog whether to overwrite files has been answered.
 // once their respective dialogs have been answered, they are either
 //  added to pendingOverwrites or simply removed from piledOverwrites.
-var piledOverwrites []int;
-var pendingOverwrites []int;
+var piledConflicts []int;
+var pendingConflicts []int;
 
 func drawLoop() {
 	fmt.Println();
 	for !done {
+		//fmt.Print("\033[4A"); // up one line to overwrite the previous bar
 		if drawBar {
 			var BAR_FILLED int;
 			if full_size == 0 {
@@ -27,7 +28,6 @@ func drawLoop() {
 				BAR_FILLED = int(math.Round(float64(BAR_WIDTH) * float64(done_size) / float64(full_size)));
 			}
 
-			fmt.Print("\033[1A"); // up one line to overwrite the previous bar
 			fmt.Print("  [");
 			var i int;
 			for i = 0; i < BAR_FILLED - 1; i++ { fmt.Print("="); }
@@ -44,6 +44,23 @@ func drawLoop() {
 			fmt.Println("k");
 		}
 
-		time.Sleep(10 * time.Millisecond);
+		if drawAskOverwriteDialog {
+			fmt.Println("[tui:49] lock");
+			filesLock.RLock();
+			var conflictID int = piledConflicts[0];
+			var conflict string = fileOrder[conflictID];
+			var cTarget string = targets[conflict];
+			fmt.Println("[tui:54] unlock");
+			filesLock.RUnlock();
+			fmt.Println();
+			fmt.Print(FGColors.Magenta);
+			fmt.Print(conflict, " already exists in ", cTarget, ".");
+			fmt.Print("Do you want to [S]kip or [O]verwrite?");
+			fmt.Println(Textstyle.Reset);
+		} else {
+			fmt.Println("hewo");
+		}
+
+		time.Sleep(1000 * time.Millisecond);
 	}
 }
