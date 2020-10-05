@@ -85,7 +85,6 @@ func verbTargets() {
 		fmt.Print(FGColors.Yellow);
 		fmt.Println("-------------------------");
 		fmt.Println("these tasks will be done:");
-		fmt.Println("[ui:89] lock");
 		filesLock.RLock();
 		var v string;
 		for _, v = range folders {
@@ -95,7 +94,6 @@ func verbTargets() {
 			var target string = targets[v];
 			fmt.Println(v, "will be copied to", target + "/");
 		}
-		fmt.Println("[ui:99] unlock");
 		filesLock.RUnlock();
 		fmt.Println("-------------------------");
 		fmt.Print(Textstyle.Reset);
