@@ -98,19 +98,6 @@ func iteratePaths() {
 	drawLoop();
 }
 
-// calculate the actual target by rebasing next's dir
-// onto the target directory
-func DEPRECATEDrebasePathOntoTarget(path string) string {
-	path = filepath.Clean(path);
-	if filepath.IsAbs(path) {
-		path = path[1:];
-		// remove the first path sep
-		//  the path separator is a rune, or unicode character, and as such always
-		//  1 character long
-	}
-	return filepath.Join(targetBase, path);
-}
-
 // copy works as follows:
 // 1. open source for reading
 // 2. stat target,
