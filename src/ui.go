@@ -19,9 +19,7 @@ func printUsage() {
 }
 
 func printHelp() {
-	fmt.Print(FGColors.LMagenta);
-	fmt.Print("This is ", EASYCOPY_NAME, " v", EASYCOPY_VERSION + ".");
-	fmt.Println(Textstyle.Reset);
+	printVersion();
 	fmt.Println();
 	printUsage();
 	fmt.Println();
@@ -44,12 +42,15 @@ func printHelp() {
 	fmt.Println("  -v, --version    ", FGColors.LGray,
 		"print version information and exit", FGColors.Default);
 	fmt.Print(Textstyle.Reset);
+	fmt.Println();
+	fmt.Print(FGColors.LBlue);
+	fmt.Print("Extensive documentation can be accessed through the manpages.");
+	fmt.Println(Textstyle.Reset);
 }
 
 func printVersion() {
 	fmt.Print(FGColors.Red);
-	fmt.Print(EASYCOPY_NAME, Textstyle.Bold);
-	fmt.Print(" v" + EASYCOPY_VERSION);
+	fmt.Print(EASYCOPY_NAME + " v" + EASYCOPY_VERSION);
 	fmt.Println(Textstyle.Reset);
 }
 
