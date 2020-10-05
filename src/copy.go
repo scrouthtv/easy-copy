@@ -5,7 +5,6 @@ import "os";
 import "errors";
 import "strconv";
 import "time";
-import "fmt";
 import "path/filepath";
 
 const BUFFERSIZE uint = 1024;
@@ -20,9 +19,8 @@ func createFolders() {
 		filesLock.RUnlock();
 		var folder string;
 		for _, folder = range localFolders {
-			var folderInTarget string = rebasePathOntoTarget(folder)
-			var err error = os.MkdirAll(folderInTarget, 0755);
-			if err != nil { errCreatingFile(err, folderInTarget); }
+			var err error = os.MkdirAll(folder, 0755);
+			if err != nil { errCreatingFile(err, folder); }
 		}
 	}
 }
@@ -52,7 +50,7 @@ func copyFiles() {
 		if err != nil { errMissingFile(err, sourcePath); }
 		createFolders();
 		dest, err = os.OpenFile(destPath, os.O_WRONLY | os.O_CREATE, 0755);
-		if err != nil { fmt.Println(err); }
+		if err != nil { errCreatingFile(err, destPath); }
 		copyFile(source, dest, &done_size);
 		i += 1;
 		done_amount += 1;
@@ -80,9 +78,6 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var err error;
 	for {
 		readAmount, err = source.Read(buf);
-		fmt.Println("--------------------");
-		fmt.Println("target is nil: ", dest == nil);
-		fmt.Println("--------------------");
 		if err != nil && err != io.EOF {
 			errCopying(source.Name(), dest.Name(), err);
 		}

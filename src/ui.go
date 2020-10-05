@@ -92,7 +92,7 @@ func verbTargets() {
 		}
 		for _, v = range fileOrder {
 			var target string = targets[v];
-			fmt.Println(v, "will be copied to", target);
+			fmt.Println(v, "will be copied to", target + "/");
 		}
 		filesLock.RUnlock();
 		fmt.Println("-------------------------");

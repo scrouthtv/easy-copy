@@ -3,7 +3,6 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
-import "fmt";
 
 var unsearchedPaths []string;
 var uPTargets map[string]string = make(map[string]string);
@@ -41,8 +40,6 @@ func iteratePaths() {
 			errMissingFile(err, next);
 			// TODO don't exit on missing file, coreutils cp doesnt do that
 		} else if (stat.IsDir()) {
-			fmt.Println("is dir:", next);
-
 			dir, err := os.Open(next);
 			if err != nil { errMissingFile(err, next); }
 			var names []string;
@@ -53,7 +50,8 @@ func iteratePaths() {
 			// merge target + folder name + file in folder name
 
 			filesLock.Lock();
-			folders = append(folders, next);
+			folders = append(folders,
+				filepath.Join(uPTargets[next], filepath.Base(next)));
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
@@ -70,7 +68,7 @@ func iteratePaths() {
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
-			var nextTarget string = rebasePathOntoTarget(next);
+			var nextTarget string = uPTargets[next];
 
 			filesLock.Lock();
 			if followSymlinks == 1 {
@@ -102,7 +100,7 @@ func iteratePaths() {
 
 // calculate the actual target by rebasing next's dir
 // onto the target directory
-func rebasePathOntoTarget(path string) string {
+func DEPRECATEDrebasePathOntoTarget(path string) string {
 	path = filepath.Clean(path);
 	if filepath.IsAbs(path) {
 		path = path[1:];
