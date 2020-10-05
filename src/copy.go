@@ -60,6 +60,8 @@ func copyLoop() {
 			}
 			i += 1;
 			done_amount += 1;
+		} else {
+			filesLock.Unlock();
 		}
 
 		if iteratorDone {
