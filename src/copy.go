@@ -43,24 +43,29 @@ func createFolders() {
  *  5. When done copying, i and done_amount is incremented by one.
  *  6. It is evaluated whether we are done:
  *     If the iterator is not finished, rerun the loop.
- *     If the iterator is finished and i == len(files), e. g. all files are
- *     copied, exit.
+ *     If the iterator is finished, i == len(files), e. g. all files are
+ *     copied and piledConflicts is empty, e. g. all conflicts are resolved,
+ *     exit.
  */
 func copyFiles() {
 	var i int = 0;
 	for !done {
+		fmt.Println("start of loop");
 		filesLock.RLock();
+		fmt.Println("locked");
 		for len(fileOrder) <= i {
-			fmt.Println("[copy:56] unlock")
 			filesLock.RUnlock();
 			if iteratorDone {
 				verbDoneIterating();
+				fmt.Println("done iterating");
 				return;
 			}
 			time.Sleep(100 * time.Millisecond);
-			fmt.Println("[copy:63] lock")
 			filesLock.RLock();
 		}
+
+		fmt.Println("a");
+
 		var sourcePath string = fileOrder[i];
 		var destPath string = filepath.Join(targets[sourcePath],
 			filepath.Base(sourcePath));
@@ -81,14 +86,12 @@ func copyFiles() {
 				if onExistingFile == 2 {
 					fmt.Println("ask");
 					filesLock.Lock();
-					fmt.Println("locked");
 					piledConflicts = append(piledConflicts, i);
-					fmt.Println("draw dialog:", drawAskOverwriteDialog);
 					drawAskOverwriteDialog = true;
-					fmt.Println("draw dialog:", drawAskOverwriteDialog);
 					filesLock.Unlock();
 				}
 				i += 1;
+				fmt.Println("going to continue");
 				continue; // rerun loop
 			} else {
 				// TODO
@@ -104,12 +107,15 @@ func copyFiles() {
 		if iteratorDone {
 			filesLock.RLock();
 			// all folders are created & we copied all files up to this point
-			if len(folders) == 0 && len(fileOrder) == i {
+			if len(folders) == 0 && len(fileOrder) == i &&
+				len(piledConflicts) == 0 {
+				fmt.Println("done");
 				done = true;
 			}
 			filesLock.RUnlock();
 		}
 	}
+	fmt.Println("end of loop");
 }
 
 /**
