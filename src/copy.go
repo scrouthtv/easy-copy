@@ -49,6 +49,16 @@ func copyFiles() {
 		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0755);
 		if err != nil { errMissingFile(err, sourcePath); }
 		createFolders();
+
+		// check if file exists:
+		if onExistingFile != 1 {
+			stat, err := os.LStat(destPath);
+			if err == nil {
+
+			} else {
+				// TODO
+			}
+		}
 		dest, err = os.OpenFile(destPath, os.O_WRONLY | os.O_CREATE, 0755);
 		if err != nil { errCreatingFile(err, destPath); }
 		copyFile(source, dest, &done_size);
