@@ -251,7 +251,7 @@ func parseArgs() {
 		} else {
 			// TODO: clean & abs arg
 			unsearchedPaths = append(unsearchedPaths, arg);
-			uPTargets[arg] = "./";
+			uPTargets[arg] = targetBase;
 		}
 	}
 }
