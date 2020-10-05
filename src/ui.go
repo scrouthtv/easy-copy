@@ -11,6 +11,7 @@ func printUsage() {
 
 	fmt.Print(FGColors.LGray);
 	fmt.Println("  ec [options] source target");
+	fmt.Println("  ec [options] source ... directory");
 	fmt.Print(FGColors.Default);
 	fmt.Println("  ec --help");
 	fmt.Print("  ec --version");

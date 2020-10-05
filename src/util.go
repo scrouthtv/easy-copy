@@ -7,6 +7,12 @@ import "strconv";
 import "strings";
 import "path/filepath";
 
+func LinuxIsPiped() bool {
+	fi, _ := os.Stdout.Stat();
+
+	return (fi.Mode() & os.ModeCharDevice) == 0;
+}
+
 func WindowsParentProcessName() (string, error) {
 	cmd := exec.Command("tasklist");//, "/fi \"pid eq " + strconv.Itoa(ppid) + "\" /nh", "") does not work
 	var out bytes.Buffer;

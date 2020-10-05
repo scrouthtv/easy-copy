@@ -9,13 +9,21 @@ func init() {
 		ppname, err = WindowsParentProcessName();
 		if err != nil || (ppname != "pwsh.exe" && ppname != "pwsh.exe") {
 			verboseDisablingColors(ppname);
-			FGColors = colors{"", "", "", "", "", "", "", "", "",
-					"", "", "", "", "", "", "", ""};
-			BGColors = colors{"", "", "", "", "", "", "", "", "",
-					"", "", "", "", "", "", "", ""};
-			Textstyle = textstyle{"", "", "", "", "", "", ""};
+			disableColors();
+		}
+	} else if (runtime.GOOS == "linux" || runtime.GOOS == "darwin") {
+		if LinuxIsPiped() {
+			disableColors();
 		}
 	}
+}
+
+func disableColors() {
+	FGColors = colors{"", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", ""};
+	BGColors = colors{"", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", ""};
+	Textstyle = textstyle{"", "", "", "", "", "", ""};
 }
 
 var FGColors colors = colors{"\033[39m",
