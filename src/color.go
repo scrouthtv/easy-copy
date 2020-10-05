@@ -25,11 +25,9 @@ func initColors(value bool) {
 			"\033[0m", "\033[1m", "\033[2m",
 			"\033[4m", "\033[5m", "\033[7m", "\033[8m" };
 	} else {
-		FGColors = colors{};//"", "", "", "", "", "", "", "", "",
-		//"", "", "", "", "", "", "", ""};
-		BGColors = colors{"", "", "", "", "", "", "", "", "",
-		"", "", "", "", "", "", "", ""};
-		Textstyle = textstyle{"", "", "", "", "", "", ""};
+		FGColors = colors{};
+		BGColors = colors{};
+		Textstyle = textstyle{};
 	}
 }
 
