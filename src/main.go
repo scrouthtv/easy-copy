@@ -26,13 +26,11 @@ var full_size uint64 = 0;
 // or 2097152 TB
 
 func iteratePaths() {
-	fmt.Println("[main:29] lock");
 	filesLock.RLock();
 	var uPlen int = len(unsearchedPaths);
 	for uPlen > 0 {
 		var next string = unsearchedPaths[0];
 		unsearchedPaths = unsearchedPaths[1:]; // discard first element
-		fmt.Println("[main:35] unlock");
 		filesLock.RUnlock();
 
 		var err error;
@@ -52,7 +50,6 @@ func iteratePaths() {
 			if err != nil { errMissingFile(err, next); }
 			// merge target + folder name + file in folder name
 
-			fmt.Println("[main:55] lock");
 			filesLock.Lock();
 			folders = append(folders,
 				filepath.Join(uPTargets[next], filepath.Base(next)));
@@ -62,14 +59,11 @@ func iteratePaths() {
 				uPTargets[filepath.Join(next, fileInFolder)] = filepath.Join(uPTargets[next], filepath.Base(next));
 			}
 			full_size += uint64(folder_size);
-			fmt.Println("[main:65] unlock");
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
-			fmt.Println("[main:68] lock");
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
 			targets[next] = uPTargets[next];
-			fmt.Println("[main:72] unlock");
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());
 		} else if (stat.Mode() & os.ModeDevice != 0) {
@@ -77,7 +71,6 @@ func iteratePaths() {
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
 			var nextTarget string = uPTargets[next];
 
-			fmt.Println("[main:80] lock");
 			filesLock.Lock();
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next);
@@ -91,16 +84,13 @@ func iteratePaths() {
 				fileOrder = append(fileOrder, nextResolved);
 				targets[nextResolved] = nextTarget;
 			}
-			fmt.Println("[main:94] unlock");
 			filesLock.Unlock();
 		} else {
 			warnBadFile(next);
 		}
-		fmt.Println("[main:99] lock");
 		filesLock.RLock();
 		uPlen = len(unsearchedPaths);
 	}
-	fmt.Println("[main:103] unlock");
 	filesLock.RUnlock();
 	iteratorDone = true;
 	full_amount = uint64(len(fileOrder));

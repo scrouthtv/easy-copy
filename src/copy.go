@@ -12,13 +12,11 @@ const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);
 
 func createFolders() {
-	fmt.Println("[copy:16] lock");
 	filesLock.RLock();
 	if (len(folders) > 0) {
 		verbCreatingFolders();
 		var localFolders []string = append([]string(nil), folders...);
 		folders = nil;
-		fmt.Println("[copy:22] unlock");
 		filesLock.RUnlock();
 		var folder string;
 		for _, folder = range localFolders {
@@ -51,7 +49,6 @@ func createFolders() {
 func copyFiles() {
 	var i int = 0;
 	for !done {
-		fmt.Println("[copy:53] lock");
 		filesLock.RLock();
 		for len(fileOrder) <= i {
 			fmt.Println("[copy:56] unlock")
@@ -67,7 +64,6 @@ func copyFiles() {
 		var sourcePath string = fileOrder[i];
 		var destPath string = filepath.Join(targets[sourcePath],
 			filepath.Base(sourcePath));
-		fmt.Println("[copy:69] unlock");
 		filesLock.RUnlock();
 
 		verbCopyStart(sourcePath, destPath);
@@ -84,14 +80,12 @@ func copyFiles() {
 				// file exists
 				if onExistingFile == 2 {
 					fmt.Println("ask");
-					fmt.Println("[copy:86] lock");
 					filesLock.Lock();
 					fmt.Println("locked");
 					piledConflicts = append(piledConflicts, i);
 					fmt.Println("draw dialog:", drawAskOverwriteDialog);
 					drawAskOverwriteDialog = true;
 					fmt.Println("draw dialog:", drawAskOverwriteDialog);
-					fmt.Println("[copy:93] unlock");
 					filesLock.Unlock();
 				}
 				i += 1;
@@ -108,13 +102,11 @@ func copyFiles() {
 
 		// check if we are done:
 		if iteratorDone {
-			fmt.Println("[copy:110] lock");
 			filesLock.RLock();
 			// all folders are created & we copied all files up to this point
 			if len(folders) == 0 && len(fileOrder) == i {
 				done = true;
 			}
-			fmt.Println("[copy:116] unlock");
 			filesLock.RUnlock();
 		}
 	}

@@ -45,12 +45,10 @@ func drawLoop() {
 		}
 
 		if drawAskOverwriteDialog {
-			fmt.Println("[tui:49] lock");
 			filesLock.RLock();
 			var conflictID int = piledConflicts[0];
 			var conflict string = fileOrder[conflictID];
 			var cTarget string = targets[conflict];
-			fmt.Println("[tui:54] unlock");
 			filesLock.RUnlock();
 			fmt.Println();
 			fmt.Print(FGColors.Magenta);
