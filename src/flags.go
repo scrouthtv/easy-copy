@@ -34,9 +34,9 @@ func parseKeyValue(key string, value string) {
 			}
 		case "color":
 			switch (value) {
-				case "never": initColors(false);
+				case "never","false","no","none": initColors(false);
 				case "auto": initColors(autoColors());
-				case "always": initColors(true);
+				case "always","true","yes","all": initColors(true);
 			}
 		default:
 			warnBadConfigKey(key);
