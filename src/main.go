@@ -56,18 +56,14 @@ func iteratePaths() {
 			folders = append(folders, next);
 			var fileInFolder string;
 			for _, fileInFolder = range names {
-				fmt.Println("next: ", next);
-				fmt.Println("fIF: ", fileInFolder);
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
-				//uPTargets[]
+				uPTargets[filepath.Join(next, fileInFolder)] = filepath.Join(uPTargets[next], filepath.Base(next));
 			}
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
-			fmt.Println("is regular:", next);
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
-			fmt.Println("target would be: ", uPTargets[next]);
 			targets[next] = uPTargets[next];
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());
