@@ -45,6 +45,7 @@ func drawLoop() {
 		}
 
 		if drawAskOverwriteDialog {
+			fmt.Println("start dialog");
 			filesLock.RLock();
 			var conflictID int = piledConflicts[0];
 			var conflict string = fileOrder[conflictID];
@@ -59,6 +60,6 @@ func drawLoop() {
 			fmt.Println("hewo");
 		}
 
-		time.Sleep(1000 * time.Millisecond);
+		time.Sleep(100 * time.Millisecond);
 	}
 }

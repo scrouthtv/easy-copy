@@ -3,7 +3,6 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
-import "fmt";
 
 var unsearchedPaths []string;
 var uPTargets map[string]string = make(map[string]string);
