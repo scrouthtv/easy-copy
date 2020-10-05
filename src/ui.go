@@ -116,7 +116,7 @@ func verbSearchStart() {
 	if verbose {
 		fmt.Print(FGColors.Yellow);
 		fmt.Println("Have to search", unsearchedPaths);
-		fmt.Print("Target is ", target);
+		fmt.Print("Target is ", targetBase);
 		fmt.Println(Textstyle.Reset);
 	}
 }
@@ -125,6 +125,14 @@ func verbCopyStart(sourcePath string, destPath string) {
 	if verbose {
 		fmt.Print(FGColors.Yellow);
 		fmt.Print("src: ", sourcePath, " dest: ", destPath);
+		fmt.Println(Textstyle.Reset);
+	}
+}
+
+func verbCopyFinished(srcPath string, destPath string) {
+	if verbose {
+		fmt.Print(FGColors.Yellow);
+		fmt.Print("finished copying ", srcPath, " to ", destPath);
 		fmt.Println(Textstyle.Reset);
 	}
 }
@@ -241,7 +249,9 @@ func parseArgs() {
 				parseFlag("-", arg[i:i+1]);
 			}
 		} else {
+			// TODO: clean & abs arg
 			unsearchedPaths = append(unsearchedPaths, arg);
+			uPTargets[arg] = "./";
 		}
 	}
 }

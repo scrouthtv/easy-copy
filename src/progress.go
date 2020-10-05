@@ -6,7 +6,7 @@ import "time";
 
 const BAR_WIDTH int = 60;
 
-var drawBar bool = true;
+var drawBar bool = false;
 
 func drawLoop() {
 	fmt.Println();

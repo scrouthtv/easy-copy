@@ -3,9 +3,11 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
+import "fmt";
 
 var unsearchedPaths []string;
-var target string;
+var uPTargets map[string]string = make(map[string]string);
+var targetBase string;
 
 var fileOrder []string;
 var folders []string;
@@ -39,6 +41,7 @@ func iteratePaths() {
 			errMissingFile(err, next);
 			// TODO don't exit on missing file, coreutils cp doesnt do that
 		} else if (stat.IsDir()) {
+			fmt.Println("is dir:", next);
 
 			dir, err := os.Open(next);
 			if err != nil { errMissingFile(err, next); }
@@ -53,14 +56,19 @@ func iteratePaths() {
 			folders = append(folders, next);
 			var fileInFolder string;
 			for _, fileInFolder = range names {
+				fmt.Println("next: ", next);
+				fmt.Println("fIF: ", fileInFolder);
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
+				//uPTargets[]
 			}
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
+			fmt.Println("is regular:", next);
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
-			targets[next] = rebasePathOntoTarget(next);
+			fmt.Println("target would be: ", uPTargets[next]);
+			targets[next] = uPTargets[next];
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());
 		} else if (stat.Mode() & os.ModeDevice != 0) {
@@ -105,11 +113,8 @@ func rebasePathOntoTarget(path string) string {
 		// remove the first path sep
 		//  the path separator is a rune, or unicode character, and as such always
 		//  1 character long
-		// TODO: test what happens if there is a space at the very beginning
-		//  it should get removed by Clean(), if not, the path separator will
-		//  also not get removed
 	}
-	return filepath.Join(target, path);
+	return filepath.Join(targetBase, path);
 }
 
 // copy works as follows:
@@ -135,20 +140,20 @@ func main() {
 	}
 
 	var err error;
-	target, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths) - 1]);
+	targetBase, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths) - 1]);
 	if err != nil {
 		errResolvingTarget(unsearchedPaths[len(unsearchedPaths) - 1], err);
 	}
 	unsearchedPaths = unsearchedPaths[0:len(unsearchedPaths) - 1];
 	if len(unsearchedPaths) > 1 {
-		stat, err := os.Stat(target);
+		stat, err := os.Stat(targetBase);
 		if err != nil {
-			errMissingFile(err, target);
+			errMissingFile(err, targetBase);
 		}
 		if os.IsNotExist(err) {
-			errMissingFile(err, target);
+			errMissingFile(err, targetBase);
 		} else if !stat.IsDir() {
-			errTargetNoDir(target)
+			errTargetNoDir(targetBase);
 		}
 	}
 
