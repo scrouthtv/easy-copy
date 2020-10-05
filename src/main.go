@@ -141,5 +141,5 @@ func main() {
 	verbSearchStart();
 
 	go iteratePaths();
-	copyFiles();
+	copyLoop();
 }

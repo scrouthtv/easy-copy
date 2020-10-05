@@ -4,118 +4,91 @@ import "io";
 import "os";
 import "errors";
 import "strconv";
-import "time";
 import "path/filepath";
-import "fmt";
 
 const BUFFERSIZE uint = 1024;
+
 var buf []byte = make([]byte, BUFFERSIZE);
 
-func createFolders() {
-	filesLock.RLock();
-	if (len(folders) > 0) {
-		verbCreatingFolders();
-		var localFolders []string = append([]string(nil), folders...);
-		folders = nil;
-		filesLock.RUnlock();
-		var folder string;
-		for _, folder = range localFolders {
-			var err error = os.MkdirAll(folder, 0755);
-			if err != nil { errCreatingFile(err, folder); }
-		}
-	} else {
-		filesLock.RUnlock();
-	}
-}
-
 /**
- * At the beginning, a counter is set up to point at the next
- * file to copy ("i").
- * In a loop, the following will be done:
- *  1. If the iterator isn't done yet, retrieve
- *     fileOrder[i] as next or wait for a new file in fileOrder
- *  2. Any pending folders are created.
- *  3. It is tested whether the file already exists.
- *     If it does, and the specified overwrite strategy does not allow
- *     overwriting, it is skipped and the loop reruns with i+1.
- *  4. The destination file is created and the file is transferred whilst
- *     saving the progress to done_size.
- *  5. When done copying, i and done_amount is incremented by one.
- *  6. It is evaluated whether we are done:
- *     If the iterator is not finished, rerun the loop.
- *     If the iterator is finished, i == len(files), e. g. all files are
- *     copied and piledConflicts is empty, e. g. all conflicts are resolved,
- *     exit.
+ * Loops checking / waiting for any left work.
  */
-func copyFiles() {
+func copyLoop() {
 	var i int = 0;
 	for !done {
-		fmt.Println("start of loop");
-		filesLock.RLock();
-		fmt.Println("locked");
-		for len(fileOrder) <= i {
-			filesLock.RUnlock();
-			if iteratorDone {
-				verbDoneIterating();
-				fmt.Println("done iterating");
-				return;
-			}
-			time.Sleep(100 * time.Millisecond);
-			filesLock.RLock();
-		}
+		filesLock.Lock();
+		if len(folders) > 0 {
+			var localFolders []string = folders;
+			folders = nil;
+			filesLock.Unlock();
+			createFolders(localFolders);
+		} else if len(pendingConflicts) > 0 {
+			// TODO
+			filesLock.Unlock();
+		} else if i < len(fileOrder) {
+			var sourcePath string = fileOrder[i];
+			var destPath string = filepath.Join(targets[sourcePath],
+				filepath.Base(sourcePath));
+			filesLock.Unlock();
 
-		fmt.Println("a");
-
-		var sourcePath string = fileOrder[i];
-		var destPath string = filepath.Join(targets[sourcePath],
-			filepath.Base(sourcePath));
-		filesLock.RUnlock();
-
-		verbCopyStart(sourcePath, destPath);
-		var source, dest *os.File;
-		var err error;
-		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0755);
-		if err != nil { errMissingFile(err, sourcePath); }
-		createFolders();
-
-		// check if file exists:
-		if onExistingFile != 1 {
-			stat, _ := os.Lstat(destPath);
-			if stat != nil {
-				// file exists
-				if onExistingFile == 2 {
-					fmt.Println("ask");
-					filesLock.Lock();
-					piledConflicts = append(piledConflicts, i);
-					drawAskOverwriteDialog = true;
-					filesLock.Unlock();
+			// check if file already exists and we even care about that:
+			var doCopy bool = true;
+			if onExistingFile != 1 {
+				stat, _ := os.Lstat(destPath);
+				// TODO error handling
+				if stat != nil {
+					doCopy = false;
+					// file exists
+					if onExistingFile == 2 {
+						// save it to the conflicts:
+						filesLock.Lock();
+						piledConflicts = append(piledConflicts, i);
+						drawAskOverwriteDialog = true;
+						filesLock.Unlock();
+					}
 				}
-				i += 1;
-				fmt.Println("going to continue");
-				continue; // rerun loop
-			} else {
-				// TODO
 			}
+			if doCopy {
+				verbCopyStart(sourcePath, destPath);
+				var source, dest *os.File;
+				var err error;
+				source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
+				if err != nil { errMissingFile(err, sourcePath); }
+				dest, err = os.OpenFile(destPath, os.O_WRONLY, 0644);
+				if err != nil { errCreatingFile(err, destPath); }
+				copyFile(source, dest, &done_size);
+			}
+			i += 1;
+			done_amount += 1;
 		}
-		dest, err = os.OpenFile(destPath, os.O_WRONLY | os.O_CREATE, 0755);
-		if err != nil { errCreatingFile(err, destPath); }
-		copyFile(source, dest, &done_size);
-		i += 1;
-		done_amount += 1;
 
-		// check if we are done:
 		if iteratorDone {
+			// all sources have been iterated, no more work will come later on
 			filesLock.RLock();
-			// all folders are created & we copied all files up to this point
 			if len(folders) == 0 && len(fileOrder) == i &&
-				len(piledConflicts) == 0 {
-				fmt.Println("done");
+				len(piledConflicts) == 0 && len(pendingConflicts) == 0 {
+					// 1. all folders have been created
+					// 2. we've tried to copy all files so far
+					// 3. all conflicts we had to ask the user are resolved
+					// 4. all conflicts the user already answered have been dealt with
 				done = true;
 			}
 			filesLock.RUnlock();
 		}
 	}
-	fmt.Println("end of loop");
+}
+
+/**
+ * Create the folders specified in folders.
+ * filesLock will not be locked.
+ */
+func createFolders(folders []string) {
+	verbCreatingFolders();
+	var folder string;
+	for _, folder = range folders {
+		var err error = os.MkdirAll(folder, 0755);
+		if err != nil { errCreatingFile(err, folder); }
+	}
 }
 
 /**
