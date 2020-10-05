@@ -10,7 +10,7 @@ bar/
 *.exe
 *.app
 easycopy*.zip
-easycopy*.zstd
+easycopy*.zst
 *.exe~
 *.dll
 *.so

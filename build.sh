@@ -6,6 +6,7 @@ SRCDIR="$ROOTDIR/src"
 BINLOC="$ROOTDIR/pkg/easycopy"
 PKGDIR="$ROOTDIR/pkg"
 OUTDIR="$ROOTDIR/build"
+DOCDIR="$ROOTDIR/doc"
 VERSION="$(grep 'EASYCOPY_VERSION' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
 OUTPREFIX="easycopy-$VERSION"
 
@@ -26,8 +27,9 @@ done
 for GOARCH in ${LINUX_ARCHES[@]}; do
 	echo "compiling for linux $GOARCH"
 	GOOS=linux go build -o "$BINLOC-linux-$GOARCH" .
-	zstd -v -o "$OUTDIR/$OUTPREFIX-linux-$GOARCH.zstd" "$PKGDIR/"*
-	rm "$BINLOC-linux-$GOARCH"
+	cp "$DOCDIR/easycopy.1" "$DOCDIR/ec.conf.5" "$PKGDIR/"
+	zstd -v -o "$OUTDIR/$OUTPREFIX-linux-$GOARCH.zst" "$PKGDIR/"*
+	rm "$PKGDIR/easycopy.1" "$PKGDIR/ec.conf.5" "$BINLOC-linux-$GOARCH"
 done
 for GOARCH in ${DARWIN_ARCHES[@]}; do
 	echo "compiling for darwin $GOARCH"
