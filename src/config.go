@@ -27,11 +27,7 @@ func readConfig() {
 			// remove spaces and tabs
 			line = strings.Trim(scanner.Text(), " \t");
 			if line != "" && !strings.HasPrefix(line, "#") {
-				var kv []string = strings.Split(line, "=");
-				if len(kv) != 2 { fmt.Println("ERROR: bad pair"); }
-				var k string = strings.Trim(kv[0], " \t'\"");
-				var v string = strings.Trim(kv[1], " \t'\"");
-				parseOption(k, v);
+				parseOption(line);
 			}
 		}
 		file.Close();

@@ -126,6 +126,7 @@ func rebasePathOntoTarget(path string) string {
 // 4. eventually delete the source file
 
 func main() {
+	initColors(autoColors());
 	parseArgs();
 	readConfig();
 	pwd, err := os.Getwd();

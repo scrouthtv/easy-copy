@@ -6,6 +6,7 @@ import "bytes";
 import "strconv";
 import "strings";
 import "path/filepath";
+import "runtime";
 
 func LinuxIsPiped() bool {
 	fi, _ := os.Stdout.Stat();
@@ -43,4 +44,34 @@ func WindowsParentProcessName() (string, error) {
 		}
 	}
 	return "", nil;
+}
+
+
+var autoColorsCache bool;
+var autoColorsCacheSet bool = false;
+// save the evaluation of autoColors() to avoid this tedious calculation
+
+func autoColors() bool {
+	if autoColorsCacheSet {
+		return autoColorsCache;
+	}
+	if (runtime.GOOS == "windows") {
+		var ppname string;
+		var err error;
+		ppname, err = WindowsParentProcessName();
+		if err != nil || (ppname != "pwsh.exe" && ppname != "powershell.exe") {
+			autoColorsCacheSet = true;
+			autoColorsCache = false;
+			return false;
+		}
+	} else if (runtime.GOOS == "linux" || runtime.GOOS == "darwin") {
+		if LinuxIsPiped() {
+			autoColorsCacheSet = true;
+			autoColorsCache = false;
+			return false;
+		}
+	}
+	autoColorsCacheSet = true;
+	autoColorsCache = true;
+	return true;
 }
