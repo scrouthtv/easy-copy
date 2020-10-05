@@ -7,6 +7,14 @@ import "time";
 const BAR_WIDTH int = 60;
 
 var drawBar bool = false;
+var drawAskOverwriteDialog bool = false;
+
+// contains ids to files that should be recopied after the
+//  dialog whether to overwrite files has been answered.
+// once their respective dialogs have been answered, they are either
+//  added to pendingOverwrites or simply removed from piledOverwrites.
+var piledOverwrites []int;
+var pendingOverwrites []int;
 
 func drawLoop() {
 	fmt.Println();
