@@ -49,14 +49,7 @@ func copyLoop() {
 				}
 			}
 			if doCopy {
-				verbCopyStart(sourcePath, destPath);
-				var source, dest *os.File;
-				var err error;
-				source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
-				if err != nil { errMissingFile(err, sourcePath); }
-				dest, err = os.OpenFile(destPath, os.O_WRONLY, 0644);
-				if err != nil { errCreatingFile(err, destPath); }
-				copyFile(source, dest, &done_size);
+				copyFilePath(sourcePath, destPath);
 			}
 			i += 1;
 			done_amount += 1;
@@ -78,6 +71,17 @@ func copyLoop() {
 			filesLock.RUnlock();
 		}
 	}
+}
+
+func copyFilePath(sourcePath string, destPath string) {
+	verbCopyStart(sourcePath, destPath);
+	var source, dest *os.File;
+	var err error;
+	source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
+	if err != nil { errMissingFile(err, sourcePath); }
+	dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_APPEND | os.O_WRONLY, 0644);
+	if err != nil { errCreatingFile(err, destPath); }
+	copyFile(source, dest, &done_size);
 }
 
 /**
