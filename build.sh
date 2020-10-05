@@ -7,6 +7,7 @@ BINLOC="$ROOTDIR/pkg/easycopy"
 PKGDIR="$ROOTDIR/pkg"
 OUTDIR="$ROOTDIR/build"
 DOCDIR="$ROOTDIR/doc"
+LICENSE="$ROOTDIR/LICENSE"
 VERSION="$(grep 'EASYCOPY_VERSION' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
 OUTPREFIX="easycopy-$VERSION"
 
@@ -17,6 +18,7 @@ WIN_ARCHES=("386" amd64)
 LINUX_ARCHES=("386" amd64)
 DARWIN_ARCHES=("386" amd64 arm arm64)
 
+cp "$LICENSE" "$PKGDIR/"
 cd "$SRCDIR"
 for GOARCH in ${WIN_ARCHES[@]}; do
 	echo "compiling for windows $GOARCH to $BINLOC-windows-$GOARCH.exe"
@@ -37,5 +39,6 @@ for GOARCH in ${DARWIN_ARCHES[@]}; do
 	zip -j "$OUTDIR/$OUTPREFIX-darwin-$GOARCH.zip" "$PKGDIR/"*
 	rm "$BINLOC-darwin-$GOARCH.app"
 done
+rm "$PKGDIR/LICENSE"
 
 cd "$ROOTDIR"
