@@ -1,0 +1,100 @@
+.TH ec.conf 5 "05 Oct 2020" "\[u00A9] EasyCopy User Manual"
+.SH NAME
+ec.conf \- the configuration file for
+.B easycopy(1)
+.SH SYNOPSIS
+.SY $XDG_CONFIG_DIR/ec.conf
+.SY $XDG_CONFIG_DIR/ec/ec.conf
+.SY $HOME/.config/ec.conf
+.SY $HOME/.config/ec/ec.conf
+.SY $HOME/ec.conf
+.YS
+.SH DESCRIPTION
+.B ec.conf
+is the configuration file for
+.BR easycopy .
+.PP
+.B ec.conf
+is written in plaintext.
+Settings can be set using the following form:
+.RS
+.I KEY
+.B =
+.I VALUE
+.RE
+.PP
+Empty lines are ignored.
+Lines starting with
+.B #
+are comments and ignored as well.
+Capitalisation is ignored.
+Whitespaces, tab characters and quotes
+.RB ( '
+or
+.BR \[u0022] )
+between the tokens are ignored.
+.PP
+If an unknown
+.I KEY
+is encountered, a warning is printed and the line is ignored.
+.br
+If an invalid
+.I VALUE
+is encountered, a warning is printed and the corresponding setting remains unset.
+.SH OPTIONS
+These options are available:
+.TP
+.I verbose
+Whether to output more information.
+.br
+Set to
+.B true
+or
+.B false
+(default).
+.TP
+.I overwrite
+Sets the behaviour when encountering existing files.
+.br
+Set to
+.RS
+.TP
+.B skip
+Skip the file (the target remains untouched). A notice is only printed if
+.I verbose
+is set.
+.TP
+.B overwrite
+Overwrite the file. A notice is only printed if
+.I verbose
+is set.
+.TP
+.B ask
+Ask everytime an exisiting file in the target is encountered (default).
+.RE
+.TP
+.I symlinks
+Sets the behaviour when encountering symbolic links (symlinks).
+.RS
+.TP
+.B ignore
+Ignore the link. No file or filder with it's name will be created in the target.
+.TP
+.B link
+The link is resolved and it's target will be linked from the target (default).
+.TP
+.B dereference
+The link is resolved and it's target will be copied into the target.
+.RE
+.SH NOTES
+If no config file is found in any of the valid locations, a default one is created in the first location.
+.PP
+.B easycopy
+will never write to an existing config file.
+.PP
+If both
+.B $XDG_CONFIG_DIR
+and
+.B $HOME
+are unset, no config file is read.
+.RE

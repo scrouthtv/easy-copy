@@ -1,0 +1,102 @@
+.TH EC 1 "05 Oct 2020" "\[u00A9] EasyCopy User Manual"
+.SH NAME
+ec \- copy files and directories with ease
+.SH SYNOPSIS
+.SY ec
+.I [options]
+source target
+.SY ec
+.I [options]
+source ... directory
+.SY ec
+.I [\-h | \-\-help]
+.SY ec
+.I [\-v | \-\-version]
+.YS
+.SH DESCRIPTION
+Duplicate source to target.
+.br
+Copy source(s) into directory.
+.br
+Output the help.
+.br
+Output version information.
+.SH OPTIONS
+.SS Existing files
+.TP
+.I \-f, \-\-force
+Overwrite existing files without asking.
+.TP
+.I \-i, \-\-interactive
+Ask before overwriting a file.
+.TP
+.I \-n, \-\-no-clobber
+Skip existing files.
+
+.SS User Interface
+.TP
+.I \-V \-\-verbose
+Output more information.
+.TP
+.I \-h \-\-help
+Output the short help and exit.
+.TP
+.I \-v \-\-version
+Output version information and exit.
+.SH EXIT STATUS
+.TP
+0
+No problems have occured. Depending on the options, some files may have been overwritten or skipped without notice.
+.TP
+1
+Minor problems have occured, e. g. a file was not readable, a device file was skipped or there was an error in the config file.
+.TP
+2
+A major problem caused the program to abort it's task. More information can be found in the command output.
+.SH EXAMPLES
+.TP
+.EX
+.BI ec " foo/ bar"
+.EE
+Duplicate the folder
+.I foo/
+as
+.IR bar/ .
+.TP
+.EX
+.BI ec " /tmp/foo /mnt/bar ~/baz/"
+.EE
+Copy
+.I /tmp/foo
+and
+.I /mnt/bar
+to
+.IR ~/baz/ .
+.TP
+.EX
+.BI ec " -fV foo bar"
+.EE
+Duplicate
+.I foo
+as
+.IR bar
+while overwriting existing files and giving more information.
+.SH FILES
+.TP
+.B ec.conf
+The config file for EasyCopy in which the command-line flags can be set by default. For more information see
+.BR ec.conf(5) .
+.SH NOTES
+If a file is skipped, it's content and attributes remain unchanged.
+An exception to this is the
+.B atime
+which will be updated to the time it was visited (if supported by the system).
+.SH SEE ALSO
+.B ec.conf(5)
+For more information, visit the project's website via
+.UR https://github.com/scrouthtv/easy-copy/
+.UE .
+.SH REPORTING BUGS
+Report bugs to the issue tracker of this project:
+.UR https://github.com/scrouthtv/easy-copy/issues/
+.UE
