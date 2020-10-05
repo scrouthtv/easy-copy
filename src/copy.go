@@ -1,7 +1,6 @@
 package main;
 
 import "io";
-import "fmt";
 import "os";
 import "errors";
 import "strconv";
@@ -13,14 +12,13 @@ var buf []byte = make([]byte, BUFFERSIZE);
 func createFolders() {
 	filesLock.RLock();
 	if (len(folders) > 0) {
-		if verbose { fmt.Println("creating folders"); }
+		verbCreatingFolders();
 		var localFolders []string = append([]string(nil), folders...);
 		folders = nil;
 		filesLock.RUnlock();
 		var folder string;
 		for _, folder = range localFolders {
 			var folderInTarget string = rebasePathOntoTarget(folder)
-			if verbose { fmt.Println("creating", folderInTarget + ":"); }
 			var err error = os.MkdirAll(folderInTarget, 0755);
 			if err != nil { errCreatingFile(err, folderInTarget); }
 		}
@@ -34,7 +32,7 @@ func copyFiles() {
 		for len(fileOrder) <= i {
 			filesLock.RUnlock();
 			if iteratorDone {
-				if verbose { fmt.Println("done iterating, no more files"); }
+				verbDoneIterating();
 				return;
 			}
 			time.Sleep(100 * time.Millisecond);
@@ -44,8 +42,7 @@ func copyFiles() {
 		var destPath string = targets[sourcePath];
 		filesLock.RUnlock();
 
-		if verbose { fmt.Println("src: ", sourcePath, "dest: ", destPath); }
-
+		verbCopyStart(sourcePath, destPath);
 		var source, dest *os.File;
 		var err error;
 		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0755);
@@ -80,8 +77,7 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	for {
 		readAmount, err = source.Read(buf);
 		if err != nil && err != io.EOF {
-			fmt.Println("error: ", err)
-			return err;
+			errCopying(source.Name(), dest.Name(), err);
 		}
 		if readAmount == 0 {
 			// when the file is fully read

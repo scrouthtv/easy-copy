@@ -1,8 +1,8 @@
 package main;
 
-import "fmt";
 import "os";
 import "strings";
+import "errors";
 
 var verbose bool;
 var onExistingFile uint8 = 2;
@@ -13,14 +13,6 @@ var followSymlinks uint8 = 1;
 // 0 ignore symlinks
 // 1 follow symlinks, copying them as links
 // 2 fully dereference
-
-func verboseFlags() {
-	fmt.Printf(FGColors.Green)
-	fmt.Println(" Verbose:", verbose);
-	fmt.Println(" Overwrite Mode:", onExistingFile);
-	fmt.Print(" Follow symlinks: ", followSymlinks);
-	fmt.Println(Textstyle.Reset);
-}
 
 func parseKeyValue(key string, value string) {
 	key = strings.ToLower(strings.Trim(key, " \t'\""));
@@ -47,13 +39,16 @@ func parseKeyValue(key string, value string) {
 				case "always": initColors(true);
 			}
 		default:
-			fmt.Println("Unknown config key", key);
+			warnBadConfigKey(key);
 	}
 }
 
 func parseOption(line string) {
 	var kv []string = strings.Split(line, "=");
-	if len(kv) != 2 { fmt.Println("ERROR: bad pair"); }
+	if len(kv) != 2 {
+		warnConfig(errors.New("missing '=' or too many '=' : " + line));
+		return;
+	}
 	parseKeyValue(kv[0], kv[1]);
 }
 
@@ -71,7 +66,7 @@ func parseFlag(prefix string, flag string) {
 			os.Exit(0);
 		case "V", "verbose":
 			verbose = true;
-			verboseVerboseEnabled();
+			verbVerboseEnabled();
 			break;
 		case "f", "force":
 			onExistingFile = 1;

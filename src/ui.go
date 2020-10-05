@@ -54,20 +54,28 @@ func printVersion() {
 	fmt.Println(Textstyle.Reset);
 }
 
-func verboseVerboseEnabled() {
-	fmt.Print(FGColors.Yellow);
-	fmt.Print("Verbose mode enabled.");
-	fmt.Println(Textstyle.Reset);
+func verbVerboseEnabled() {
+	fmt.Print(FGColors.Yellow + "Verbose mode enabled." + Textstyle.Reset);
 }
 
-func verboseDisablingColors(shellname string) {
+func verbFlags() {
+	if verbose {
+		fmt.Printf(FGColors.Green)
+		fmt.Println(" Verbose:", verbose);
+		fmt.Println(" Overwrite Mode:", onExistingFile);
+		fmt.Print(" Follow symlinks: ", followSymlinks);
+		fmt.Println(Textstyle.Reset);
+	}
+}
+
+func verbDisablingColors(shellname string) {
 	// as this is called from the init function where verbose isn't set yet
 	fmt.Println("Color support for", shellname, "is currently not ipmlemented.");
 	fmt.Println("If your terminal does support colors, open an issue at");
 	fmt.Println(" " + EASYCOPY_ISSUES);
 }
 
-func verboseTargets() {
+func verbTargets() {
 	if verbose {
 		fmt.Print(FGColors.Yellow);
 		fmt.Println("-------------------------");
@@ -84,6 +92,35 @@ func verboseTargets() {
 		filesLock.RUnlock();
 		fmt.Println("-------------------------");
 		fmt.Print(Textstyle.Reset);
+	}
+}
+
+func verbCreatingFolders() {
+	if verbose {
+		fmt.Println(FGColors.Yellow + "Creating folders..." + Textstyle.Reset);
+	}
+}
+
+func verbDoneIterating() {
+	if verbose {
+		fmt.Println(FGColors.Yellow + "All source files iterated." + Textstyle.Reset);
+	}
+}
+
+func verbSearchStart() {
+	if verbose {
+		fmt.Print(FGColors.Yellow);
+		fmt.Println("Have to search", unsearchedPaths);
+		fmt.Print("Target is ", target);
+		fmt.Println(Textstyle.Reset);
+	}
+}
+
+func verbCopyStart(sourcePath string, destPath string) {
+	if verbose {
+		fmt.Print(FGColors.Yellow);
+		fmt.Print("src: ", sourcePath, " dest: ", destPath);
+		fmt.Println(Textstyle.Reset);
 	}
 }
 
@@ -118,18 +155,32 @@ func warnConfig(err error) {
 	fmt.Println(Textstyle.Reset);
 }
 
-func warnBadConfig(key string, given uint8, expected string) {
-	fmt.Println("Error while reading the config file:");
+//func warnBadConfigValue(key string, given uint8, expected string) {
+	//fmt.Println("Error while reading the config file:");
+	//fmt.Print(FGColors.LRed);
+	//fmt.Print("Bad value for", key, "given", given, "but expected", expected);
+	//fmt.Println(Textstyle.Reset);
+	//fmt.Println("Reverting to default.");
+//}
+
+func warnBadConfigKey(key string) {
 	fmt.Print(FGColors.LRed);
-	fmt.Print("Bad value for", key, "given", given, "but expected", expected);
+	fmt.Print("Unknown key ", key, " in the configuration file, skipping it.");
 	fmt.Println(Textstyle.Reset);
-	fmt.Println("Reverting to default.");
 }
 
 func warnBadFile(file string) {
 	fmt.Print(FGColors.LRed);
 	fmt.Println(file, "is not a regular file, skipping it.");
 	fmt.Println(Textstyle.Reset);
+}
+
+func errCopying(sourcePath string, destPath string, err error) {
+	fmt.Println("Error copying", sourcePath, "to", destPath + ":")
+	fmt.Print(FGColors.Red);
+	fmt.Print(err);
+	fmt.Println(Textstyle.Reset);
+	os.Exit(2);
 }
 
 func errUnknownOption(option string) {
@@ -155,20 +206,19 @@ func errTargetNoDir(file string) {
 	os.Exit(2);
 }
 
-func errInvalidWD(err error) {
-	fmt.Println("The current directory is invalid:");
-	fmt.Print(FGColors.Red);
-	fmt.Print(err);
-	fmt.Println(Textstyle.Reset);
-	os.Exit(2);
-}
-
 func errResolvingTarget(target string, err error) {
 	fmt.Println("Cannot resolve", target, " as the target directory:")
 	fmt.Print(FGColors.Red);
 	fmt.Print(err);
 	fmt.Println(Textstyle.Reset);
 	os.Exit(2);
+}
+
+func warnCreatingConfig(err error) {
+	fmt.Println("Could not create a default configuration file:");
+	fmt.Print(FGColors.LRed);
+	fmt.Print(err);
+	fmt.Println(Textstyle.Reset);
 }
 
 func parseArgs() {

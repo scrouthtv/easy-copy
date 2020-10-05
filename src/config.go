@@ -1,7 +1,6 @@
 package main;
 
 import "bufio";
-import "fmt";
 import "os";
 import "errors";
 import "strings";
@@ -16,11 +15,14 @@ func readConfig() {
 				createConfigFile(config_locs[0]);
 			}
 		} else {
-			fmt.Println(err);
+			warnConfig(err);
 		}
 	} else {
 		file, err := os.OpenFile(configPath, os.O_RDONLY, 0644);
-		if err != nil { fmt.Println(err); }
+		if err != nil {
+			warnConfig(err);
+			return;
+		}
 		var scanner *bufio.Scanner = bufio.NewScanner(file);
 		var line string;
 		for scanner.Scan() {
@@ -31,7 +33,10 @@ func readConfig() {
 			}
 		}
 		file.Close();
-		if err := scanner.Err(); err != nil { fmt.Println(err); }
+		if err := scanner.Err(); err != nil {
+			warnConfig(err);
+			return;
+		}
 	}
 }
 
@@ -52,13 +57,13 @@ func createConfigFile(filePath string) {
 	var err error;
 	file, err := os.OpenFile(filePath, os.O_WRONLY | os.O_CREATE | os.O_APPEND, 0644);
 	if err != nil {
-		fmt.Println(err);
+		warnCreatingConfig(err);
 	}
 	var writer *bufio.Writer = bufio.NewWriter(file);
 	var line string;
 	for _, line = range sample_config {
 		_, err = writer.WriteString(line + "\n");
-		if err != nil { fmt.Println(err); }
+		if err != nil { warnCreatingConfig(err); }
 	}
 	writer.Flush();
 	file.Close();

@@ -1,12 +1,10 @@
 package main;
 
-import "fmt";
 import "os";
 import "sync";
 import "path/filepath";
 
 var unsearchedPaths []string;
-var pwd string;
 var target string;
 
 var fileOrder []string;
@@ -41,7 +39,6 @@ func iteratePaths() {
 			errMissingFile(err, next);
 			// TODO don't exit on missing file, coreutils cp doesnt do that
 		} else if (stat.IsDir()) {
-			if verbose { fmt.Println(next, "is a dir"); }
 
 			dir, err := os.Open(next);
 			if err != nil { errMissingFile(err, next); }
@@ -69,8 +66,6 @@ func iteratePaths() {
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
-			if verbose { fmt.Println(next, "is a symlink"); }
-
 			var nextTarget string = rebasePathOntoTarget(next);
 
 			filesLock.Lock();
@@ -96,7 +91,7 @@ func iteratePaths() {
 	filesLock.RUnlock();
 	iteratorDone = true;
 	full_amount = uint64(len(fileOrder));
-	if verbose { verboseTargets(); }
+	verbTargets();
 	// as this function is forked anyways we can directly call this:
 	drawLoop();
 }
@@ -129,21 +124,17 @@ func main() {
 	initColors(autoColors());
 	parseArgs();
 	readConfig();
-	pwd, err := os.Getwd();
-	if (err != nil) {
-		errInvalidWD(err);
-	}
 
 	if verbose {
 		printVersion();
-		verboseFlags();
-		fmt.Println("Working directory", pwd)
+		verbFlags();
 	}
 
 	if len(unsearchedPaths) < 2 {
 		errEmptySource();
 	}
 
+	var err error;
 	target, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths) - 1]);
 	if err != nil {
 		errResolvingTarget(unsearchedPaths[len(unsearchedPaths) - 1], err);
@@ -161,10 +152,7 @@ func main() {
 		}
 	}
 
-	if verbose {
-		fmt.Println("Have to search", unsearchedPaths);
-		fmt.Println("Target is", target);
-	}
+	verbSearchStart();
 
 	go iteratePaths();
 	copyFiles();
