@@ -27,6 +27,7 @@ func printHelp() {
 	fmt.Print("These options are supported:");
 	fmt.Println();
 	fmt.Print(Textstyle.Reset);
+	const indent string = "                     ";
 	fmt.Println("  -f, --force      ", FGColors.LGray,
 		"overwrite existing files without asking", FGColors.Default);
 	fmt.Println("  -i, --interactive", FGColors.LGray,
@@ -36,6 +37,10 @@ func printHelp() {
 	fmt.Println("");
 	fmt.Println("  -V, --verbose    ", FGColors.LGray,
 		"verbose mode ", FGColors.Default);
+	fmt.Println("      --color=WHEN ", FGColors.LGray,
+		"whether to colorize the output.");
+	fmt.Println(indent + "WHEN can be 'always', 'auto' (default) or 'never'",
+		FGColors.Default);
 	fmt.Println("");
 	fmt.Println("  -h, --help       ", FGColors.LGray,
 		"print this help and exit", FGColors.Default);

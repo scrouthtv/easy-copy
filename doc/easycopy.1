@@ -38,6 +38,26 @@ Skip existing files.
 .I \-V \-\-verbose
 Output more information.
 .TP
+.I "   \-\-color=WHEN"
+Whether to colorize the output.
+.I WHEN
+can be any of
+.RS
+.TP
+.I always
+always put ANSII escape codes in the output, regardless of the context
+.TP
+.I auto
+put ANSII escape codes in the output if the environment supports it:
+.RS
+.TP - on Windows, colors are only enabled in Powershell
+.TP - on Linux, colors are disabled, if stdout is a pipe
+.RE
+.TP
+.I never
+never put ANSII escape codes in the output.
+.RE
+.TP
 .I \-h \-\-help
 Output the short help and exit.
 .TP
