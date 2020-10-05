@@ -56,8 +56,6 @@ func drawLoop() {
 			fmt.Print(conflict, " already exists in ", cTarget, ".");
 			fmt.Print("Do you want to [S]kip or [O]verwrite?");
 			fmt.Println(Textstyle.Reset);
-		} else {
-			fmt.Println("hewo");
 		}
 
 		time.Sleep(100 * time.Millisecond);
