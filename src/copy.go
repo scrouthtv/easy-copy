@@ -5,6 +5,8 @@ import "os";
 import "errors";
 import "strconv";
 import "time";
+import "fmt";
+import "path/filepath";
 
 const BUFFERSIZE uint = 1024;
 var buf []byte = make([]byte, BUFFERSIZE);
@@ -39,7 +41,8 @@ func copyFiles() {
 			filesLock.RLock();
 		}
 		var sourcePath string = fileOrder[i];
-		var destPath string = targets[sourcePath];
+		var destPath string = filepath.Join(targets[sourcePath],
+			filepath.Base(sourcePath));
 		filesLock.RUnlock();
 
 		verbCopyStart(sourcePath, destPath);
@@ -49,6 +52,7 @@ func copyFiles() {
 		if err != nil { errMissingFile(err, sourcePath); }
 		createFolders();
 		dest, err = os.OpenFile(destPath, os.O_WRONLY | os.O_CREATE, 0755);
+		if err != nil { fmt.Println(err); }
 		copyFile(source, dest, &done_size);
 		i += 1;
 		done_amount += 1;
@@ -76,6 +80,9 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var err error;
 	for {
 		readAmount, err = source.Read(buf);
+		fmt.Println("--------------------");
+		fmt.Println("target is nil: ", dest == nil);
+		fmt.Println("--------------------");
 		if err != nil && err != io.EOF {
 			errCopying(source.Name(), dest.Name(), err);
 		}
@@ -93,5 +100,6 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 		}
 		*progressStorage += uint64(writtenAmount);
 	}
+	verbCopyFinished(source.Name(), dest.Name());
 	return nil;
 }
