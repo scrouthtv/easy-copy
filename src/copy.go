@@ -23,8 +23,14 @@ func copyLoop() {
 			filesLock.Unlock();
 			createFolders(localFolders);
 		} else if len(pendingConflicts) > 0 {
-			// TODO
+			var id int = pendingConflicts[0];
+			pendingConflicts = pendingConflicts[1:];
+			var sourcePath string = fileOrder[id];
+			var destPath = filepath.Join(targets[sourcePath],
+				filepath.Base(sourcePath));
 			filesLock.Unlock();
+			copyFilePath(sourcePath, destPath);
+			done_amount += 1;
 		} else if i < len(fileOrder) {
 			var sourcePath string = fileOrder[i];
 			var destPath string = filepath.Join(targets[sourcePath],
@@ -43,16 +49,15 @@ func copyLoop() {
 						// save it to the conflicts:
 						filesLock.Lock();
 						piledConflicts = append(piledConflicts, i);
-						drawAskOverwriteDialog = true;
 						filesLock.Unlock();
 					}
 				}
 			}
 			if doCopy {
 				copyFilePath(sourcePath, destPath);
+				done_amount += 1;
 			}
 			i += 1;
-			done_amount += 1;
 		} else {
 			filesLock.Unlock();
 		}
@@ -79,7 +84,7 @@ func copyFilePath(sourcePath string, destPath string) {
 	var err error;
 	source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
 	if err != nil { errMissingFile(err, sourcePath); }
-	dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_APPEND | os.O_WRONLY, 0644);
+	dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_WRONLY, 0644);
 	if err != nil { errCreatingFile(err, destPath); }
 	copyFile(source, dest, &done_size);
 }
