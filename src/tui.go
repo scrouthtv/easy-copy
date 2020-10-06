@@ -3,11 +3,16 @@ package main;
 import "fmt";
 import "math";
 import "time";
+import "path/filepath";
+import "bufio";
+import "os";
+import "strings";
 
 const BAR_WIDTH int = 60;
 
 var drawBar bool = true;
-var drawAskOverwriteDialog bool = false;
+
+var reader *bufio.Reader;
 
 // contains ids to files that should be recopied after the
 //  dialog whether to overwrite files has been answered.
@@ -17,12 +22,28 @@ var piledConflicts []int;
 var pendingConflicts []int;
 
 func drawLoop() {
+	reader = bufio.NewReader(os.Stdin);
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
+	fmt.Println();
 	fmt.Println();
 	for !done {
 		//fmt.Print("\033[4A"); // up one line to overwrite the previous bar
 		if drawBar {
 			var BAR_FILLED int;
 			if full_size == 0 {
+				// unneeded as this is only called after the iterator is done
 				BAR_FILLED = BAR_WIDTH / 2;
 			} else {
 				BAR_FILLED = int(math.Round(float64(BAR_WIDTH) * float64(done_size) / float64(full_size)));
@@ -44,18 +65,42 @@ func drawLoop() {
 			fmt.Println("k");
 		}
 
-		if drawAskOverwriteDialog {
+		if len(piledConflicts) > 0 {
 			fmt.Println("start dialog");
 			filesLock.RLock();
 			var conflictID int = piledConflicts[0];
 			var conflict string = fileOrder[conflictID];
-			var cTarget string = targets[conflict];
+			var cTarget string = filepath.Join(targets[conflict], 
+				filepath.Base(conflict));
+			fmt.Println(targets);
+			fmt.Println(conflict);
 			filesLock.RUnlock();
 			fmt.Println();
-			fmt.Print(FGColors.Magenta);
-			fmt.Print(conflict, " already exists in ", cTarget, ".");
+			fmt.Print(FGColors.Yellow, Textstyle.Bold);
+			fmt.Print(conflict);
+			fmt.Print(Textstyle.Reset, FGColors.Magenta);
+			fmt.Print(" already exists in ");
+			fmt.Print(FGColors.Yellow, Textstyle.Bold);
+			fmt.Print(cTarget + "/.");
+			fmt.Println(Textstyle.Reset + FGColors.Magenta);
+			fmt.Println("piled:", piledConflicts);
+			fmt.Println("pending:", pendingConflicts);
 			fmt.Print("Do you want to [S]kip or [O]verwrite?");
 			fmt.Println(Textstyle.Reset);
+			text, _ := reader.ReadString('\n');
+			text = strings.ToLower(text);
+			if strings.HasPrefix(text, "s") {
+				filesLock.Lock();
+				piledConflicts = piledConflicts[1:];
+				filesLock.Unlock();
+			} else if strings.HasPrefix(text, "o") {
+				filesLock.Lock();
+				pendingConflicts = append(pendingConflicts, conflictID);
+				piledConflicts = piledConflicts[1:];
+				filesLock.Unlock();
+			}
+			fmt.Println("piled:", piledConflicts);
+			fmt.Println("pending:", pendingConflicts);
 		}
 
 		time.Sleep(100 * time.Millisecond);
