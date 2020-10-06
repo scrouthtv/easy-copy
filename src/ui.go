@@ -49,6 +49,18 @@ func printHelp() {
 	fmt.Print(Textstyle.Reset);
 	fmt.Println();
 	fmt.Print(FGColors.LBlue);
+	fmt.Println("This is free software licensed under GNU GPL v3.0.");
+	fmt.Println("You are welcome to redistribute it under certain conditions,");
+	fmt.Print("run ");
+	fmt.Print(FGColors.LGray + "ec --copying");
+	fmt.Println(FGColors.LBlue + " for more information.");
+	fmt.Println("This program is distributed with ABSOLUTELY NO WARRANTY,");
+	fmt.Print("for details run ");
+	fmt.Print(FGColors.LGray + "ec --warranty");
+	fmt.Print(FGColors.LBlue + ".");
+	fmt.Println(Textstyle.Reset);
+	fmt.Println();
+	fmt.Print(FGColors.LBlue);
 	fmt.Print("Extensive documentation can be accessed through the manpages.");
 	fmt.Println(Textstyle.Reset);
 }
@@ -57,6 +69,38 @@ func printVersion() {
 	fmt.Print(FGColors.Red);
 	fmt.Print(EASYCOPY_NAME + " v" + EASYCOPY_VERSION);
 	fmt.Println(Textstyle.Reset);
+}
+
+func printCopying() {
+	fmt.Print(FGColors.Black);
+	fmt.Print(infoCopying());
+	fmt.Println(Textstyle.Reset);
+}
+
+func printWarranty() {
+	fmt.Print(FGColors.Black);
+	fmt.Print(infoWarranty());
+	fmt.Println(Textstyle.Reset);
+}
+
+func printColortest() {
+	fmt.Println(FGColors.Default + "Default");
+	fmt.Println(FGColors.Black + "Black");
+	fmt.Println(FGColors.Red + "Red");
+	fmt.Println(FGColors.Green + "Green");
+	fmt.Println(FGColors.Yellow + "Yellow");
+	fmt.Println(FGColors.Blue + "Blue");
+	fmt.Println(FGColors.Magenta + "Magenta");
+	fmt.Println(FGColors.Cyan + "Cyan");
+	fmt.Println(FGColors.LGray + "LGray");
+	fmt.Println(FGColors.DGray + "DGray");
+	fmt.Println(FGColors.LRed + "LRed");
+	fmt.Println(FGColors.LGreen + "LGreen");
+	fmt.Println(FGColors.LYellow + "LYellow");
+	fmt.Println(FGColors.LBlue + "LBlue");
+	fmt.Println(FGColors.LMagenta + "LMagenta");
+	fmt.Println(FGColors.LCyan + "LCyan");
+	fmt.Println(FGColors.White + "LWhite");
 }
 
 func verbVerboseEnabled() {

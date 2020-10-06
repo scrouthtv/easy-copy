@@ -68,6 +68,15 @@ func parseFlag(prefix string, flag string) {
 			verbose = true;
 			verbVerboseEnabled();
 			break;
+		case "copying":
+			printCopying();
+			os.Exit(0);
+		case "warranty":
+			printWarranty();
+			os.Exit(0);
+		case "colortest":
+			printColortest();
+			os.Exit(0);
 		case "f", "force":
 			onExistingFile = 1;
 			break;

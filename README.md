@@ -53,3 +53,13 @@ There are only some memorable differences:
 ### Software you can trust in
 
 ## Differences to other tools
+
+# Copyright
+Copyright &#169; 2020 The *EasyCopy* authors.
+This software is licensed under GNU GPL v3.0.
+This means that you are free to change and redistribute *EasyCopy* as a whole or any part of it, as long as the source to any derived work is as well publicly disclosed and licensed under GNU GPL v3.0.
+Absolutely no warranty is provided for this software.
+For more information read the LICENSE file that is distributed with *EasyCopy*.
+
+This software uses third-party source code.
+ - Salvatore Sanfilippo's `kilo.c`, accessible on the internet via [https://github.com/snaptoken/kilo-src/blob/sections/kilo.c](GitHub). It is licensed under BSD 2-Clause "Simplified", a copy of which comes included with EasyCopy, named `LICENSE.2`.
