@@ -30,10 +30,13 @@ Overwrite existing files without asking.
 .I \-i, \-\-interactive
 Ask before overwriting a file.
 .TP
-.I \-n, \-\-no-clobber
+.I \-n, \-\-no\-clobber
 Skip existing files.
 
 .SS User Interface
+.TP
+.I "   \-\-no\-config"
+Do not read any user configuration files.
 .TP
 .I \-V \-\-verbose
 Output more information.
@@ -49,10 +52,10 @@ always put ANSII escape codes in the output, regardless of the context
 .TP
 .I auto
 put ANSII escape codes in the output if the environment supports it:
-.RS
-.TP - on Windows, colors are only enabled in Powershell
-.TP - on Linux, colors are disabled, if stdout is a pipe
-.RE
+.br
+On Windows, colors are only enabled in Powershell.
+.br
+On Linux, colors are disabled, if stdout is a pipe.
 .TP
 .I never
 never put ANSII escape codes in the output.
@@ -63,6 +66,12 @@ Output the short help and exit.
 .TP
 .I \-v \-\-version
 Output version information and exit.
+.TP
+.I "   \-\-copying"
+Print conditions on redistributing EasyCopy source code.
+.TP
+.I "   \-\-warranty"
+Print information on warranty provided with EasyCopy.
 .SH EXIT STATUS
 .TP
 0

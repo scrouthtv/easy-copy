@@ -34,7 +34,9 @@ func printHelp() {
 		"ask before overwriting a file", FGColors.Default);
 	fmt.Println("  -n, --no-clobber ", FGColors.LGray,
 		"skip existing files", FGColors.Default);
-	fmt.Println("");
+	fmt.Println();
+	fmt.Println("      --no-config  ", FGColors.LGray,
+		"don't read any config file", Textstyle.Reset);
 	fmt.Println("  -V, --verbose    ", FGColors.LGray,
 		"verbose mode ", FGColors.Default);
 	fmt.Println("      --color=WHEN ", FGColors.LGray,

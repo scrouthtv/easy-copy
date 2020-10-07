@@ -67,7 +67,6 @@ func parseFlag(prefix string, flag string) {
 		case "V", "verbose":
 			verbose = true;
 			verbVerboseEnabled();
-			break;
 		case "copying":
 			printCopying();
 			os.Exit(0);
@@ -79,13 +78,12 @@ func parseFlag(prefix string, flag string) {
 			os.Exit(0);
 		case "f", "force":
 			onExistingFile = 1;
-			break;
 		case "i", "interactive":
 			onExistingFile = 2;
-			break;
+		case "no-config":
+			doReadConfig = false;
 		case "n", "no-clobber": //case "no-overwrite":
 			onExistingFile = 0;
-			break;
 		default:
 			errUnknownOption(prefix + flag);
 	}

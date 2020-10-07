@@ -6,8 +6,10 @@ import "errors";
 import "strings";
 
 var MissingConfigFileError error = errors.New("No config file found.");
+var doReadConfig bool = true;
 
 func readConfig() {
+	if !doReadConfig { return; }
 	configPath, err := findConfigFile();
 	if configPath == "" {
 		if err == MissingConfigFileError {
