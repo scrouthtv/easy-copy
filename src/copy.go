@@ -6,6 +6,8 @@ import "errors";
 import "strconv";
 import "path/filepath";
 
+import "fmt";
+
 const BUFFERSIZE uint = 1024;
 
 var buf []byte = make([]byte, BUFFERSIZE);
@@ -78,15 +80,31 @@ func copyLoop() {
 	}
 }
 
+/**
+ * This function copies source to dest, while
+ *  adding the progress to done_size
+ * If source is a symlink that links to a file,
+ *  dest will be created as a link that links to that file as well.
+ */
 func copyFilePath(sourcePath string, destPath string) {
-	verbCopyStart(sourcePath, destPath);
-	var source, dest *os.File;
 	var err error;
-	source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
-	if err != nil { errMissingFile(err, sourcePath); }
-	dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_WRONLY, 0644);
-	if err != nil { errCreatingFile(err, destPath); }
-	copyFile(source, dest, &done_size);
+	var stat os.FileInfo;
+	stat, err = os.Lstat(sourcePath);
+	if stat.Mode().IsRegular() {
+		verbCopyStart(sourcePath, destPath);
+		var source, dest *os.File;
+		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
+		if err != nil { errMissingFile(err, sourcePath); }
+		dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_WRONLY, 0644);
+		if err != nil { errCreatingFile(err, destPath); }
+		copyFile(source, dest, &done_size);
+	} else if stat.Mode() & os.ModeSymlink != 0 {
+		fmt.Println("going to crate symlink");
+		destPath, _ = os.Readlink(destPath);
+		fmt.Print(destPath, " => ", sourcePath);
+		err = os.Symlink(sourcePath, destPath);
+		if err != nil {fmt.Println(err);}
+	}
 }
 
 /**
@@ -102,14 +120,6 @@ func createFolders(folders []string) {
 	}
 }
 
-/**
- * This function copies source to dest, while
- *  adding the progress in bytes to progressStorage
- * The outer function still has to open (and create) source and dest
- *  and handle returned errors.
- * If source is a symlink that links to a file,
- *  dest will be created as a link that links to that file as well.
- */
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var readAmount, writtenAmount int;
 	var err error;

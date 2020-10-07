@@ -37,11 +37,9 @@ func iteratePaths() {
 		var err error;
 		var stat os.FileInfo;
 		stat, err = os.Lstat(next);
+		// TODO don't exit on missing file, coreutils cp doesnt do that
 		if err != nil { errMissingFile(err, next); }
-		if (os.IsNotExist(err)) {
-			errMissingFile(err, next);
-			// TODO don't exit on missing file, coreutils cp doesnt do that
-		} else if (stat.IsDir()) {
+		if stat.IsDir() {
 			dir, err := os.Open(next);
 			if err != nil { errMissingFile(err, next); }
 			var names []string;
@@ -76,15 +74,15 @@ func iteratePaths() {
 			createFoldersInTarget = true;
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
-		} else if (stat.Mode().IsRegular()) {
+		} else if stat.Mode().IsRegular() {
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
 			targets[next] = uPTargets[next];
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());
-		} else if (stat.Mode() & os.ModeDevice != 0) {
+		} else if stat.Mode() & os.ModeDevice != 0 {
 			warnBadFile(next);
-		} else if (stat.Mode() & os.ModeSymlink != 0) {
+		} else if stat.Mode() & os.ModeSymlink != 0 {
 			filesLock.Lock();
 			var nextTarget string = uPTargets[next];
 			if followSymlinks == 1 {
