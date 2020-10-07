@@ -93,7 +93,7 @@ func parseFlag(prefix string, flag string) {
 
 func configInterpretBoolean(v string) bool {
 	switch(v) {
-		case "true", "on", "yes": return true;
+		case "true", "on", "yes", "always": return true;
 		default: return false;
 	}
 }

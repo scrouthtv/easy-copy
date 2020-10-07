@@ -4,6 +4,8 @@ import "os";
 import "sync";
 import "path/filepath";
 
+var createFoldersInTarget bool;
+
 var unsearchedPaths []string;
 var uPTargets map[string]string = make(map[string]string);
 var targetBase string;
@@ -47,16 +49,31 @@ func iteratePaths() {
 			//  and recall Readdirnames until io.EOF is returned (I guess)
 			names, err = dir.Readdirnames(0);
 			if err != nil { errMissingFile(err, next); }
-			// merge target + folder name + file in folder name
 
 			filesLock.Lock();
+			if createFoldersInTarget {
 			folders = append(folders,
 				filepath.Join(uPTargets[next], filepath.Base(next)));
+			}
 			var fileInFolder string;
 			for _, fileInFolder = range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder));
-				uPTargets[filepath.Join(next, fileInFolder)] = filepath.Join(uPTargets[next], filepath.Base(next));
+				if createFoldersInTarget {
+					uPTargets[filepath.Join(next, fileInFolder)] = filepath.Join(uPTargets[next], filepath.Base(next));
+				} else {
+					uPTargets[filepath.Join(next, fileInFolder)] = uPTargets[next];
+				}
 			}
+			// three possibilities:
+			//  - only one *file* is passed and should be duplicated.
+			//    we don't care about creating folders in the target
+			//    as there aren't any to create anyways
+			//  - only one *folder* is passed and should be duplicated.
+			//    this if statement is the very first to be called and 
+			//    this variable is subsequently set to true
+			//  - multiple files and folders are passed and should be copied
+			//    into a target, this variable was already set to true in main
+			createFoldersInTarget = true;
 			full_size += uint64(folder_size);
 			filesLock.Unlock();
 		} else if (stat.Mode().IsRegular()) {
@@ -68,9 +85,8 @@ func iteratePaths() {
 		} else if (stat.Mode() & os.ModeDevice != 0) {
 			warnBadFile(next);
 		} else if (stat.Mode() & os.ModeSymlink != 0) {
-			var nextTarget string = uPTargets[next];
-
 			filesLock.Lock();
+			var nextTarget string = uPTargets[next];
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
@@ -80,8 +96,8 @@ func iteratePaths() {
 				//  don't add this to file order but to unsearched paths
 				nextResolved, err := os.Readlink(next);
 				if err != nil { errReadingSymlink(err, next); }
-				fileOrder = append(fileOrder, nextResolved);
-				targets[nextResolved] = nextTarget;
+				unsearchedPaths = append(unsearchedPaths, nextResolved);
+				uPTargets[nextResolved] = nextTarget;
 			}
 			filesLock.Unlock();
 		} else {
@@ -136,6 +152,14 @@ func main() {
 		} else if !stat.IsDir() {
 			errTargetNoDir(targetBase);
 		}
+	}
+	if len(unsearchedPaths) == 1 {
+		folders = append(folders, targetBase);
+		uPTargets[unsearchedPaths[0]] = targetBase;
+		createFoldersInTarget = false;
+	} else {
+		createFoldersInTarget = true;
+		// this should work as long as "" and "." are equal
 	}
 
 	verbSearchStart();

@@ -107,6 +107,8 @@ func createFolders(folders []string) {
  *  adding the progress in bytes to progressStorage
  * The outer function still has to open (and create) source and dest
  *  and handle returned errors.
+ * If source is a symlink that links to a file,
+ *  dest will be created as a link that links to that file as well.
  */
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var readAmount, writtenAmount int;

@@ -289,9 +289,7 @@ func parseArgs() {
 				parseFlag("-", arg[i:i+1]);
 			}
 		} else {
-			// TODO: clean & abs arg
 			unsearchedPaths = append(unsearchedPaths, arg);
-			uPTargets[arg] = targetBase;
 		}
 	}
 }
