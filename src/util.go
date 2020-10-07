@@ -7,6 +7,50 @@ import "strconv";
 import "strings";
 import "path/filepath";
 import "runtime";
+import "bufio"
+import "errors"
+import "io"
+
+var noPagerError error = errors.New("No suitable pager found.");
+
+/**
+* Tries to find a pager in $PAGER or defaults to less or more.
+* If none of those are available, runPager returns false and noPagerError.
+*/
+func runPager(text string) (bool, error) {
+	var pager string;
+	var ok bool;
+	var err error;
+	pager, ok = os.LookupEnv("PAGER")
+	if !ok {
+		_, err = exec.LookPath("less");
+		if err == nil {
+			pager = "less";
+		} else {
+			_, err = exec.LookPath("more");
+			if err == nil {
+				pager = "more";
+			} else {
+				return false, noPagerError;
+			}
+		}
+	}
+	var cmd *exec.Cmd;
+	cmd = exec.Command(pager)
+	var out io.WriteCloser;
+	out, err = cmd.StdinPipe()
+	if err != nil { return false, err; }
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Start();
+	if err != nil { return false, err; }
+	writer := bufio.NewWriter(out);
+	writer.WriteString(text);
+	writer.Flush();
+	out.Close();
+	cmd.Wait();
+	return true, nil;
+}
 
 func LinuxIsPiped() bool {
 	fi, _ := os.Stdout.Stat();

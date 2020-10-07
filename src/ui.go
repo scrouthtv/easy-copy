@@ -72,15 +72,11 @@ func printVersion() {
 }
 
 func printCopying() {
-	fmt.Print(FGColors.Black);
-	fmt.Print(infoCopying());
-	fmt.Println(Textstyle.Reset);
+	runPager(infoCopying());
 }
 
 func printWarranty() {
-	fmt.Print(FGColors.Black);
-	fmt.Print(infoWarranty());
-	fmt.Println(Textstyle.Reset);
+	runPager(infoWarranty());
 }
 
 func printColortest() {
