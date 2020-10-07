@@ -83,8 +83,6 @@ func drawLoop() {
 			fmt.Print(FGColors.Yellow, Textstyle.Bold);
 			fmt.Print(cTarget + "/.");
 			fmt.Println(Textstyle.Reset + FGColors.Magenta);
-			fmt.Println("piled:", piledConflicts);
-			fmt.Println("pending:", pendingConflicts);
 			fmt.Print("Do you want to [S]kip or [O]verwrite?");
 			fmt.Println(Textstyle.Reset);
 			text, _ := reader.ReadString('\n');
@@ -99,8 +97,6 @@ func drawLoop() {
 				piledConflicts = piledConflicts[1:];
 				filesLock.Unlock();
 			}
-			fmt.Println("piled:", piledConflicts);
-			fmt.Println("pending:", pendingConflicts);
 		}
 
 		time.Sleep(100 * time.Millisecond);
