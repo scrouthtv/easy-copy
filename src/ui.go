@@ -142,12 +142,6 @@ func verbTargets() {
 	}
 }
 
-func verbCreatingFolders() {
-	if verbose {
-		fmt.Println(FGColors.Yellow + "Creating folders..." + Textstyle.Reset);
-	}
-}
-
 func verbDoneIterating() {
 	if verbose {
 		fmt.Println(FGColors.Yellow + "All source files iterated." + Textstyle.Reset);

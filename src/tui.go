@@ -7,6 +7,7 @@ import "path/filepath";
 import "bufio";
 import "os";
 import "strings";
+import "strconv";
 
 const BAR_WIDTH int = 60;
 
@@ -21,11 +22,18 @@ var reader *bufio.Reader;
 var piledConflicts []int;
 var pendingConflicts []int;
 
+var currentTask string = "";
+
+var lines int = 0;
+
 func drawLoop() {
+	go speedLoop();
 	reader = bufio.NewReader(os.Stdin);
-	fmt.Println();
+	fmt.Println("\033[2K");
 	for !done {
-		fmt.Print("\033[1A"); // up one line to overwrite the previous bar
+		fmt.Print("\033[" + strconv.Itoa(lines) + "A");
+		lines = 0;
+		// up one line to overwrite the previous bar
 		if drawBar {
 			var BAR_FILLED int;
 			if full_size == 0 {
@@ -49,6 +57,22 @@ func drawLoop() {
 			fmt.Print("k / ");
 			fmt.Print(full_size / 1024);
 			fmt.Println("k");
+			lines++;
+			if verbose {
+				fmt.Print("\033[2K");
+				fmt.Print(currentTask);
+				fmt.Print(" @ ");
+				var kbPerSecond float32 = sizePerSecond / 1024;
+				var mbPerSecond float32 = kbPerSecond / 1024;
+				if mbPerSecond > 2 {
+					fmt.Print(mbPerSecond);
+					fmt.Println(" MB/s");
+				} else {
+					fmt.Print(kbPerSecond);
+					fmt.Println(" kB/s");
+				}
+				lines++;
+			}
 		}
 
 		if len(piledConflicts) > 0 {
@@ -58,6 +82,7 @@ func drawLoop() {
 			var conflict string = fileOrder[conflictID];
 			var cTarget string = filepath.Join(targets[conflict], 
 				filepath.Base(conflict));
+			// TODO
 			fmt.Println(targets);
 			fmt.Println(conflict);
 			filesLock.RUnlock();

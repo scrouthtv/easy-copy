@@ -89,7 +89,8 @@ func copyFilePath(sourcePath string, destPath string) {
 	var stat os.FileInfo;
 	stat, err = os.Lstat(sourcePath);
 	if stat.Mode().IsRegular() {
-		verbCopyStart(sourcePath, destPath);
+		currentTask = "Copying " + sourcePath;
+
 		var source, dest *os.File;
 		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
 		if err != nil { errMissingFile(err, sourcePath); }
@@ -97,6 +98,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil { errCreatingFile(err, destPath); }
 		copyFile(source, dest, &done_size);
 	} else if stat.Mode() & os.ModeSymlink != 0 {
+		currentTask = "Linking " + sourcePath;
 		var resolvedSourcePath string;
 		resolvedSourcePath, err = os.Readlink(sourcePath);
 		if err != nil { errMissingFile(err, sourcePath); }
@@ -112,9 +114,9 @@ func copyFilePath(sourcePath string, destPath string) {
  * filesLock will not be locked.
  */
 func createFolders(folders []string) {
-	verbCreatingFolders();
 	var folder string;
 	for _, folder = range folders {
+		currentTask = "Creating " + folder;
 		var err error = os.MkdirAll(folder, 0755);
 		if err != nil { errCreatingFile(err, folder); }
 		done_size += uint64(folder_size);
@@ -138,11 +140,12 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 			return err;
 		}
 		if readAmount != writtenAmount {
-			return errors.New("couldn't write all the data: " + strconv.Itoa(readAmount) +
-				" read, " + strconv.Itoa(writtenAmount) + "written");
+			return errors.New("couldn't write all the data: " +
+				strconv.Itoa(readAmount) + " read, " +
+				strconv.Itoa(writtenAmount) + "written");
 		}
 		*progressStorage += uint64(writtenAmount);
 	}
-	verbCopyFinished(source.Name(), dest.Name());
+	//verbCopyFinished(source.Name(), dest.Name());
 	return nil;
 }
