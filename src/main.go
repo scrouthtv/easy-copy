@@ -3,7 +3,6 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
-import "fmt";
 
 var createFoldersInTarget bool;
 
@@ -87,9 +86,6 @@ func iteratePaths() {
 			filesLock.Lock();
 			var nextTarget string = uPTargets[next];
 			if followSymlinks == 1 {
-				fmt.Println("adding");
-				fmt.Println("next", next);
-				fmt.Println("nextTarget", nextTarget);
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
 				full_size += uint64(symlink_size);
@@ -159,7 +155,10 @@ func main() {
 		createFoldersInTarget = false;
 	} else {
 		createFoldersInTarget = true;
-		// this should work as long as "" and "." are equal
+		var uP string;
+		for _, uP = range unsearchedPaths {
+			uPTargets[uP] = targetBase;
+		}
 	}
 
 	verbSearchStart();
