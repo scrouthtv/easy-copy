@@ -62,4 +62,4 @@ Absolutely no warranty is provided for this software.
 For more information read the LICENSE file that is distributed with *EasyCopy*.
 
 This software uses third-party source code.
- - Salvatore Sanfilippo's `kilo.c`, accessible on the internet via [https://github.com/snaptoken/kilo-src/blob/sections/kilo.c](GitHub). It is licensed under BSD 2-Clause "Simplified", a copy of which comes included with EasyCopy, named `LICENSE.2`.
+ - Salvatore Sanfilippo's `kilo.c`, accessible on the internet via [their GitHub](https://github.com/snaptoken/kilo-src/blob/sections/kilo.c). It is licensed under BSD 2-Clause "Simplified", a copy of which comes included with EasyCopy, named `LICENSE.2`.
