@@ -7,6 +7,17 @@ import "strconv";
 import "strings";
 import "path/filepath";
 import "runtime";
+import "unicode";
+
+func getChoice(choices string) rune {
+	var in rune;
+	for {
+		in = unicode.ToLower(getch());
+		if strings.ContainsRune(choices, in) {
+			return in;
+		}
+	}
+}
 
 func LinuxIsPiped() bool {
 	fi, _ := os.Stdout.Stat();

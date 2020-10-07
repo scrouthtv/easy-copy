@@ -6,7 +6,6 @@ import "time";
 import "path/filepath";
 import "bufio";
 import "os";
-import "strings";
 
 const BAR_WIDTH int = 60;
 
@@ -87,13 +86,12 @@ func drawLoop() {
 			fmt.Println("pending:", pendingConflicts);
 			fmt.Print("Do you want to [S]kip or [O]verwrite?");
 			fmt.Println(Textstyle.Reset);
-			text, _ := reader.ReadString('\n');
-			text = strings.ToLower(text);
-			if strings.HasPrefix(text, "s") {
+			var in rune = getChoice("so");
+			if in == 's' {
 				filesLock.Lock();
 				piledConflicts = piledConflicts[1:];
 				filesLock.Unlock();
-			} else if strings.HasPrefix(text, "o") {
+			} else if in == 'o' {
 				filesLock.Lock();
 				pendingConflicts = append(pendingConflicts, conflictID);
 				piledConflicts = piledConflicts[1:];
