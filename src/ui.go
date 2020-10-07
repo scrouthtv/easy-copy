@@ -187,6 +187,14 @@ func errCreatingFile(err error, file string) {
 	os.Exit(2);
 }
 
+func errCreatingLink(err error, source string, dest string) {
+	fmt.Println("Error linking", source, "to", dest + ":");
+	fmt.Print(FGColors.Red);
+	fmt.Print(err);
+	fmt.Println(Textstyle.Reset);
+	os.Exit(2);
+}
+
 func errMissingFile(err error, file string) {
 	fmt.Println("Could not read", file + ":");
 	fmt.Print(FGColors.Red);

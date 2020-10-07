@@ -24,22 +24,8 @@ var pendingConflicts []int;
 func drawLoop() {
 	reader = bufio.NewReader(os.Stdin);
 	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
-	fmt.Println();
 	for !done {
-		//fmt.Print("\033[4A"); // up one line to overwrite the previous bar
+		fmt.Print("\033[1A"); // up one line to overwrite the previous bar
 		if drawBar {
 			var BAR_FILLED int;
 			if full_size == 0 {

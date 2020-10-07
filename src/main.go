@@ -3,6 +3,7 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
+import "fmt";
 
 var createFoldersInTarget bool;
 
@@ -86,12 +87,13 @@ func iteratePaths() {
 			filesLock.Lock();
 			var nextTarget string = uPTargets[next];
 			if followSymlinks == 1 {
+				fmt.Println("adding");
+				fmt.Println("next", next);
+				fmt.Println("nextTarget", nextTarget);
 				fileOrder = append(fileOrder, next);
 				targets[next] = nextTarget;
 				full_size += uint64(symlink_size);
 			} else if followSymlinks == 2 {
-				// TODO what if the symlink points to a directory:
-				//  don't add this to file order but to unsearched paths
 				nextResolved, err := os.Readlink(next);
 				if err != nil { errReadingSymlink(err, next); }
 				unsearchedPaths = append(unsearchedPaths, nextResolved);

@@ -6,8 +6,6 @@ import "errors";
 import "strconv";
 import "path/filepath";
 
-import "fmt";
-
 const BUFFERSIZE uint = 1024;
 
 var buf []byte = make([]byte, BUFFERSIZE);
@@ -99,11 +97,11 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil { errCreatingFile(err, destPath); }
 		copyFile(source, dest, &done_size);
 	} else if stat.Mode() & os.ModeSymlink != 0 {
-		fmt.Println("going to crate symlink");
-		destPath, _ = os.Readlink(destPath);
-		fmt.Print(destPath, " => ", sourcePath);
+		sourcePath, err = os.Readlink(sourcePath);
+		if err != nil { fmt.Println("error: ", err); }
 		err = os.Symlink(sourcePath, destPath);
-		if err != nil {fmt.Println(err);}
+		done_size += uint64(symlink_size);
+		if err != nil { errCreatingLink(err, sourcePath, destPath); }
 	}
 }
 
@@ -117,6 +115,7 @@ func createFolders(folders []string) {
 	for _, folder = range folders {
 		var err error = os.MkdirAll(folder, 0755);
 		if err != nil { errCreatingFile(err, folder); }
+		done_size += uint64(folder_size);
 	}
 }
 
