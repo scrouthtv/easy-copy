@@ -3,7 +3,7 @@ package main;
 import "fmt";
 
 func main() {
-	var err error = Reflink("/mnt2/src", "/mnt2/reflink");
+	var err error = reflink("/mnt2/src", "/mnt2/reflink");
 	if err == nil {
 		fmt.Println("Done.");
 	} else {
