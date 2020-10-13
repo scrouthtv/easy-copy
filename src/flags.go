@@ -13,6 +13,10 @@ var followSymlinks uint8 = 1;
 // 0 ignore symlinks
 // 1 follow symlinks, copying them as links
 // 2 fully dereference
+var doReflinks uint8 = 0;
+// 0 never  -> no reflinks
+// 1 auto   -> attempt reflink, if that fails simply copy
+// 2 always -> attempt reflink, if that fails, fail
 
 func parseKeyValue(key string, value string) {
 	key = strings.ToLower(strings.Trim(key, " \t'\""));
@@ -37,6 +41,12 @@ func parseKeyValue(key string, value string) {
 				case "never","false","no","none": initColors(false);
 				case "auto": initColors(autoColors());
 				case "always","true","yes","all": initColors(true);
+			}
+		case "reflink":
+			switch (value) {
+				case "never","false","no","none": doReflinks = 0;
+				case "auto": doReflinks = 1;
+				case "always","true","yes","all": doReflinks = 2;
 			}
 		default:
 			warnBadConfigKey(key);

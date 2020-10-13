@@ -232,6 +232,24 @@ func warnBadFile(file string) {
 	fmt.Println(Textstyle.Reset);
 }
 
+func verbReflinkFailed(sourcePath string, destPath string, err error) {
+	if verbose {
+		fmt.Print(FGColors.Yellow);
+		fmt.Println("Error reflinking", sourcePath, "to", destPath + ":");
+		fmt.Println(err);
+		fmt.Println("Going to copy it instead.");
+		fmt.Print(Textstyle.Reset);
+	}
+}
+
+func errReflinkFailed(sourcePath string, destPath string, err error) {
+	fmt.Println("Error reflinking", sourcePath, "to", destPath + ":");
+	fmt.Print(FGColors.Red);
+	fmt.Println(err);
+	fmt.Print(Textstyle.Reset);
+	os.Exit(2);
+}
+
 func errCopying(sourcePath string, destPath string, err error) {
 	fmt.Println("Error copying", sourcePath, "to", destPath + ":")
 	fmt.Print(FGColors.Red);

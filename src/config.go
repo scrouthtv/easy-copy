@@ -57,7 +57,7 @@ func findConfigFile() (string, error) {
 
 func createConfigFile(filePath string) {
 	var err error;
-	file, err := os.OpenFile(filePath, os.O_WRONLY | os.O_CREATE | os.O_APPEND, 0644);
+	file, err := os.OpenFile(filePath, os.O_WRONLY | os.O_CREATE, 0644);
 	if err != nil {
 		warnCreatingConfig(err);
 	}
