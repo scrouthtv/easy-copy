@@ -30,7 +30,6 @@ func reflink(srcPath string, dstPath string) error {
 
 	err = sd.Control(func(dfd uintptr) {
 		err2 = ss.Control(func(sfd uintptr) {
-			// will you shut up man? int ioctl(int dest_fd, FICLONE, int src_fd);
 			_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, dfd, C.FICLONE, sfd);
 			if errno != 0 {
 				err3 = errno;
