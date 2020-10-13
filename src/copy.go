@@ -86,6 +86,19 @@ func copyLoop() {
  */
 func copyFilePath(sourcePath string, destPath string) {
 	var err error;
+	if doReflinks > 0 {
+		err = reflink(sourcePath, destPath, &done_size);
+		if err == nil {
+			return;
+		} else {
+			if doReflinks == 1 {
+				verbReflinkFailed(sourcePath, destPath, err);
+			} else {
+				errReflinkFailed(sourcePath, destPath, err);
+				// os.Exit(2);
+			}
+		}
+	}
 	var stat os.FileInfo;
 	stat, err = os.Lstat(sourcePath);
 	if stat.Mode().IsRegular() {
