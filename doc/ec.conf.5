@@ -44,6 +44,38 @@ is encountered, a warning is printed and the corresponding setting remains unset
 .SH OPTIONS
 These options are available:
 .TP
+.I color
+Whether to colorize the output:
+.RS
+.TP
+.B always
+Always put ANSII escape codes in the output, regardless of the context.
+.TP
+.B auto
+put ANSII escape codes in the output if the environment supports it:
+.br
+On Windows, colors are only enabled in the Powershell.
+.br
+On Linux, colors are disabled if stdout is a pipe.
+.TP
+.B never
+Do not create reflinks.
+.RE
+.TP
+.I reflink
+Whether to create reflinks. Set to
+.RS
+.TP
+.B always
+Create a reflink. If that fails, exit with an error.
+.TP
+.B auto
+Attempt to create a reflink. If that fails, copy the file instead.
+.TP
+.B never
+Do not create reflinks.
+.RE
+.TP
 .I verbose
 Whether to output more information.
 .br
