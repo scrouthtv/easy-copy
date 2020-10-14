@@ -92,6 +92,10 @@ func parseFlag(prefix string, flag string) {
 			onExistingFile = 2;
 		case "no-config":
 			doReadConfig = false;
+		case "color":
+			initColors(true);
+		case "reflink":
+			doReflinks = 2;
 		case "n", "no-clobber": //case "no-overwrite":
 			onExistingFile = 0;
 		default:
