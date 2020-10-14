@@ -16,7 +16,7 @@ rm -rf "$OUTDIR/"*
 
 WIN_ARCHES=("386" amd64)
 LINUX_ARCHES=("386" amd64)
-DARWIN_ARCHES=("386" amd64 arm arm64)
+#DARWIN_ARCHES=("386" amd64 arm arm64)
 
 cp "$LICENSE" "$PKGDIR/"
 cd "$SRCDIR"
@@ -30,7 +30,7 @@ for GOARCH in ${LINUX_ARCHES[@]}; do
 	echo "compiling for linux $GOARCH"
 	GOOS=linux go build -o "$BINLOC-linux-$GOARCH" .
 	cp "$DOCDIR/easycopy.1" "$DOCDIR/ec.conf.5" "$PKGDIR/"
-	zstd -v -o "$OUTDIR/$OUTPREFIX-linux-$GOARCH.zst" "$PKGDIR/"*
+	zstd -v -o "$OUTDIR/$OUTPREFIX-linux-$GOARCH.zst" "$PKGDIR/"* 2>&1 | sed 's/(.*)//g'
 	rm "$PKGDIR/easycopy.1" "$PKGDIR/ec.conf.5" "$BINLOC-linux-$GOARCH"
 done
 for GOARCH in ${DARWIN_ARCHES[@]}; do
