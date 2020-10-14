@@ -33,8 +33,13 @@ func copyLoop() {
 			done_amount += 1;
 		} else if i < len(fileOrder) {
 			var sourcePath string = fileOrder[i];
-			var destPath string = filepath.Join(targets[sourcePath],
-				filepath.Base(sourcePath));
+			var destPath string;
+			if createFoldersInTarget {
+				destPath = filepath.Join(targets[sourcePath],
+					filepath.Base(sourcePath));
+			} else {
+				destPath = targets[sourcePath];
+			}
 			filesLock.Unlock();
 
 			// check if file already exists and we even care about that:

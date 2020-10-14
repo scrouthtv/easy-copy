@@ -3,6 +3,7 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
+import "fmt";
 
 var createFoldersInTarget bool;
 
@@ -77,6 +78,8 @@ func iteratePaths() {
 		} else if stat.Mode().IsRegular() {
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
+			fmt.Println(FGColors.Blue + next);
+			fmt.Println(uPTargets[next] + Textstyle.Reset);
 			targets[next] = uPTargets[next];
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());
@@ -110,14 +113,6 @@ func iteratePaths() {
 	drawLoop();
 }
 
-// copy works as follows:
-// 1. open source for reading
-// 2. stat target,
-// 		if it is file, open it for writing (check if it exists & we want to overwrite)
-//		if it is directory, create a new file in it with the same name as source
-// 3. copy it over
-// 4. eventually delete the source file
-
 func main() {
 	initColors(autoColors());
 	parseArgs();
@@ -150,7 +145,7 @@ func main() {
 		}
 	}
 	if len(unsearchedPaths) == 1 {
-		folders = append(folders, targetBase);
+		//folders = append(folders, targetBase);
 		uPTargets[unsearchedPaths[0]] = targetBase;
 		createFoldersInTarget = false;
 	} else {
