@@ -1,18 +1,23 @@
-*.img
-a.out
-test/
-
 # test folders:
 foo/
 foo2/
 bar/
+*.img
+test/
 
+# executables:
+a.out
 *.exe
 *.app
-easycopy*.zip
-easycopy*.zst
 *.exe~
 *.dll
 *.so
 *.dylib
 easycopy
+
+# packages:
+easycopy*.zip
+easycopy*.zst
+
+# cross-compiler for osx:
+osxcross/
