@@ -7,9 +7,10 @@ import "strconv";
 import "strings";
 import "path/filepath";
 import "runtime";
-import "bufio"
-import "errors"
-import "io"
+import "bufio";
+import "errors";
+import "io";
+import "unicode";
 
 var noPagerError error = errors.New("No suitable pager found.");
 
@@ -50,6 +51,16 @@ func runPager(text string) (bool, error) {
 	out.Close();
 	cmd.Wait();
 	return true, nil;
+}
+
+func getChoice(choices string) rune {
+	var in rune;
+	for {
+		in = unicode.ToLower(getch());
+		if strings.ContainsRune(choices, in) {
+			return in;
+		}
+	}
 }
 
 func LinuxIsPiped() bool {

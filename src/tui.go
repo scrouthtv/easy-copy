@@ -82,7 +82,6 @@ func drawLoop() {
 			var conflict string = fileOrder[conflictID];
 			var cTarget string = filepath.Join(targets[conflict], 
 				filepath.Base(conflict));
-			// TODO
 			fmt.Println(targets);
 			fmt.Println(conflict);
 			filesLock.RUnlock();
@@ -94,15 +93,16 @@ func drawLoop() {
 			fmt.Print(FGColors.Yellow, Textstyle.Bold);
 			fmt.Print(cTarget + "/.");
 			fmt.Println(Textstyle.Reset + FGColors.Magenta);
+			fmt.Println("piled:", piledConflicts);
+			fmt.Println("pending:", pendingConflicts);
 			fmt.Print("Do you want to [S]kip or [O]verwrite?");
 			fmt.Println(Textstyle.Reset);
-			text, _ := reader.ReadString('\n');
-			text = strings.ToLower(text);
-			if strings.HasPrefix(text, "s") {
+			var in rune = getChoice("so");
+			if in == 's' {
 				filesLock.Lock();
 				piledConflicts = piledConflicts[1:];
 				filesLock.Unlock();
-			} else if strings.HasPrefix(text, "o") {
+			} else if in == 'o' {
 				filesLock.Lock();
 				pendingConflicts = append(pendingConflicts, conflictID);
 				piledConflicts = piledConflicts[1:];
