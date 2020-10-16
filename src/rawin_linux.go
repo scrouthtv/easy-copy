@@ -2,6 +2,8 @@
 
 package main;
 
+import "os";
+
 //#include <ctype.h>
 //#include <errno.h>
 //#include <stdio.h>
@@ -47,5 +49,9 @@ package main;
 import "C";
 
 func getch() rune {
-	return rune(C.getOneKey());
+	var in rune = rune(C.getOneKey());
+	if in == rune(3) {
+		os.Exit(8);
+	}
+	return in;
 }
