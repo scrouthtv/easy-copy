@@ -1,3 +1,7 @@
-//+build !linux !windows
+// +build !linux,!windows
 
-// TODO
+package main;
+
+func getch() rune {
+	panic(FGColors.Red + "NOT SUPPORTED" + Textstyle.Reset);
+}

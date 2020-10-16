@@ -83,30 +83,6 @@ func copyLoop() {
 	}
 }
 
-func copyFilePath(sourcePath string, destPath string) {
-	verbCopyStart(sourcePath, destPath);
-	var source, dest *os.File;
-	var err error;
-	source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
-	if err != nil { errMissingFile(err, sourcePath); }
-	dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_WRONLY, 0644);
-	if err != nil { errCreatingFile(err, destPath); }
-	copyFile(source, dest, &done_size);
-}
-
-/**
- * Create the folders specified in folders.
- * filesLock will not be locked.
- */
-func createFolders(folders []string) {
-	verbCreatingFolders();
-	var folder string;
-	for _, folder = range folders {
-		var err error = os.MkdirAll(folder, 0755);
-		if err != nil { errCreatingFile(err, folder); }
-	}
-}
-
 /**
  * This function copies source to dest, while
  *  adding the progress to done_size

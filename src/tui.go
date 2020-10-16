@@ -6,7 +6,6 @@ import "time";
 import "path/filepath";
 import "bufio";
 import "os";
-import "strings";
 import "strconv";
 
 const BAR_WIDTH int = 60;
