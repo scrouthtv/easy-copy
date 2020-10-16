@@ -11,6 +11,11 @@ LICENSE="$ROOTDIR/LICENSE"
 VERSION="$(grep 'EASYCOPY_VERSION' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
 OUTPREFIX="easycopy-$VERSION"
 
+# using https://github.com/tpoechtrager/osxcross
+DARWINCC="$ROOTDIR/osxcross/bin"
+CC_FOR_darwin_amd64="$DARWINCC/o64-clang"
+CC_FOR_darwin_arm="$DARWINCC/oa64-clang"
+
 mkdir -p "$ROOTDIR" "$SRCDIR" "$PKGDIR" "$OUTDIR"
 rm -rf "$OUTDIR/"*
 
@@ -20,6 +25,7 @@ DARWIN_ARCHES=("386" amd64 arm arm64)
 
 cp "$LICENSE" "$PKGDIR/"
 cd "$SRCDIR"
+export CGO_ENABLED=1
 for GOARCH in ${WIN_ARCHES[@]}; do
 	echo "compiling for windows $GOARCH to $BINLOC-windows-$GOARCH.exe"
 	GOOS=windows go build -o "$BINLOC-windows-$GOARCH.exe" .
