@@ -3,7 +3,6 @@ package main;
 import "os";
 import "sync";
 import "path/filepath";
-import "fmt";
 
 var createFoldersInTarget bool;
 
@@ -78,8 +77,6 @@ func iteratePaths() {
 		} else if stat.Mode().IsRegular() {
 			filesLock.Lock();
 			fileOrder = append(fileOrder, next);
-			fmt.Println(FGColors.Blue + next);
-			fmt.Println(uPTargets[next] + Textstyle.Reset);
 			targets[next] = uPTargets[next];
 			filesLock.Unlock();
 			full_size += uint64(stat.Size());

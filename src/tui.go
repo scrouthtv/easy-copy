@@ -6,7 +6,6 @@ import "time";
 import "path/filepath";
 import "bufio";
 import "os";
-import "strconv";
 
 const BAR_WIDTH int = 60;
 
@@ -28,9 +27,13 @@ var lines int = 0;
 func drawLoop() {
 	go speedLoop();
 	reader = bufio.NewReader(os.Stdin);
-	fmt.Println("\033[2K");
 	for !done {
-		fmt.Print("\033[" + strconv.Itoa(lines) + "A");
+
+		var i int;
+		for i = 0; i < lines; i++ {
+			fmt.Print("\033[2K\033[1A");
+		}
+
 		lines = 0;
 		// up one line to overwrite the previous bar
 		if drawBar {
@@ -75,16 +78,14 @@ func drawLoop() {
 		}
 
 		if len(piledConflicts) > 0 {
-			fmt.Println("start dialog");
 			filesLock.RLock();
 			var conflictID int = piledConflicts[0];
 			var conflict string = fileOrder[conflictID];
 			var cTarget string = filepath.Join(targets[conflict], 
 				filepath.Base(conflict));
-			fmt.Println(targets);
-			fmt.Println(conflict);
 			filesLock.RUnlock();
 			fmt.Println();
+			lines++;
 			fmt.Print(FGColors.Yellow, Textstyle.Bold);
 			fmt.Print(conflict);
 			fmt.Print(Textstyle.Reset, FGColors.Magenta);
@@ -92,20 +93,37 @@ func drawLoop() {
 			fmt.Print(FGColors.Yellow, Textstyle.Bold);
 			fmt.Print(cTarget + "/.");
 			fmt.Println(Textstyle.Reset + FGColors.Magenta);
-			fmt.Println("piled:", piledConflicts);
-			fmt.Println("pending:", pendingConflicts);
-			fmt.Print("Do you want to [S]kip or [O]verwrite?");
+			lines++;
+			fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All");
+			lines++;
+			fmt.Print("[I]nfo | [D]iff | [R]ename | [E]dit target | [Q]uit");
 			fmt.Println(Textstyle.Reset);
-			var in rune = getChoice("so");
-			if in == 's' {
-				filesLock.Lock();
-				piledConflicts = piledConflicts[1:];
-				filesLock.Unlock();
-			} else if in == 'o' {
-				filesLock.Lock();
-				pendingConflicts = append(pendingConflicts, conflictID);
-				piledConflicts = piledConflicts[1:];
-				filesLock.Unlock();
+			lines++;
+			var in rune = getChoice("soavidreq");
+			switch in {
+				case 's':
+					filesLock.Lock();
+					piledConflicts = piledConflicts[1:];
+					filesLock.Unlock();
+				case 'o':
+					filesLock.Lock();
+					pendingConflicts = append(pendingConflicts, conflictID);
+					piledConflicts = piledConflicts[1:];
+					filesLock.Unlock();
+				case 'a':
+					fmt.Println("skip all");
+				case 'v':
+					fmt.Println("overwrite all");
+				case 'i':
+					fmt.Println("info");
+				case 'd':
+					fmt.Println("diff");
+				case 'r':
+					fmt.Println("rename");
+				case 'e':
+					fmt.Println("edit");
+				case 'q':
+					os.Exit(0);
 			}
 		}
 
