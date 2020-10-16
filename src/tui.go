@@ -91,7 +91,7 @@ func drawLoop() {
 			fmt.Print(Textstyle.Reset, FGColors.Magenta);
 			fmt.Print(" already exists in ");
 			fmt.Print(FGColors.Yellow, Textstyle.Bold);
-			fmt.Print(cTarget + "/.");
+			fmt.Print(filepath.Dir(cTarget));
 			fmt.Println(Textstyle.Reset + FGColors.Magenta);
 			lines++;
 			fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All");
@@ -105,15 +105,23 @@ func drawLoop() {
 					filesLock.Lock();
 					piledConflicts = piledConflicts[1:];
 					filesLock.Unlock();
+					skipFile(cTarget);
 				case 'o':
 					filesLock.Lock();
 					pendingConflicts = append(pendingConflicts, conflictID);
 					piledConflicts = piledConflicts[1:];
 					filesLock.Unlock();
 				case 'a':
-					fmt.Println("skip all");
+					onExistingFile = 0; // skip all
+					filesLock.Lock();
+					pendingConflicts = nil;
+					filesLock.Unlock();
 				case 'v':
-					fmt.Println("overwrite all");
+					onExistingFile = 1; // overwrite all
+					filesLock.Lock();
+					pendingConflicts = append(pendingConflicts, piledConflicts...);
+					pendingConflicts = nil;
+					filesLock.Unlock();
 				case 'i':
 					fmt.Println("info");
 				case 'd':
@@ -129,4 +137,20 @@ func drawLoop() {
 
 		time.Sleep(100 * time.Millisecond);
 	}
+}
+
+/**
+ * Add the file size to done_size and 1 to done_amount.
+ */
+func skipFile(path string) {
+	var stat os.FileInfo;
+	stat, _ = os.Lstat(path);
+
+	if stat.Mode().IsRegular() {
+		done_size += uint64(stat.Size());
+	} else if stat.Mode() & os.ModeSymlink != 0 {
+		done_size += uint64(symlink_size);
+	}
+
+	done_amount += 1;
 }
