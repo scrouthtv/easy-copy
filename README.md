@@ -54,6 +54,10 @@ There are only some memorable differences:
 
 ## Differences to other tools
 
+## Contributing
+ - Get help with *EasyCopy* by opening an issue on the project's page.
+ - Feel free to fork *EasyCopy* and open PRs with new features.
+
 # Copyright
 Copyright &#169; 2020 The *EasyCopy* authors.
 This software is licensed under GNU GPL v3.0.
