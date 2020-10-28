@@ -1,11 +1,11 @@
 // +build !linux
 
-package main;
+package main
 
-import "errors";
+import "errors"
 
-var notSupportedError error = errors.New("operation not supported");
+var notSupportedError error = errors.New("operation not supported")
 
 func reflink(srcPath string, dstPath string, progressStorage *uint64) error {
-	return notSupportedError;
+	return notSupportedError
 }

@@ -1,7 +1,7 @@
 // +build !linux,!windows
 
-package main;
+package main
 
 func getch() rune {
-	panic(FGColors.Red + "NOT SUPPORTED" + Textstyle.Reset);
+	panic(FGColors.Red + "NOT SUPPORTED" + Textstyle.Reset)
 }

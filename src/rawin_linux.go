@@ -1,8 +1,8 @@
 // +build linux
 
-package main;
+package main
 
-import "os";
+import "os"
 
 //#include <ctype.h>
 //#include <errno.h>
@@ -46,12 +46,12 @@ import "os";
 //
 //	return 0;
 //}
-import "C";
+import "C"
 
 func getch() rune {
-	var in rune = rune(C.getOneKey());
+	var in rune = rune(C.getOneKey())
 	if in == rune(3) {
-		os.Exit(8);
+		os.Exit(8)
 	}
-	return in;
+	return in
 }

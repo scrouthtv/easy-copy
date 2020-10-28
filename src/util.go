@@ -84,7 +84,7 @@ func WindowsParentProcessName() (string, error) {
 		var tasklist []string = strings.Split(out.String(), "\n")
 		var header string = tasklist[2]
 		var colpidstart int = strings.Index(header, " ")
-		var colpidend int = colpidstart + 1 + strings.Index(header[colpidstart+1:len(header)], " ")
+		var colpidend int = colpidstart + 1 + strings.Index(header[colpidstart+1:], " ")
 
 		var paddedPID string = strconv.Itoa(os.Getppid())
 		for len(paddedPID) < colpidend-colpidstart {
@@ -185,7 +185,7 @@ func autoColors() bool {
 
 func shrinkPath(path string, length int) string {
 	if len(path) > length {
-		return path[0:length-8] + "..." + path[len(path)-5:len(path)]
+		return path[0:length-8] + "..." + path[len(path)-5:]
 	} else {
 		return path
 	}

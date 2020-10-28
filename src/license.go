@@ -1,7 +1,7 @@
-package main;
+package main
 
 func infoWarranty() string {
-return `15. Disclaimer of Warranty.
+	return `15. Disclaimer of Warranty.
 
   THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
 APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
@@ -31,11 +31,11 @@ above cannot be given local legal effect according to their terms,
 reviewing courts shall apply local law that most closely approximates
 an absolute waiver of all civil liability in connection with the
 Program, unless a warranty or assumption of liability accompanies a
-copy of the Program in return for a fee.`;
+copy of the Program in return for a fee.`
 }
 
 func infoCopying() string {
-return `4. Conveying Verbatim Copies.
+	return `4. Conveying Verbatim Copies.
 
 You may convey verbatim copies of the Program's source code as you
 receive it, in any medium, provided that you conspicuously and
@@ -181,5 +181,5 @@ Corresponding Source conveyed, and Installation Information provided,
 in accord with this section must be in a format that is publicly
 documented (and with an implementation available to the public in
 source code form), and must require no special password or key for
-unpacking, reading or copying.`;
+unpacking, reading or copying.`
 }
