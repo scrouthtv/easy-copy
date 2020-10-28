@@ -4,6 +4,7 @@ foo2/
 bar/
 *.img
 test/
+test.zsh
 
 # executables:
 a.out
@@ -14,6 +15,7 @@ a.out
 *.so
 *.dylib
 easycopy
+ec
 
 # packages:
 easycopy*.zip
