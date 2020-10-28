@@ -1,21 +1,25 @@
-package main;
+package main
 
-import "time";
+import "time"
 
-var last_size uint64 = 0;
-const ms int = 500;
+var last_size uint64 = 0
 
-var sizePerSecond float32 = 0;
-var lastTime time.Time = time.Now();
+// in what intervals to measure time (millis)
+const ms int = 500
+
+var sizePerSecond float32 = 0
+var lastTime time.Time = time.Now()
 
 func speedLoop() {
-	ticker := time.NewTicker(time.Duration(ms) * time.Millisecond);
+	ticker := time.NewTicker(time.Duration(ms) * time.Millisecond)
 	for tick := range ticker.C {
-		var seconds float32 = float32(tick.Sub(lastTime).Seconds());
+		var seconds float32 = float32(tick.Sub(lastTime).Seconds())
 		if seconds != 0 {
-			sizePerSecond = float32(done_size - last_size) / float32(seconds);
-			last_size = done_size;
+			sizePerSecond = float32(done_size-last_size) / float32(seconds)
+			last_size = done_size
 		}
 	}
-	ticker.Stop();
+	ticker.Stop()
 }
+
+var startMeasure time.Time

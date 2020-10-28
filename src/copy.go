@@ -1,84 +1,84 @@
-package main;
+package main
 
-import "io";
-import "os";
-import "errors";
-import "strconv";
-import "path/filepath";
+import "io"
+import "os"
+import "errors"
+import "strconv"
+import "path/filepath"
 
-const BUFFERSIZE uint = 1024;
+const BUFFERSIZE uint = 1024
 
-var buf []byte = make([]byte, BUFFERSIZE);
+var buf []byte = make([]byte, BUFFERSIZE)
 
 /**
  * Loops checking / waiting for any left work.
  */
 func copyLoop() {
-	var i int = 0;
+	var i int = 0
 	for !done {
-		filesLock.Lock();
+		filesLock.Lock()
 		if len(folders) > 0 {
-			var localFolders []string = folders;
-			folders = nil;
-			filesLock.Unlock();
-			createFolders(localFolders);
+			var localFolders []string = folders
+			folders = nil
+			filesLock.Unlock()
+			createFolders(localFolders)
 		} else if len(pendingConflicts) > 0 {
-			var id int = pendingConflicts[0];
-			pendingConflicts = pendingConflicts[1:];
-			var sourcePath string = fileOrder[id];
+			var id int = pendingConflicts[0]
+			pendingConflicts = pendingConflicts[1:]
+			var sourcePath string = fileOrder[id]
 			var destPath = filepath.Join(targets[sourcePath],
-				filepath.Base(sourcePath));
-			filesLock.Unlock();
-			copyFilePath(sourcePath, destPath);
-			done_amount += 1;
+				filepath.Base(sourcePath))
+			filesLock.Unlock()
+			copyFilePath(sourcePath, destPath)
+			done_amount += 1
 		} else if i < len(fileOrder) {
-			var sourcePath string = fileOrder[i];
-			var destPath string;
+			var sourcePath string = fileOrder[i]
+			var destPath string
 			if createFoldersInTarget {
 				destPath = filepath.Join(targets[sourcePath],
-					filepath.Base(sourcePath));
+					filepath.Base(sourcePath))
 			} else {
-				destPath = targets[sourcePath];
+				destPath = targets[sourcePath]
 			}
-			filesLock.Unlock();
+			filesLock.Unlock()
 
 			// check if file already exists and we even care about that:
-			var doCopy bool = true;
+			var doCopy bool = true
 			if onExistingFile != 1 {
-				stat, _ := os.Lstat(destPath);
+				stat, _ := os.Lstat(destPath)
 				// TODO error handling
 				if stat != nil {
-					doCopy = false;
+					doCopy = false
 					// file exists
 					if onExistingFile == 2 {
 						// save it to the conflicts:
-						filesLock.Lock();
-						piledConflicts = append(piledConflicts, i);
-						filesLock.Unlock();
+						filesLock.Lock()
+						piledConflicts = append(piledConflicts, i)
+						filesLock.Unlock()
 					}
 				}
 			}
 			if doCopy {
-				copyFilePath(sourcePath, destPath);
-				done_amount += 1;
+				copyFilePath(sourcePath, destPath)
+				done_amount += 1
 			}
-			i += 1;
+			i += 1
 		} else {
-			filesLock.Unlock();
+			filesLock.Unlock()
 		}
 
 		if iteratorDone {
 			// all sources have been iterated, no more work will come later on
-			filesLock.RLock();
+			filesLock.RLock()
 			if len(folders) == 0 && len(fileOrder) == i &&
 				len(piledConflicts) == 0 && len(pendingConflicts) == 0 {
-					// 1. all folders have been created
-					// 2. we've tried to copy all files so far
-					// 3. all conflicts we had to ask the user are resolved
-					// 4. all conflicts the user already answered have been dealt with
-				done = true;
+				// 1. all folders have been created
+				// 2. we've tried to copy all files so far
+				// 3. all conflicts we had to ask the user are resolved
+				// 4. all conflicts the user already answered have been dealt with
+				done = true
 			}
-			filesLock.RUnlock();
+			filesLock.RUnlock()
 		}
 	}
 }
@@ -90,40 +90,55 @@ func copyLoop() {
  *  dest will be created as a link that links to that file as well.
  */
 func copyFilePath(sourcePath string, destPath string) {
-	var err error;
+	var err error
 	if doReflinks > 0 {
-		err = reflink(sourcePath, destPath, &done_size);
+		err = reflink(sourcePath, destPath, &done_size)
 		if err == nil {
-			return;
+			return
 		} else {
 			if doReflinks == 1 {
-				verbReflinkFailed(sourcePath, destPath, err);
+				verbReflinkFailed(sourcePath, destPath, err)
 			} else {
-				errReflinkFailed(sourcePath, destPath, err);
+				errReflinkFailed(sourcePath, destPath, err)
 				// os.Exit(2);
 			}
 		}
 	}
-	var stat os.FileInfo;
-	stat, err = os.Lstat(sourcePath);
+	var stat os.FileInfo
+	stat, err = os.Lstat(sourcePath)
 	if stat.Mode().IsRegular() {
-		currentTask = "Copying " + sourcePath;
+		currentTaskType = 1
+		currentFile = sourcePath
 
-		var source, dest *os.File;
-		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644);
-		if err != nil { errMissingFile(err, sourcePath); }
-		dest, err = os.OpenFile(destPath, os.O_CREATE | os.O_WRONLY, 0644);
-		if err != nil { errCreatingFile(err, destPath); }
-		copyFile(source, dest, &done_size);
-	} else if stat.Mode() & os.ModeSymlink != 0 {
-		currentTask = "Linking " + sourcePath;
-		var resolvedSourcePath string;
-		resolvedSourcePath, err = os.Readlink(sourcePath);
-		if err != nil { errMissingFile(err, sourcePath); }
-		sourcePath = resolvedSourcePath;
-		err = os.Symlink(sourcePath, destPath);
-		done_size += uint64(symlink_size);
-		if err != nil { errCreatingLink(err, sourcePath, destPath); }
+		var source, dest *os.File
+		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644)
+		if err != nil {
+			errMissingFile(err, sourcePath)
+		}
+		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			errCreatingFile(err, destPath)
+		}
+		copyFile(source, dest, &done_size)
+	} else if stat.Mode()&os.ModeSymlink != 0 {
+		currentTaskType = 2
+		currentFile = sourcePath
+
+		var resolvedSourcePath string
+		resolvedSourcePath, err = os.Readlink(sourcePath)
+		if err != nil {
+			errMissingFile(err, sourcePath)
+		}
+		sourcePath = resolvedSourcePath
+		if onExistingFile == 1 {
+			os.Remove(destPath)
+		}
+		err = os.Symlink(sourcePath, destPath)
+
+		if err != nil {
+			errCreatingLink(err, sourcePath, destPath)
+		}
+		done_size += uint64(symlink_size)
 	}
 }
 
@@ -132,38 +147,41 @@ func copyFilePath(sourcePath string, destPath string) {
  * filesLock will not be locked.
  */
 func createFolders(folders []string) {
-	var folder string;
+	var folder string
 	for _, folder = range folders {
-		currentTask = "Creating " + folder;
-		var err error = os.MkdirAll(folder, 0755);
-		if err != nil { errCreatingFile(err, folder); }
-		done_size += uint64(folder_size);
+		currentTaskType = 3
+		currentFile = folder
+		var err error = os.MkdirAll(folder, 0755)
+		if err != nil {
+			errCreatingFile(err, folder)
+		}
+		done_size += uint64(folder_size)
 	}
 }
 
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
-	var readAmount, writtenAmount int;
-	var err error;
+	var readAmount, writtenAmount int
+	var err error
 	for {
-		readAmount, err = source.Read(buf);
+		readAmount, err = source.Read(buf)
 		if err != nil && err != io.EOF {
-			errCopying(source.Name(), dest.Name(), err);
+			errCopying(source.Name(), dest.Name(), err)
 		}
 		if readAmount == 0 {
 			// when the file is fully read
-			break;
+			break
 		}
-		writtenAmount, err = dest.Write(buf[:readAmount]);
+		writtenAmount, err = dest.Write(buf[:readAmount])
 		if err != nil {
-			return err;
+			return err
 		}
 		if readAmount != writtenAmount {
 			return errors.New("couldn't write all the data: " +
 				strconv.Itoa(readAmount) + " read, " +
-				strconv.Itoa(writtenAmount) + "written");
+				strconv.Itoa(writtenAmount) + "written")
 		}
-		*progressStorage += uint64(writtenAmount);
+		*progressStorage += uint64(writtenAmount)
 	}
 	//verbCopyFinished(source.Name(), dest.Name());
-	return nil;
+	return nil
 }
