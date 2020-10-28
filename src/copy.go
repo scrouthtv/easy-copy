@@ -6,7 +6,7 @@ import "errors"
 import "strconv"
 import "path/filepath"
 
-const BUFFERSIZE uint = 1024
+var BUFFERSIZE uint = 32768
 
 var buf []byte = make([]byte, BUFFERSIZE)
 

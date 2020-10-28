@@ -3,6 +3,7 @@ package main
 import "os"
 import "strings"
 import "errors"
+import "strconv"
 
 var verbose bool
 var onExistingFile uint8 = 2
@@ -62,6 +63,14 @@ func parseKeyValue(key string, value string) {
 			doReflinks = 1
 		case "always", "true", "yes", "all":
 			doReflinks = 2
+		}
+	case "buffersize":
+		var val int
+		var err error
+		val, err = strconv.Atoi(value)
+		if err == nil {
+			BUFFERSIZE = uint(val)
+			buf = make([]byte, BUFFERSIZE)
 		}
 	default:
 		warnBadConfigKey(key)
