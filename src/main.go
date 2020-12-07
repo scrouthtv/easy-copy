@@ -2,6 +2,7 @@ package main
 
 import "os"
 import "sync"
+import "strings"
 import "path/filepath"
 import "time"
 
@@ -14,16 +15,26 @@ var targetBase string
 var fileOrder []string
 var folders []string
 var targets map[string]string = make(map[string]string)
-var filesLock = sync.RWMutex{}
 
 // read/write exclusion lock for the three arrays above
+var filesLock = sync.RWMutex{}
 
 var iteratorDone, done bool = false, false
+
+var sources []string
 
 var done_amount uint64 = 0
 var full_amount uint64 = 0
 var done_size uint64 = 0
 var full_size uint64 = 0
+
+var mode int = -1
+
+const (
+	MODE_CP = iota
+	MODE_MV
+	MODE_RM
+)
 
 // Maybe these are too small:
 // uint64 goes up to 18446744073709551615
@@ -124,6 +135,19 @@ func iteratePaths() {
 }
 
 func main() {
+	switch strings.ToLower(os.Args[1]) {
+	case "cp":
+		mode = MODE_CP
+	case "mv":
+		mode = MODE_MV
+	case "rm":
+		mode = MODE_RM
+	default:
+		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
+	}
+	if mode == MODE_RM {
+		panic("This mode is not implemented (yet).")
+	}
 	initColors(autoColors())
 	parseArgs()
 	readConfig()
@@ -143,6 +167,7 @@ func main() {
 		errResolvingTarget(unsearchedPaths[len(unsearchedPaths)-1], err)
 	}
 	unsearchedPaths = unsearchedPaths[0 : len(unsearchedPaths)-1]
+	sources = unsearchedPaths
 	if len(unsearchedPaths) > 1 {
 		stat, err := os.Stat(targetBase)
 		if err != nil {

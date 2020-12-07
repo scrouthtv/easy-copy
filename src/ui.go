@@ -289,6 +289,22 @@ func errResolvingTarget(target string, err error) {
 	os.Exit(2)
 }
 
+func errInvalidMode(given string, expected string) {
+	fmt.Print(FGColors.Red)
+	fmt.Println("Invalid mode", given+", expected one of")
+	fmt.Print(expected)
+	fmt.Println(Textstyle.Reset)
+	os.Exit(2)
+}
+
+func errDeletingFile(path string, err error) {
+	fmt.Print(FGColors.Red)
+	fmt.Println("Error deleting", path+":")
+	fmt.Print(err)
+	fmt.Println(Textstyle.Reset)
+	os.Exit(2)
+}
+
 func warnCreatingConfig(err error) {
 	fmt.Println("Could not create a default configuration file:")
 	fmt.Print(FGColors.LRed)
@@ -297,7 +313,7 @@ func warnCreatingConfig(err error) {
 }
 
 func parseArgs() {
-	args := os.Args[1:]
+	args := os.Args[2:]
 	var isFiles bool = false
 	for _, arg := range args {
 		if arg == "--" {

@@ -23,6 +23,7 @@ var pendingConflicts []int
 // 1 Copying
 // 2 Linking
 // 3 Creating Folder
+// 4 Deleting
 var currentTaskType int = -1
 var currentFile string = ""
 

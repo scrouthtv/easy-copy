@@ -6,21 +6,21 @@ import "errors"
 import "strconv"
 
 var verbose bool
-var onExistingFile uint8 = 2
 
 // 0 skip
 // 1 overwrite
 // 2 ask
-var followSymlinks uint8 = 1
+var onExistingFile uint8 = 2
 
 // 0 ignore symlinks
 // 1 follow symlinks, copying them as links
 // 2 fully dereference
-var doReflinks uint8 = 0
+var followSymlinks uint8 = 1
 
 // 0 never  -> no reflinks
 // 1 auto   -> attempt reflink, if that fails simply copy
 // 2 always -> attempt reflink, if that fails, fail
+var doReflinks uint8 = 0
 
 func parseKeyValue(key string, value string) {
 	key = strings.ToLower(strings.Trim(key, " \t'\""))

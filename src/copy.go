@@ -76,6 +76,10 @@ func copyLoop() {
 				// 2. we've tried to copy all files so far
 				// 3. all conflicts we had to ask the user are resolved
 				// 4. all conflicts the user already answered have been dealt with
+				if mode == MODE_MV {
+					syncdel(&fileOrder)
+					syncdel(&sources)
+				}
 				done = true
 			}
 			filesLock.RUnlock()
@@ -120,6 +124,8 @@ func copyFilePath(sourcePath string, destPath string) {
 			errCreatingFile(err, destPath)
 		}
 		copyFile(source, dest, &done_size)
+		source.Close()
+		dest.Close()
 	} else if stat.Mode()&os.ModeSymlink != 0 {
 		currentTaskType = 2
 		currentFile = sourcePath
