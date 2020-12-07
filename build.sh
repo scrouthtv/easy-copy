@@ -7,6 +7,7 @@ BINLOC="$ROOTDIR/pkg/easycopy"
 PKGDIR="$ROOTDIR/pkg"
 OUTDIR="$ROOTDIR/build"
 DOCDIR="$ROOTDIR/doc"
+SHRDIR="$ROOTDIR/shared"
 LICENSE="$ROOTDIR/LICENSE"
 VERSION="$(grep 'EASYCOPY_VERSION' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
 OUTPREFIX="easycopy-$VERSION"
@@ -36,6 +37,8 @@ for GOARCH in ${LINUX_ARCHES[@]}; do
 	echo "compiling for linux $GOARCH"
 	GOOS=linux go build -o "$BINLOC-linux-$GOARCH" .
 	cp "$DOCDIR/easycopy.1" "$DOCDIR/ec.conf.5" "$PKGDIR/"
+	cp "$DOCDIR/INSTALL" "$PKGDIR/"
+	cp "$SHRDIR/_ec" "$SHRDIR/ec-completion.bash" "$SHRDIR/ec-completion.fish" "$PKGDIR/"
 	zstd -v -o "$OUTDIR/$OUTPREFIX-linux-$GOARCH.zst" "$PKGDIR/"* 2>&1 | sed 's/(.*)//g'
 	rm "$PKGDIR/easycopy.1" "$PKGDIR/ec.conf.5" "$BINLOC-linux-$GOARCH"
 done
@@ -45,6 +48,6 @@ for GOARCH in ${DARWIN_ARCHES[@]}; do
 	zip -j "$OUTDIR/$OUTPREFIX-darwin-$GOARCH.zip" "$PKGDIR/"*
 	rm "$BINLOC-darwin-$GOARCH.app"
 done
-rm "$PKGDIR/LICENSE"
+rm "$PKGDIR/"*
 
 cd "$ROOTDIR"
