@@ -8,7 +8,15 @@ import "strconv"
 // 0 quiet
 // 1 default (show progress)
 // 2 verbose
-var verbose int
+var verbose int = VERB_NOTICE
+
+const (
+	VERB_QUIET = iota
+	VERB_CRIT
+	VERB_NOTICE
+	VERB_INFO
+	VERB_DEBUG
+)
 
 // 0 skip
 // 1 overwrite
@@ -31,11 +39,11 @@ func parseKeyValue(key string, value string) {
 	switch key {
 	case "verbose":
 		if configInterpretBoolean(value) {
-			verbose = 2
+			verbose = VERB_INFO
 		}
 	case "quiet":
 		if configInterpretBoolean(value) {
-			verbose = 0
+			verbose = VERB_QUIET
 		}
 	case "overwrite":
 		switch value {
@@ -108,10 +116,10 @@ func parseFlag(prefix string, flag string) {
 		printVersion()
 		os.Exit(0)
 	case "V", "verbose":
-		verbose = 2
+		verbose = VERB_INFO
 		verbVerboseEnabled()
 	case "q", "quiet":
-		verbose = 0
+		verbose = VERB_QUIET
 	case "copying":
 		printCopying()
 		os.Exit(0)
