@@ -3,9 +3,11 @@
 ec \- copy files and directories with ease
 .SH SYNOPSIS
 .SY ec
+.I OPERATION
 .I [options]
 source target
 .SY ec
+.I OPERATION
 .I [options]
 source ... directory
 .SY ec
@@ -14,13 +16,27 @@ source ... directory
 .I [\-v | \-\-version]
 .YS
 .SH DESCRIPTION
-Duplicate source to target.
+Depending on
+.IR OPERATION :
+.PP
+Duplicate or move source to target.
 .br
-Copy source(s) into directory.
+Copy or move source(s) into directory.
 .br
 Output the help.
 .br
 Output version information.
+.PP
+.I OPERATION
+must be one of
+.RS
+.TP
+.I cp
+Copy files and folders
+.TP
+.I mv
+Move files and folders
+.RE
 .SH OPTIONS
 .SS Existing files
 .TP
