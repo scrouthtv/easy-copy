@@ -38,7 +38,9 @@ func printHelp() {
 	fmt.Println("      --no-config  ", FGColors.LGray,
 		"don't read any config file", Textstyle.Reset)
 	fmt.Println("  -V, --verbose    ", FGColors.LGray,
-		"verbose mode ", FGColors.Default)
+		"verbose mode", FGColors.Default)
+	fmt.Println("  -q, --quiet      ", FGColors.LGray,
+		"quiet mode", FGColors.Default)
 	fmt.Println("      --color=WHEN ", FGColors.LGray,
 		"whether to colorize the output.")
 	fmt.Println(indent+"WHEN can be 'always', 'auto' (default) or 'never'",

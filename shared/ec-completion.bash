@@ -22,6 +22,7 @@ _ec() {
 		opts+="-n --no-clobber "
 		opts+="--no-config "
 		opts+="-V --verbose "
+		opts+="-q --quiet "
 		opts+="--color "
 		COMPREPLY=($(compgen -W "$opts" \"${COMP_WORDS[$COMP_CWORD]}\"))
 	else
