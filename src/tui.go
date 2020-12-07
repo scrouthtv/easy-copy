@@ -10,8 +10,6 @@ import "strconv"
 const BAR_WIDTH int = 50
 const MAX_WIDTH int = 80
 
-var drawBar bool = true
-
 // contains ids to files that should be recopied after the
 //  dialog whether to overwrite files has been answered.
 // once their respective dialogs have been answered, they are either
@@ -39,7 +37,7 @@ func drawLoop() {
 		}
 		lines = 0
 
-		if drawBar {
+		if verbose > 0 {
 			var BAR_FILLED int
 
 			if full_size == 0 {
@@ -180,7 +178,7 @@ func printSummary() {
 		fmt.Print("\033[1A\033[2K")
 	}
 
-	if drawBar {
+	if verbose > 0 {
 		fmt.Print("  [")
 		for i = 0; i < BAR_WIDTH; i++ {
 			fmt.Print("=")

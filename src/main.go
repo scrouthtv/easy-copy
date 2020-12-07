@@ -139,7 +139,7 @@ func main() {
 	parseArgs()
 	readConfig()
 
-	if verbose {
+	if verbose > 2 {
 		printVersion()
 		verbFlags()
 	}

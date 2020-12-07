@@ -5,7 +5,10 @@ import "strings"
 import "errors"
 import "strconv"
 
-var verbose bool
+// 0 quiet
+// 1 default (show progress)
+// 2 verbose
+var verbose int
 
 // 0 skip
 // 1 overwrite
@@ -27,7 +30,13 @@ func parseKeyValue(key string, value string) {
 	value = strings.ToLower(strings.Trim(value, " \t'\""))
 	switch key {
 	case "verbose":
-		verbose = configInterpretBoolean(value)
+		if configInterpretBoolean(value) {
+			verbose = 2
+		}
+	case "quiet":
+		if configInterpretBoolean(value) {
+			verbose = 0
+		}
 	case "overwrite":
 		switch value {
 		case "skip":
@@ -99,8 +108,10 @@ func parseFlag(prefix string, flag string) {
 		printVersion()
 		os.Exit(0)
 	case "V", "verbose":
-		verbose = true
+		verbose = 2
 		verbVerboseEnabled()
+	case "q", "quiet":
+		verbose = 0
 	case "copying":
 		printCopying()
 		os.Exit(0)
