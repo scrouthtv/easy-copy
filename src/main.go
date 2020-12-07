@@ -135,19 +135,6 @@ func iteratePaths() {
 }
 
 func main() {
-	switch strings.ToLower(os.Args[1]) {
-	case "cp":
-		mode = MODE_CP
-	case "mv":
-		mode = MODE_MV
-	case "rm":
-		mode = MODE_RM
-	default:
-		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
-	}
-	if mode == MODE_RM {
-		panic("This mode is not implemented (yet).")
-	}
 	initColors(autoColors())
 	parseArgs()
 	readConfig()
@@ -157,9 +144,22 @@ func main() {
 		verbFlags()
 	}
 
-	if len(unsearchedPaths) < 2 {
+	if len(unsearchedPaths) < 3 {
 		errEmptySource()
 	}
+
+	switch strings.ToLower(unsearchedPaths[0]) {
+	case "cp":
+		mode = MODE_CP
+	case "mv":
+		mode = MODE_MV
+	case "rm":
+		mode = MODE_RM
+		panic("This mode is not implemented (yet).")
+	default:
+		errInvalidMode(strings.ToLower(unsearchedPaths[0]), "cp, mv")
+	}
+	unsearchedPaths = unsearchedPaths[1:]
 
 	var err error
 	targetBase, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths)-1])

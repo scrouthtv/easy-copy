@@ -10,8 +10,8 @@ func printUsage() {
 	fmt.Println(Textstyle.Reset)
 
 	fmt.Print(FGColors.LGray)
-	fmt.Println("  ec [options] source target")
-	fmt.Println("  ec [options] source ... directory")
+	fmt.Println("  ec OPERATION [options] source target")
+	fmt.Println("  ec OPERATION [options] source ... directory")
 	fmt.Print(FGColors.Default)
 	fmt.Println("  ec --help")
 	fmt.Print("  ec --version")
@@ -313,7 +313,7 @@ func warnCreatingConfig(err error) {
 }
 
 func parseArgs() {
-	args := os.Args[2:]
+	args := os.Args[1:]
 	var isFiles bool = false
 	for _, arg := range args {
 		if arg == "--" {
