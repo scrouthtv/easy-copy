@@ -12,7 +12,7 @@ import "errors"
 import "io"
 import "unicode"
 
-import input "github.com/scrouthtv/easy-copy/input"
+import "github.com/scrouthtv/easy-copy/input"
 
 var noPagerError error = errors.New("No suitable pager found.")
 
