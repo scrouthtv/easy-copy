@@ -1,4 +1,5 @@
 // +build windows
+// +build rawin
 
 package main
 
@@ -6,7 +7,7 @@ package main
 //#include <conio.h>
 import "C"
 
-func getch() rune {
+func Getch() rune {
 	var ch int = int(C.getch())
 	return rune(ch)
 }

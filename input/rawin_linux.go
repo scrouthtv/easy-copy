@@ -1,6 +1,7 @@
 // +build linux
+// +build rawin
 
-package main
+package input
 
 import "os"
 
@@ -48,9 +49,9 @@ import "os"
 //}
 import "C"
 
-func getch() rune {
+func Getch() rune {
 	var in rune = rune(C.getOneKey())
-	if in == rune(3) {
+	if in == rune(3) { // C-c
 		os.Exit(8)
 	}
 	return in

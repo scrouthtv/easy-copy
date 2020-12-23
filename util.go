@@ -12,6 +12,8 @@ import "errors"
 import "io"
 import "unicode"
 
+import input "github.com/scrouthtv/easy-copy/input"
+
 var noPagerError error = errors.New("No suitable pager found.")
 
 /**
@@ -60,7 +62,7 @@ func runPager(text string) (bool, error) {
 func getChoice(choices string) rune {
 	var in rune
 	for {
-		in = unicode.ToLower(getch())
+		in = unicode.ToLower(input.Getch())
 		if strings.ContainsRune(choices, in) {
 			return in
 		}
