@@ -121,7 +121,8 @@ func copyFilePath(sourcePath string, destPath string) {
 			errMissingFile(err, sourcePath)
 		}
 		if progressLSColors {
-			currentFile = "\033[" + lscolors.FormatFile(stat) + "m" + currentFile + "\033[0m"
+			currentFile = "\033[" + lscolors.FormatFile(stat) + "m" +
+				currentFile + "\033[" + lscolors.FormatType("re") + "m"
 		}
 
 		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, 0644)
@@ -134,6 +135,10 @@ func copyFilePath(sourcePath string, destPath string) {
 	} else if stat.Mode()&os.ModeSymlink != 0 {
 		currentTaskType = 2
 		currentFile = sourcePath
+		if progressLSColors {
+			currentFile = "\033[" + lscolors.FormatType("li") + "m" +
+				currentFile + "\033[" + lscolors.FormatType("re") + "m"
+		}
 
 		var resolvedSourcePath string
 		resolvedSourcePath, err = os.Readlink(sourcePath)
@@ -162,6 +167,10 @@ func createFolders(folders []string) {
 	for _, folder = range folders {
 		currentTaskType = 3
 		currentFile = folder
+		if progressLSColors {
+			currentFile = "\033[" + lscolors.FormatType("di") + "m" + currentFile +
+				"\033[" + lscolors.FormatType("rs") + "m"
+		}
 		var err error = os.MkdirAll(folder, 0755)
 		if err != nil {
 			errCreatingFile(err, folder)
