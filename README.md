@@ -10,7 +10,7 @@ Use it at your own risk. I take zero responsibility for any damage linked to thi
 ## Features
  - **No more lockups**: In difference to normal tools, *EasyCopy* forks tasks such as asking the user to overwrite files or searching for source files.
  - **Know what's happening**: A terminal UI shows all current information at one glance, such as progress, speed and remaining time.
- - **No dependencies**: Zero third-party packages are used at anytime. This way you can trust *EasyCopy* even when running as `sudo`.
+ - **No dependencies**: Zero third-party packages are used at any time. This way you can trust *EasyCopy* even when running as `sudo`.
  - **Uses sane defaults**: Recurses into directories without having to add a flag. Checks by default if enough space is available.
  - **Configurable**: *EasyCopy* supports all features `cp` or `mv` has. *EasyCopy* even supports a config file for setting default options.
  - **Blazingly fast**: While adding extra features, *EasyCopy* stays as fast as proven tools by forking second-priority tasks and using Go.
@@ -25,7 +25,7 @@ Use it at your own risk. I take zero responsibility for any damage linked to thi
 <!-- some gif or so -->
 
 ### Zero third-party dependencies
-<!-- how many sol, which go packages are used -->
+<!-- how many sloc, which go packages are used -->
 
 ###  Defaults, differences to coreutils `cp`
 There are only some memorable differences:
@@ -48,7 +48,14 @@ There are only some memorable differences:
 ```
 
 ### Modularity
-<!-- show different configurations and time them -->
+Starting with `v0.4.0`, *EasyCopy* has support for modular compilation. These features can be turned off for safety or performance concerns:
+ - **Configuration file**: By default, a configuration file is read and evaluated. Disable this feature at compile-time using `noconfig`.
+ - **Colorized output**: The output can be colorized by default. Disable this feature using `nocolor`.
+ - **Raw input**: On Linux, the user's answer to a prompt can be read using CGO and the terminal's raw mode. On Windows, the same is achieved through CGO and the `getch()` function. Both implementations are highly experimental. Disable this feature using `goin`.
+To compile *EasyCopy* without color and config file support, one would use
+```
+go build -tags noconfig,nocolor .
+```
 
 ### Software you can trust in
 
