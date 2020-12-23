@@ -1,6 +1,6 @@
 // +build nolscolors
 
-package main
+package lscolors
 
 func FormatFile(info os.FileInfo) string {
 	return ""

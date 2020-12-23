@@ -1,6 +1,6 @@
 // +build !nolscolors
 
-package main
+package lscolors
 
 import "testing"
 import "io/ioutil"
@@ -20,7 +20,7 @@ func TestLoadLSC(t *testing.T) {
 }
 
 func TestFormatSingleFile(t *testing.T) {
-	f, err := ioutil.TempFile("", "")
+	f, err := ioutil.TempFile("", "*.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,7 +31,8 @@ func TestFormatSingleFile(t *testing.T) {
 	}
 	format := FormatFile(info)
 
-	t.Logf(format)
+	t.Logf("formatting with %s:\n", format)
+	t.Logf("\033["+format+"m%s\033[0m", f.Name())
 
 	f.Close()
 	os.Remove(f.Name())

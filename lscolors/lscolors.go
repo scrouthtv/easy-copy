@@ -1,6 +1,6 @@
 // +build !nolscolors
 
-package main
+package lscolors
 
 import "os"
 import "strings"
