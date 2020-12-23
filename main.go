@@ -207,6 +207,7 @@ func main() {
 			uPTargets[uP] = targetBase
 		}
 	}
+	createFolders([]string{targetBase})
 
 	verbSearchStart()
 
