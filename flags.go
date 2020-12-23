@@ -32,6 +32,8 @@ var followSymlinks uint8 = 1
 // 2 always -> attempt reflink, if that fails, fail
 var doReflinks uint8 = 0
 
+var progressLSColors bool = false
+
 func parseKeyValue(key string, value string) {
 	key = strings.ToLower(strings.Trim(key, " \t'\""))
 	value = strings.ToLower(strings.Trim(value, " \t'\""))
@@ -125,6 +127,8 @@ func parseFlag(prefix string, flag string) {
 	case "warranty":
 		printWarranty()
 		os.Exit(0)
+	case "e", "extended-colors":
+		progressLSColors = true
 	case "colortest":
 		printColortest()
 		os.Exit(0)
