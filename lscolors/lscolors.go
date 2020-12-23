@@ -21,6 +21,10 @@ var lsc lscolors = lscolors{
 	make(map[string]string), make(map[string]string),
 }
 
+func FormatType(t string) string {
+	return lsc.types[t]
+}
+
 func FormatFile(info os.FileInfo) string {
 	if !lsc_loaded {
 		ReloadLsColors()
@@ -66,13 +70,14 @@ func FormatFile(info os.FileInfo) string {
 func formatByExtension(name string) string {
 	// the coreutils ls implementation of LS_COLORS matching only works
 	// if there is a single * in the beginning, so I'm going to do the same thing:
+	name = strings.ToLower(name)
 	var ext, format string
 	for ext, format = range lsc.exts {
 		if strings.HasSuffix(name, ext) {
 			return format
 		}
 	}
-	return lsc.types["re"]
+	return lsc.types["fi"]
 }
 
 func ReloadLsColors() {
@@ -99,7 +104,8 @@ func ReloadLsColors() {
 			lsc.types[clr[:eqsym]] = clr[eqsym+1:]
 		} else {
 			// assume the text starts with an asterisk:
-			lsc.exts[clr[1:eqsym]] = clr[eqsym+1:]
+			// also lowercase it, since ls also does that
+			lsc.exts[clr[1:eqsym]] = strings.ToLower(clr[eqsym+1:])
 		}
 	}
 	lsc_loaded = true
