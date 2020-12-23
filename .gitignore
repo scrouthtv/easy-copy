@@ -16,6 +16,7 @@ a.out
 *.so
 *.dylib
 easycopy
+easy-copy
 ec
 
 # packages:
