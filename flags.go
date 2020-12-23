@@ -7,9 +7,6 @@ import "strconv"
 
 import "github.com/scrouthtv/easy-copy/color"
 
-// 0 quiet
-// 1 default (show progress)
-// 2 verbose
 var verbose int = VERB_NOTICE
 
 const (
