@@ -1,3 +1,5 @@
+// +build !nolscolors
+
 package main
 
 import "os"
@@ -19,9 +21,9 @@ var lsc lscolors = lscolors{
 	make(map[string]string), make(map[string]string),
 }
 
-func formatFile(info os.FileInfo) string {
+func FormatFile(info os.FileInfo) string {
 	if !lsc_loaded {
-		reloadLsColors()
+		ReloadLsColors()
 	}
 	if info == nil {
 		return ""
@@ -73,7 +75,7 @@ func formatByExtension(name string) string {
 	return lsc.types["re"]
 }
 
-func reloadLsColors() {
+func ReloadLsColors() {
 	var lscvar string
 	var ok bool
 	lscvar, ok = os.LookupEnv("LS_COLORS")

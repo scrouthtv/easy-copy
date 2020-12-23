@@ -1,3 +1,5 @@
+// +build !nolscolors
+
 package main
 
 import "testing"
@@ -10,7 +12,7 @@ import "sort"
 import "strings"
 
 func TestLoadLSC(t *testing.T) {
-	reloadLsColors()
+	ReloadLsColors()
 	for k, v := range lsc.types {
 		t.Logf("%s => %s\n", k, v)
 	}
@@ -27,7 +29,7 @@ func TestFormatSingleFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	format := formatFile(info)
+	format := FormatFile(info)
 
 	t.Logf(format)
 
@@ -45,7 +47,7 @@ func TestFormatSingleFolder(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Logf("%t", info.IsDir())
-	t.Logf(formatFile(info))
+	t.Logf(FormatFile(info))
 }
 
 // Simulate an ls output on ~
@@ -95,8 +97,8 @@ func TestFormatHomeFolder(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			line += fmt.Sprintf("\033[%sm%-"+strconv.Itoa(longest)+"s\033[0m",
-				formatFile(info), names[row*epl+col])
+			line += fmt.Sprintf("\033[%sm%-"+strconv.Itoa(longest+1)+"s\033[0m",
+				FormatFile(info), names[row*epl+col])
 		}
 		fmt.Println(line)
 	}
