@@ -6,6 +6,8 @@ import "errors"
 import "strconv"
 import "path/filepath"
 
+import "github.com/scrouthtv/easy-copy/lscolors"
+
 var BUFFERSIZE uint = 32768
 
 var buf []byte = make([]byte, BUFFERSIZE)
@@ -113,13 +115,16 @@ func copyFilePath(sourcePath string, destPath string) {
 	if stat.Mode().IsRegular() {
 		currentTaskType = 1
 		currentFile = sourcePath
-
 		var source, dest *os.File
 		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644)
 		if err != nil {
 			errMissingFile(err, sourcePath)
 		}
-		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_WRONLY, 0644)
+		if progressLSColors {
+			currentFile = "\033[" + lscolors.FormatFile(stat) + "m" + currentFile + "\033[0m"
+		}
+
+		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
