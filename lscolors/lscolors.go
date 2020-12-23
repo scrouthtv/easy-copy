@@ -48,7 +48,7 @@ func formatFile(info os.FileInfo) string {
 	case os.ModeCharDevice:
 		return lsc.types["cd"]
 	case os.ModeSticky:
-		//                 rwxrwxrwx
+		//                      rwxrwxrwx
 		if info.Mode().Perm()&0b000000010 == 0 {
 			return lsc.types["ex"]
 		} else {
@@ -57,8 +57,20 @@ func formatFile(info os.FileInfo) string {
 	case os.ModeIrregular:
 		return lsc.types["mi"]
 	default:
-		return "5555555555555555555555555555"
+		return formatByExtension(info.Name())
 	}
+}
+
+func formatByExtension(name string) string {
+	// the coreutils ls implementation of LS_COLORS matching only works
+	// if there is a single * in the beginning, so I'm going to do the same thing:
+	var ext, format string
+	for ext, format = range lsc.exts {
+		if strings.HasSuffix(name, ext) {
+			return format
+		}
+	}
+	return lsc.types["re"]
 }
 
 func reloadLsColors() {
@@ -84,7 +96,8 @@ func reloadLsColors() {
 		if lscIsType(clr[0:eqsym]) {
 			lsc.types[clr[:eqsym]] = clr[eqsym+1:]
 		} else {
-			lsc.exts[clr[:eqsym]] = clr[eqsym+1:]
+			// assume the text starts with an asterisk:
+			lsc.exts[clr[1:eqsym]] = clr[eqsym+1:]
 		}
 	}
 	lsc_loaded = true
