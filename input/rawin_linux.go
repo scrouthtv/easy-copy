@@ -1,5 +1,5 @@
 // +build linux
-// +build rawin
+// +build !goin
 
 package input
 

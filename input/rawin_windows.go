@@ -1,5 +1,5 @@
 // +build windows
-// +build rawin
+// +build !goin
 
 package main
 

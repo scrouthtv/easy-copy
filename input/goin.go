@@ -1,4 +1,4 @@
-// +build !rawin
+// +build goin
 
 package input
 
