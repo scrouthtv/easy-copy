@@ -25,7 +25,7 @@ var pendingConflicts []int
 // 3 Creating Folder
 // 4 Deleting
 var currentTaskType int = -1
-var currentFile string = ""
+var currentFile string
 
 var lines int = 0
 
