@@ -70,7 +70,7 @@ func parseKeyValue(key string, value string) {
 		case "never", "false", "no", "none":
 			color.Init(false)
 		case "auto":
-			color.Init(autoColors())
+			color.Init(color.AutoColors())
 		case "always", "true", "yes", "all":
 			color.Init(true)
 		}

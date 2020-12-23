@@ -7,6 +7,7 @@ import "path/filepath"
 import "time"
 
 import "github.com/scrouthtv/easy-copy/color"
+import "github.com/scrouthtv/easy-copy/config"
 
 var createFoldersInTarget bool
 
@@ -37,6 +38,8 @@ const (
 	MODE_MV
 	MODE_RM
 )
+
+var doReadConfig bool = true
 
 // Maybe these are too small:
 // uint64 goes up to 18446744073709551615
@@ -137,9 +140,22 @@ func iteratePaths() {
 }
 
 func main() {
-	color.Init(autoColors())
+	var err error
+
+	color.Init(color.AutoColors())
 	parseArgs()
-	readConfig()
+	if doReadConfig {
+		var kvs []string
+		kvs, err = config.Load()
+		if err == nil {
+			var line string
+			for _, line = range kvs {
+				parseOption(line)
+			}
+		} else {
+			warnConfig(err)
+		}
+	}
 
 	if verbose >= VERB_INFO {
 		printVersion()
@@ -163,7 +179,6 @@ func main() {
 	}
 	unsearchedPaths = unsearchedPaths[1:]
 
-	var err error
 	targetBase, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths)-1])
 	if err != nil {
 		errResolvingTarget(unsearchedPaths[len(unsearchedPaths)-1], err)

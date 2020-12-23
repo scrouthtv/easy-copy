@@ -1,31 +1,29 @@
-package main
+// +build !noconfig
+
+package config
 
 import "bufio"
 import "os"
-import "errors"
 import "strings"
 
-var MissingConfigFileError error = errors.New("No config file found.")
-var doReadConfig bool = true
-
-func readConfig() {
-	if !doReadConfig {
-		return
-	}
+func Load() ([]string, error) {
+	var kvs []string
 	configPath, err := findConfigFile()
 	if configPath == "" {
 		if err == MissingConfigFileError {
 			if len(config_locs) > 0 {
-				createConfigFile(config_locs[0])
+				err = createConfigFile(config_locs[0])
+				if err != nil {
+					return nil, err
+				}
 			}
 		} else {
-			warnConfig(err)
+			return nil, err
 		}
 	} else {
 		file, err := os.OpenFile(configPath, os.O_RDONLY, 0644)
 		if err != nil {
-			warnConfig(err)
-			return
+			return nil, err
 		}
 		var scanner *bufio.Scanner = bufio.NewScanner(file)
 		var line string
@@ -33,15 +31,15 @@ func readConfig() {
 			// remove spaces and tabs
 			line = strings.Trim(scanner.Text(), " \t")
 			if line != "" && !strings.HasPrefix(line, "#") {
-				parseOption(line)
+				kvs = append(kvs, line)
 			}
 		}
 		file.Close()
 		if err := scanner.Err(); err != nil {
-			warnConfig(err)
-			return
+			return nil, err
 		}
 	}
+	return kvs, nil
 }
 
 /**
@@ -59,20 +57,21 @@ func findConfigFile() (string, error) {
 	return "", MissingConfigFileError
 }
 
-func createConfigFile(filePath string) {
+func createConfigFile(filePath string) error {
 	var err error
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	defer file.Close()
 	if err != nil {
-		warnCreatingConfig(err)
+		return err
 	}
 	var writer *bufio.Writer = bufio.NewWriter(file)
 	var line string
 	for _, line = range sample_config {
 		_, err = writer.WriteString(line + "\n")
 		if err != nil {
-			warnCreatingConfig(err)
+			return err
 		}
 	}
 	writer.Flush()
-	file.Close()
+	return nil
 }
