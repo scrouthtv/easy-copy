@@ -24,6 +24,7 @@ _ec() {
 		opts+="-V --verbose "
 		opts+="-q --quiet "
 		opts+="--color "
+		opts+="-e --extended-colors"
 		COMPREPLY=($(compgen -W "$opts" \"${COMP_WORDS[$COMP_CWORD]}\"))
 	else
 		COMPREPLY=($(compgen -f \"${COMP_WORDS[$COMP_CWORD]}\"))
