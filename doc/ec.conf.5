@@ -59,8 +59,17 @@ On Windows, colors are only enabled in the Powershell.
 On Linux, colors are disabled if stdout is a pipe.
 .TP
 .B never
-Do not create reflinks.
+Do not print escape codes.
 .RE
+.TP
+.I extended-colors
+Whether to colorize the output using $LS_COLORS
+.br
+Set to 
+.B true
+or
+.B false
+(default).
 .TP
 .I reflink
 Whether to create reflinks. Set to
