@@ -1,8 +1,12 @@
-// +build !linux,!windows
-// +build !goin
+// +build !linux,!windows goin
 
 package input
 
+import "os"
+import "bufio"
+
 func Getch() rune {
-	panic("NOT SUPPORTED")
+	var rdr *bufio.Reader = bufio.NewReader(os.Stdin)
+	r, _, _ := rdr.ReadRune()
+	return r
 }
