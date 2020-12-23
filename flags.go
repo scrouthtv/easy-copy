@@ -64,6 +64,10 @@ func parseKeyValue(key string, value string) {
 		case "dereference":
 			followSymlinks = 2
 		}
+	case "extended-colors":
+		if configInterpretBoolean(value) {
+			progressLSColors = true
+		}
 	case "color":
 		switch value {
 		case "never", "false", "no", "none":
