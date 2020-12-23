@@ -1,4 +1,4 @@
-// +build color
+// +build !nocolor
 
 package color
 
