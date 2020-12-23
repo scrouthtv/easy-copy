@@ -27,7 +27,7 @@ func formatFile(info os.FileInfo) string {
 		return ""
 	}
 	//                      rwxrwxrwx
-	if info.Mode().Perm()&0b001000000 != 0 {
+	if info.Mode().Perm()&0b001000000 != 0 && info.Mode().IsRegular() {
 		return lsc.types["ex"]
 	}
 	switch info.Mode() & os.ModeType {

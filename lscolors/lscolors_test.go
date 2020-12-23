@@ -35,6 +35,19 @@ func TestFormatSingleFile(t *testing.T) {
 	os.Remove(f.Name())
 }
 
+func TestFormatSingleFolder(t *testing.T) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Lstat(home)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%t", info.IsDir())
+	t.Logf(formatFile(info))
+}
+
 // Simulate an ls output on ~
 // Compare to ls -A -w 81 -x --color=auto ~
 func TestFormatHomeFolder(t *testing.T) {
