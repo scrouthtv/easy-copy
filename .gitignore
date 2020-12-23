@@ -5,7 +5,6 @@ bar/
 qwertz/
 *.img
 test/
-test.zsh
 
 # executables:
 a.out
