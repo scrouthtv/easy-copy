@@ -7,6 +7,8 @@ import "path/filepath"
 import "os"
 import "strconv"
 
+import "github.com/scrouthtv/easy-copy/color"
+
 const BAR_WIDTH int = 50
 const MAX_WIDTH int = 80
 
@@ -101,18 +103,18 @@ func drawLoop() {
 			filesLock.RUnlock()
 			fmt.Println()
 			lines++
-			fmt.Print(FGColors.Yellow, Textstyle.Bold)
+			fmt.Print(color.FGColors.Yellow, color.Text.Bold)
 			fmt.Print(conflict)
-			fmt.Print(Textstyle.Reset, FGColors.Magenta)
+			fmt.Print(color.Text.Reset, color.FGColors.Magenta)
 			fmt.Print(" already exists in ")
-			fmt.Print(FGColors.Yellow, Textstyle.Bold)
+			fmt.Print(color.FGColors.Yellow, color.Text.Bold)
 			fmt.Print(filepath.Dir(cTarget))
-			fmt.Println(Textstyle.Reset + FGColors.Magenta)
+			fmt.Println(color.Text.Reset + color.FGColors.Magenta)
 			lines++
 			fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All")
 			lines++
 			fmt.Print("[I]nfo | [D]iff | [R]ename | [E]dit target | [Q]uit")
-			fmt.Println(Textstyle.Reset)
+			fmt.Println(color.Text.Reset)
 			lines++
 			var in rune = getChoice("soavidreq")
 			switch in {

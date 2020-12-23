@@ -5,6 +5,8 @@ import "strings"
 import "errors"
 import "strconv"
 
+import "github.com/scrouthtv/easy-copy/color"
+
 // 0 quiet
 // 1 default (show progress)
 // 2 verbose
@@ -66,11 +68,11 @@ func parseKeyValue(key string, value string) {
 	case "color":
 		switch value {
 		case "never", "false", "no", "none":
-			initColors(false)
+			color.Init(false)
 		case "auto":
-			initColors(autoColors())
+			color.Init(autoColors())
 		case "always", "true", "yes", "all":
-			initColors(true)
+			color.Init(true)
 		}
 	case "reflink":
 		switch value {
@@ -136,7 +138,7 @@ func parseFlag(prefix string, flag string) {
 	case "no-config":
 		doReadConfig = false
 	case "color":
-		initColors(true)
+		color.Init(true)
 	case "reflink":
 		doReflinks = 2
 	case "n", "no-clobber": //case "no-overwrite":

@@ -6,6 +6,8 @@ import "strings"
 import "path/filepath"
 import "time"
 
+import "github.com/scrouthtv/easy-copy/color"
+
 var createFoldersInTarget bool
 
 var unsearchedPaths []string
@@ -135,7 +137,7 @@ func iteratePaths() {
 }
 
 func main() {
-	initColors(autoColors())
+	color.Init(autoColors())
 	parseArgs()
 	readConfig()
 
