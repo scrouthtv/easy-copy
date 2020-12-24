@@ -1,7 +1,7 @@
 // +build windows
 // +build !goin
 
-package main
+package input
 
 //#include <stdio.h>
 //#include <conio.h>
