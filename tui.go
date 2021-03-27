@@ -113,7 +113,7 @@ func drawLoop() {
 			lines++
 			fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All")
 			lines++
-			fmt.Print("[I]nfo | [D]iff | [R]ename | [E]dit target | [Q]uit")
+			fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
 			fmt.Println(color.Text.Reset)
 			lines++
 			var in rune = getChoice("soavidreq")
@@ -140,13 +140,9 @@ func drawLoop() {
 				piledConflicts = nil
 				filesLock.Unlock()
 			case 'i':
-				fmt.Println("info")
-			case 'd':
-				fmt.Println("diff")
+				panic("not supported")
 			case 'r':
-				fmt.Println("rename")
-			case 'e':
-				fmt.Println("edit")
+				panic("not supported")
 			case 'q':
 				os.Exit(0)
 			}
