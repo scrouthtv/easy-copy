@@ -46,7 +46,7 @@ func drawLoop() {
 		}
 		lines = 0
 
-		if verbose > VERB_QUIET {
+		if verbose > VerbQuiet {
 			var BAR_FILLED int
 
 			if full_size == 0 {
@@ -183,7 +183,7 @@ func printSummary() {
 		fmt.Print("\033[1A\033[2K")
 	}
 
-	if verbose > VERB_QUIET {
+	if verbose > VerbQuiet {
 		fmt.Print("  [")
 		for i = 0; i < BAR_WIDTH; i++ {
 			fmt.Print("=")

@@ -111,7 +111,7 @@ func verbVerboseEnabled() {
 }
 
 func verbFlags() {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Printf(color.FGColors.Green)
 		fmt.Println(" Verbose:", verbose)
 		fmt.Println(" Overwrite Mode:", onExistingFile)
@@ -128,7 +128,7 @@ func verbDisablingColors(shellname string) {
 }
 
 func verbTargets() {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Println("-------------------------")
 		fmt.Println("these tasks will be done:")
@@ -148,13 +148,13 @@ func verbTargets() {
 }
 
 func verbDoneIterating() {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Println(color.FGColors.Yellow + "All source files iterated." + color.Text.Reset)
 	}
 }
 
 func verbSearchStart() {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Println("Have to search", unsearchedPaths)
 		fmt.Print("Target is ", targetBase)
@@ -163,7 +163,7 @@ func verbSearchStart() {
 }
 
 func verbCopyStart(sourcePath string, destPath string) {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Print("src: ", sourcePath, " dest: ", destPath)
 		fmt.Println(color.Text.Reset)
@@ -171,7 +171,7 @@ func verbCopyStart(sourcePath string, destPath string) {
 }
 
 func verbCopyFinished(srcPath string, destPath string) {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Print("finished copying ", srcPath, " to ", destPath)
 		fmt.Println(color.Text.Reset)
@@ -238,7 +238,7 @@ func warnBadFile(file string) {
 }
 
 func verbReflinkFailed(sourcePath string, destPath string, err error) {
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Println("Error reflinking", sourcePath, "to", destPath+":")
 		fmt.Println(err)

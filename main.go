@@ -164,7 +164,7 @@ func main() {
 		}
 	}
 
-	if verbose >= VERB_INFO {
+	if verbose >= VerbInfo {
 		printVersion()
 		verbFlags()
 	}

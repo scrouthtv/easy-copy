@@ -23,5 +23,3 @@ func speedLoop() {
 	}
 	ticker.Stop()
 }
-
-var startMeasure time.Time

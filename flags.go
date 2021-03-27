@@ -8,14 +8,23 @@ import (
 	"strings"
 )
 
-var verbose int = VERB_NOTICE
+var verbose int = VerbNotice
 
 const (
-	VERB_QUIET = iota
-	VERB_CRIT
-	VERB_NOTICE
-	VERB_INFO
-	VERB_DEBUG
+	// VerbQuiet indicates that no output should be written at all.
+	VerbQuiet = iota
+
+	// VerbCrit indicates that only critical messages should be written.
+	VerbCrit
+
+	// VerbNotice indicates that critical and helpful messages should be written.
+	VerbNotice
+
+	// VerbInfo indicates that additional info should be written.
+	VerbInfo
+
+	// VerbDebug should only be used for debugging.
+	VerbDebug
 )
 
 // 0 skip
@@ -41,11 +50,11 @@ func parseKeyValue(key string, value string) {
 	switch key {
 	case "verbose":
 		if configInterpretBoolean(value) {
-			verbose = VERB_INFO
+			verbose = VerbInfo
 		}
 	case "quiet":
 		if configInterpretBoolean(value) {
-			verbose = VERB_QUIET
+			verbose = VerbQuiet
 		}
 	case "overwrite":
 		switch value {
@@ -122,10 +131,10 @@ func parseFlag(prefix string, flag string) {
 		printVersion()
 		os.Exit(0)
 	case "V", "verbose":
-		verbose = VERB_INFO
+		verbose = VerbInfo
 		verbVerboseEnabled()
 	case "q", "quiet":
-		verbose = VERB_QUIET
+		verbose = VerbQuiet
 	case "copying":
 		printCopying()
 		os.Exit(0)
