@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"easy-copy/color"
 	"fmt"
 	"os"
@@ -80,7 +81,7 @@ func printVersion() {
 
 func printCopying() {
 	_, err := runPager(infoCopying())
-	if err == errNoPager {
+	if errors.Is(err, errNoPager) {
 		fmt.Println(infoCopying())
 	} else if err != nil {
 		fmt.Println(err)
@@ -90,7 +91,7 @@ func printCopying() {
 
 func printWarranty() {
 	_, err := runPager(infoWarranty())
-	if err == errNoPager {
+	if errors.Is(err, errNoPager) {
 		fmt.Println(infoCopying())
 	} else if err != nil {
 		fmt.Println(err)
@@ -145,13 +146,11 @@ func verbTargets() {
 		fmt.Println("-------------------------")
 		fmt.Println("these tasks will be done:")
 		filesLock.RLock()
-		var v string
-		for _, v = range folders {
+		for _, v := range folders {
 			fmt.Println("need to create folder", v)
 		}
-		for _, v = range fileOrder {
-			var target string = targets[v]
-			fmt.Println(v, "will be copied to", target+"/")
+		for _, v := range fileOrder {
+			fmt.Println(v, "will be copied to", targets[v]+"/")
 		}
 		filesLock.RUnlock()
 		fmt.Println("-------------------------")

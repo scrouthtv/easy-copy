@@ -9,9 +9,9 @@ import (
 	"strconv"
 )
 
-var BUFFERSIZE uint = 32768
+var buffersize uint = 32768
 
-var buf []byte = make([]byte, BUFFERSIZE)
+var buf []byte = make([]byte, buffersize)
 
 /**
  * Loops checking / waiting for any left work.
@@ -21,27 +21,37 @@ func copyLoop() {
 	for !done {
 		filesLock.Lock()
 		if len(folders) > 0 {
-			var localFolders []string = folders
+
+			// Create all folders:
+			localFolders := folders
 			folders = nil
+
 			filesLock.Unlock()
 			createFolders(localFolders)
 		} else if len(pendingConflicts) > 0 {
+
+			// Work resolved conflicts:
 			var id int = pendingConflicts[0]
 			pendingConflicts = pendingConflicts[1:]
 			var sourcePath string = fileOrder[id]
 			destPath := filepath.Join(targets[sourcePath],
 				filepath.Base(sourcePath))
+
 			filesLock.Unlock()
 			copyFilePath(sourcePath, destPath)
 		} else if i < len(fileOrder) {
+
+			// Copy normal files:
 			var sourcePath string = fileOrder[i]
 			var destPath string
+
 			if createFoldersInTarget {
 				destPath = filepath.Join(targets[sourcePath],
 					filepath.Base(sourcePath))
 			} else {
 				destPath = targets[sourcePath]
 			}
+
 			filesLock.Unlock()
 
 			// check if file already exists and we even care about that:
@@ -73,6 +83,7 @@ func copyLoop() {
 			filesLock.RLock()
 			if len(folders) == 0 && len(fileOrder) == i &&
 				len(piledConflicts) == 0 && len(pendingConflicts) == 0 {
+
 				// 1. all folders have been created
 				// 2. we've tried to copy all files so far
 				// 3. all conflicts we had to ask the user are resolved
@@ -81,6 +92,7 @@ func copyLoop() {
 					syncdel(&fileOrder)
 					syncdel(&sources)
 				}
+
 				done = true
 			}
 			filesLock.RUnlock()
@@ -109,9 +121,11 @@ func copyFilePath(sourcePath string, destPath string) {
 			}
 		}
 	}
-	var stat os.FileInfo
-	stat, err = os.Lstat(sourcePath)
-	if stat.Mode().IsRegular() {
+
+	stat, err := os.Lstat(sourcePath)
+	if err != nil {
+		errCopying(sourcePath, destPath, err)
+	} else if stat.Mode().IsRegular() {
 		currentTaskType = 1
 		currentFile = sourcePath
 		var source, dest *os.File
@@ -166,17 +180,21 @@ func copyFilePath(sourcePath string, destPath string) {
  */
 func createFolders(folders []string) {
 	var folder string
+
 	for _, folder = range folders {
 		currentTaskType = 3
 		currentFile = folder
+
 		if progressLSColors {
 			currentFile = "\033[" + lscolors.FormatType("di") + "m" + currentFile +
 				"\033[" + lscolors.FormatType("rs") + "m"
 		}
+
 		var err error = os.MkdirAll(folder, 0o755)
 		if err != nil {
 			errCreatingFile(err, folder)
 		}
+
 		doneSize += uint64(folderSize)
 	}
 }
@@ -184,26 +202,31 @@ func createFolders(folders []string) {
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 	var readAmount, writtenAmount int
 	var err error
+
 	for {
 		readAmount, err = source.Read(buf)
-		if err != nil && err != io.EOF {
+
+		if err != nil && !errors.Is(err, io.EOF) {
 			errCopying(source.Name(), dest.Name(), err)
 		}
 		if readAmount == 0 {
 			// when the file is fully read
 			break
 		}
+
 		writtenAmount, err = dest.Write(buf[:readAmount])
 		if err != nil {
 			return err
 		}
+
 		if readAmount != writtenAmount {
 			return errors.New("couldn't write all the data: " +
 				strconv.Itoa(readAmount) + " read, " +
 				strconv.Itoa(writtenAmount) + "written")
 		}
+
 		*progressStorage += uint64(writtenAmount)
 	}
-	// verbCopyFinished(source.Name(), dest.Name());
+
 	return nil
 }

@@ -65,11 +65,13 @@ func runPager(text string) (bool, error) {
 	writer.Flush()
 	out.Close()
 	cmd.Wait()
+
 	return true, nil
 }
 
 func getChoice(choices string) rune {
 	var in rune
+
 	for {
 		in = unicode.ToLower(input.Getch())
 		if strings.ContainsRune(choices, in) {

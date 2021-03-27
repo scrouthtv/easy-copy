@@ -104,8 +104,8 @@ func parseKeyValue(key string, value string) {
 		var err error
 		val, err = strconv.Atoi(value)
 		if err == nil {
-			BUFFERSIZE = uint(val)
-			buf = make([]byte, BUFFERSIZE)
+			buffersize = uint(val)
+			buf = make([]byte, buffersize)
 		}
 	default:
 		warnBadConfigKey(key)

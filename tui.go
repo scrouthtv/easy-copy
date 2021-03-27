@@ -70,8 +70,7 @@ func drawLoop() {
 				fmt.Print(" ")
 			}
 			fmt.Print("] ")
-			var unit int
-			unit = sizeAutoUnit(float64(fullSize))
+			unit := sizeAutoUnit(float64(fullSize))
 			fmt.Print(formatSize(float64(doneSize), unit))
 			fmt.Print(" / ")
 			fmt.Print(formatSize(float64(fullSize), unit))
@@ -95,7 +94,7 @@ func drawLoop() {
 
 			// remaining time:
 			fmt.Print(", ")
-			var secondsLeft float32 = float32(fullSize-doneSize) / sizePerSecond
+			secondsLeft := float32(fullSize-doneSize) / sizePerSecond
 			fmt.Print(formatSeconds(float64(secondsLeft)))
 			fmt.Println(" remaining")
 			lines++
@@ -123,7 +122,8 @@ func drawLoop() {
 			fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
 			fmt.Println(color.Text.Reset)
 			lines++
-			var in rune = getChoice("soavidreq")
+			in := getChoice("soavidreq")
+
 			switch in {
 			case 's':
 				filesLock.Lock()
@@ -173,31 +173,30 @@ func skipFile(path string) {
 		doneSize += uint64(symlinkSize)
 	}
 
-	doneAmount += 1
+	doneAmount++
 }
 
 func printSummary() {
-	var elapsed time.Duration
-	elapsed = time.Now().Sub(start)
-	var i int
-	for i = 0; i < lines; i++ {
+	elapsed := time.Since(start)
+	for i := 0; i < lines; i++ {
 		fmt.Print("\033[1A\033[2K")
 	}
 
 	if verbose > VerbQuiet {
 		fmt.Print("  [")
-		for i = 0; i < barWidth; i++ {
+
+		for i := 0; i < barWidth; i++ {
 			fmt.Print("=")
 		}
+
 		fmt.Println("]")
 		fmt.Print("   Copied " + strconv.FormatUint(fullAmount, 9))
 		fmt.Print(" files in ")
 		fmt.Print(formatSeconds(elapsed.Seconds()))
 		fmt.Print(" (")
-		var full_speed float64
-		full_speed = float64(fullSize) / float64(elapsed.Seconds())
-		fmt.Print(formatSize(float64(full_speed),
-			sizeAutoUnit(float64(full_speed))))
+		fullSpeed := float64(fullSize) / float64(elapsed.Seconds())
+		fmt.Print(formatSize(float64(fullSpeed),
+			sizeAutoUnit(float64(fullSpeed))))
 		fmt.Print("/s).")
 		fmt.Println()
 	}
