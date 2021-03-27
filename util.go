@@ -12,7 +12,19 @@ import (
 	"unicode"
 )
 
-var noPagerError error = errors.New("No suitable pager found.")
+var errNoPager error = errors.New("error: no suitable pager found")
+
+type errOpeningPager struct {
+	err error
+}
+
+func (err *errOpeningPager) Unwrap() error {
+	return err.err
+}
+
+func (err *errOpeningPager) Error() string {
+	return "error opening pager: " + err.err.Error()
+}
 
 /**
 * Tries to find a pager in $PAGER or defaults to less or more.
@@ -32,7 +44,7 @@ func runPager(text string) (bool, error) {
 			if err == nil {
 				pager = "more"
 			} else {
-				return false, noPagerError
+				return false, &errOpeningPager{err}
 			}
 		}
 	}
@@ -40,13 +52,13 @@ func runPager(text string) (bool, error) {
 	var out io.WriteCloser
 	out, err = cmd.StdinPipe()
 	if err != nil {
-		return false, err
+		return false, &errOpeningPager{err}
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Start()
 	if err != nil {
-		return false, err
+		return false, &errOpeningPager{err}
 	}
 	writer := bufio.NewWriter(out)
 	writer.WriteString(text)

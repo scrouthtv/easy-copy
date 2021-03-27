@@ -41,8 +41,13 @@ var (
 var mode int = -1
 
 const (
+	// ModeCopy indicates that the files should only be copied.
 	ModeCopy = iota
+
+	// ModeMove indicates that the files should be moved.
 	ModeMove
+
+	// ModeRemove indicates that the specified files should be deleted.
 	ModeRemove
 )
 

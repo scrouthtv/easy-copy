@@ -12,11 +12,9 @@ import "C"
 
 // this defines C.FICLONE
 
-/**
- * Takes two paths as arguments. Attempts to reflink dst to src.
- * If that did not work, an error is returned and the file has to
- * be copied manually
- */
+// reflink takes two paths as arguments. Attempts to reflink dst to
+// src. If that did not work, an error is returned and the file has to
+// be copied manually
 func reflink(srcPath string, dstPath string, progressStorage *uint64) error {
 	var err error
 	var src, dst *os.File
@@ -43,7 +41,6 @@ func reflink(srcPath string, dstPath string, progressStorage *uint64) error {
 
 	err = sd.Control(func(dfd uintptr) {
 		err2 = ss.Control(func(sfd uintptr) {
-			// will you shut up man? int ioctl(int dest_fd, FICLONE, int src_fd);
 			_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, dfd, C.FICLONE, sfd)
 			if errno != 0 {
 				err3 = errno
