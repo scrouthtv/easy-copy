@@ -32,10 +32,10 @@ var iteratorDone, done bool = false, false
 var sources []string
 
 var (
-	done_amount uint64 = 0
-	full_amount uint64 = 0
-	done_size   uint64 = 0
-	full_size   uint64 = 0
+	doneAmount uint64 = 0
+	fullAmount uint64 = 0
+	doneSize   uint64 = 0
+	fullSize   uint64 = 0
 )
 
 var mode int = -1
@@ -106,14 +106,14 @@ func iteratePaths() {
 			//  - multiple files and folders are passed and should be copied
 			//    into a target, this variable was already set to true in main
 			createFoldersInTarget = true
-			full_size += uint64(folderSize)
+			fullSize += uint64(folderSize)
 			filesLock.Unlock()
 		} else if stat.Mode().IsRegular() {
 			filesLock.Lock()
 			fileOrder = append(fileOrder, next)
 			targets[next] = uPTargets[next]
 			filesLock.Unlock()
-			full_size += uint64(stat.Size())
+			fullSize += uint64(stat.Size())
 		} else if stat.Mode()&os.ModeDevice != 0 {
 			warnBadFile(next)
 		} else if stat.Mode()&os.ModeSymlink != 0 {
@@ -122,7 +122,7 @@ func iteratePaths() {
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next)
 				targets[next] = nextTarget
-				full_size += uint64(symlinkSize)
+				fullSize += uint64(symlinkSize)
 			} else if followSymlinks == 2 {
 				nextResolved, err := os.Readlink(next)
 				if err != nil {
@@ -140,7 +140,7 @@ func iteratePaths() {
 	}
 	filesLock.RUnlock()
 	iteratorDone = true
-	full_amount = uint64(len(fileOrder))
+	fullAmount = uint64(len(fileOrder))
 	verbDoneIterating()
 	verbTargets()
 

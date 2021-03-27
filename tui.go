@@ -47,34 +47,34 @@ func drawLoop() {
 		lines = 0
 
 		if verbose > VerbQuiet {
-			var BAR_FILLED int
+			var barFilled int
 
-			if full_size == 0 {
+			if fullSize == 0 {
 				// unneeded as this is only called after the iterator is done
-				BAR_FILLED = barWidth / 2
+				barFilled = barWidth / 2
 			} else {
-				BAR_FILLED = int(math.Round(float64(barWidth) * float64(done_size) / float64(full_size)))
+				barFilled = int(math.Round(float64(barWidth) * float64(doneSize) / float64(fullSize)))
 			}
 
 			fmt.Print("  [")
 			var i int
-			for i = 0; i < BAR_FILLED-1; i++ {
+			for i = 0; i < barFilled-1; i++ {
 				fmt.Print("=")
 			}
-			if BAR_FILLED == barWidth {
+			if barFilled == barWidth {
 				fmt.Print("=")
 			} else {
 				fmt.Print(">")
 			}
-			for i = BAR_FILLED; i < barWidth; i++ {
+			for i = barFilled; i < barWidth; i++ {
 				fmt.Print(" ")
 			}
 			fmt.Print("] ")
 			var unit int
-			unit = sizeAutoUnit(float64(full_size))
-			fmt.Print(formatSize(float64(done_size), unit))
+			unit = sizeAutoUnit(float64(fullSize))
+			fmt.Print(formatSize(float64(doneSize), unit))
 			fmt.Print(" / ")
-			fmt.Print(formatSize(float64(full_size), unit))
+			fmt.Print(formatSize(float64(fullSize), unit))
 			fmt.Println()
 			lines++
 
@@ -95,7 +95,7 @@ func drawLoop() {
 
 			// remaining time:
 			fmt.Print(", ")
-			var secondsLeft float32 = float32(full_size-done_size) / sizePerSecond
+			var secondsLeft float32 = float32(fullSize-doneSize) / sizePerSecond
 			fmt.Print(formatSeconds(float64(secondsLeft)))
 			fmt.Println(" remaining")
 			lines++
@@ -166,14 +166,14 @@ func skipFile(path string) {
 	stat, err := os.Lstat(path)
 
 	if err != nil {
-		done_size += 0
+		doneSize += 0
 	} else if stat.Mode().IsRegular() {
-		done_size += uint64(stat.Size())
+		doneSize += uint64(stat.Size())
 	} else if stat.Mode()&os.ModeSymlink != 0 {
-		done_size += uint64(symlinkSize)
+		doneSize += uint64(symlinkSize)
 	}
 
-	done_amount += 1
+	doneAmount += 1
 }
 
 func printSummary() {
@@ -190,12 +190,12 @@ func printSummary() {
 			fmt.Print("=")
 		}
 		fmt.Println("]")
-		fmt.Print("   Copied " + strconv.FormatUint(full_amount, 9))
+		fmt.Print("   Copied " + strconv.FormatUint(fullAmount, 9))
 		fmt.Print(" files in ")
 		fmt.Print(formatSeconds(elapsed.Seconds()))
 		fmt.Print(" (")
 		var full_speed float64
-		full_speed = float64(full_size) / float64(elapsed.Seconds())
+		full_speed = float64(fullSize) / float64(elapsed.Seconds())
 		fmt.Print(formatSize(float64(full_speed),
 			sizeAutoUnit(float64(full_speed))))
 		fmt.Print("/s).")

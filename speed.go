@@ -17,8 +17,8 @@ func speedLoop() {
 	for tick := range ticker.C {
 		var seconds float32 = float32(tick.Sub(lastTime).Seconds())
 		if seconds != 0 {
-			sizePerSecond = float32(done_size-lastSize) / float32(seconds)
-			lastSize = done_size
+			sizePerSecond = float32(doneSize-lastSize) / float32(seconds)
+			lastSize = doneSize
 		}
 	}
 	ticker.Stop()

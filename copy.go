@@ -61,7 +61,7 @@ func copyLoop() {
 			}
 			if doCopy {
 				copyFilePath(sourcePath, destPath)
-				done_amount += 1
+				doneAmount += 1
 			}
 			i += 1
 		} else {
@@ -97,7 +97,7 @@ func copyLoop() {
 func copyFilePath(sourcePath string, destPath string) {
 	var err error
 	if doReflinks > 0 {
-		err = reflink(sourcePath, destPath, &done_size)
+		err = reflink(sourcePath, destPath, &doneSize)
 		if err == nil {
 			return
 		} else {
@@ -128,7 +128,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
-		err := copyFile(source, dest, &done_size)
+		err := copyFile(source, dest, &doneSize)
 		if err != nil {
 			errCopying(source.Name(), dest.Name(), err)
 		}
@@ -156,7 +156,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil {
 			errCreatingLink(err, sourcePath, destPath)
 		}
-		done_size += uint64(symlinkSize)
+		doneSize += uint64(symlinkSize)
 	}
 }
 
@@ -177,7 +177,7 @@ func createFolders(folders []string) {
 		if err != nil {
 			errCreatingFile(err, folder)
 		}
-		done_size += uint64(folderSize)
+		doneSize += uint64(folderSize)
 	}
 }
 
