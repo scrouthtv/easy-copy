@@ -128,7 +128,10 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
-		copyFile(source, dest, &done_size)
+		err := copyFile(source, dest, &done_size)
+		if err != nil {
+			errCopying(source.Name(), dest.Name(), err)
+		}
 		source.Close()
 		dest.Close()
 	} else if stat.Mode()&os.ModeSymlink != 0 {

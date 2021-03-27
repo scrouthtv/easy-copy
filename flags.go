@@ -27,19 +27,22 @@ const (
 	VerbDebug
 )
 
+// onExistingFile takes one of these values:
 // 0 skip
 // 1 overwrite
-// 2 ask
+// 2 ask.
 var onExistingFile uint8 = 2
 
+// followSymlinks takes one of these values:
 // 0 ignore symlinks
 // 1 follow symlinks, copying them as links
-// 2 fully dereference
+// 2 fully dereference.
 var followSymlinks uint8 = 1
 
+// doReflinks takes one of these values:
 // 0 never  -> no reflinks
 // 1 auto   -> attempt reflink, if that fails simply copy
-// 2 always -> attempt reflink, if that fails, fail
+// 2 always -> attempt reflink, if that fails, fail.
 var doReflinks uint8 = 0
 
 var progressLSColors bool = false

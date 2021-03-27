@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	BAR_WIDTH int = 50
-	MAX_WIDTH int = 80
+	barWidth int = 50
+	maxWidth int = 80
 )
 
 // contains ids to files that should be recopied after the
@@ -51,9 +51,9 @@ func drawLoop() {
 
 			if full_size == 0 {
 				// unneeded as this is only called after the iterator is done
-				BAR_FILLED = BAR_WIDTH / 2
+				BAR_FILLED = barWidth / 2
 			} else {
-				BAR_FILLED = int(math.Round(float64(BAR_WIDTH) * float64(done_size) / float64(full_size)))
+				BAR_FILLED = int(math.Round(float64(barWidth) * float64(done_size) / float64(full_size)))
 			}
 
 			fmt.Print("  [")
@@ -61,12 +61,12 @@ func drawLoop() {
 			for i = 0; i < BAR_FILLED-1; i++ {
 				fmt.Print("=")
 			}
-			if BAR_FILLED == BAR_WIDTH {
+			if BAR_FILLED == barWidth {
 				fmt.Print("=")
 			} else {
 				fmt.Print(">")
 			}
-			for i = BAR_FILLED; i < BAR_WIDTH; i++ {
+			for i = BAR_FILLED; i < barWidth; i++ {
 				fmt.Print(" ")
 			}
 			fmt.Print("] ")
@@ -82,11 +82,11 @@ func drawLoop() {
 			fmt.Print("   ")
 			switch currentTaskType {
 			case 1:
-				fmt.Print("Copying " + shrinkPath(currentFile, MAX_WIDTH/2))
+				fmt.Print("Copying " + shrinkPath(currentFile, maxWidth/2))
 			case 2:
-				fmt.Print("Linking " + shrinkPath(currentFile, MAX_WIDTH/2))
+				fmt.Print("Linking " + shrinkPath(currentFile, maxWidth/2))
 			case 3:
-				fmt.Print("Creating " + shrinkPath(currentFile, MAX_WIDTH/2))
+				fmt.Print("Creating " + shrinkPath(currentFile, maxWidth/2))
 			}
 			fmt.Print(" @ ")
 			fmt.Print(formatSize(float64(sizePerSecond),
@@ -163,10 +163,11 @@ func drawLoop() {
  * Add the file size to done_size and 1 to done_amount.
  */
 func skipFile(path string) {
-	var stat os.FileInfo
-	stat, _ = os.Lstat(path)
+	stat, err := os.Lstat(path)
 
-	if stat.Mode().IsRegular() {
+	if err != nil {
+		done_size += 0
+	} else if stat.Mode().IsRegular() {
 		done_size += uint64(stat.Size())
 	} else if stat.Mode()&os.ModeSymlink != 0 {
 		done_size += uint64(symlinkSize)
@@ -185,7 +186,7 @@ func printSummary() {
 
 	if verbose > VerbQuiet {
 		fmt.Print("  [")
-		for i = 0; i < BAR_WIDTH; i++ {
+		for i = 0; i < barWidth; i++ {
 			fmt.Print("=")
 		}
 		fmt.Println("]")

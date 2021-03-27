@@ -36,8 +36,7 @@ func runPager(text string) (bool, error) {
 			}
 		}
 	}
-	var cmd *exec.Cmd
-	cmd = exec.Command(pager)
+	cmd := exec.Command(pager)
 	var out io.WriteCloser
 	out, err = cmd.StdinPipe()
 	if err != nil {

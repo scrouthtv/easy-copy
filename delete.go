@@ -2,7 +2,7 @@ package main
 
 import "os"
 
-// Delete a list of files synchronously
+// syncdel deletes a list of files synchronously.
 func syncdel(files *[]string) {
 	var path string
 	var err error

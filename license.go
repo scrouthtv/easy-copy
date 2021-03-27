@@ -34,7 +34,7 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.`
 }
 
-func infoCopying() string {
+func infoCopying() string { //nolint:funlen // brrr
 	return `4. Conveying Verbatim Copies.
 
 You may convey verbatim copies of the Program's source code as you

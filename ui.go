@@ -81,16 +81,14 @@ func printVersion() {
 func printCopying() {
 	_, err := runPager(infoCopying())
 	if err != nil {
-		fmt.Println(color.FGColors.Red + err.Error())
-		os.Exit(1)
+		fmt.Println(infoCopying())
 	}
 }
 
 func printWarranty() {
 	_, err := runPager(infoWarranty())
 	if err != nil {
-		fmt.Println(color.FGColors.Red + err.Error())
-		os.Exit(1)
+		fmt.Println(infoCopying())
 	}
 }
 
@@ -224,14 +222,6 @@ func warnConfig(err error) {
 	fmt.Print(err)
 	fmt.Println(color.Text.Reset)
 }
-
-//func warnBadConfigValue(key string, given uint8, expected string) {
-//fmt.Println("Error while reading the config file:");
-//fmt.Print(color.FGColors.LRed);
-//fmt.Print("Bad value for", key, "given", given, "but expected", expected);
-//fmt.Println(color.Text.Reset);
-//fmt.Println("Reverting to default.");
-//}
 
 func warnBadConfigKey(key string) {
 	fmt.Print(color.FGColors.LRed)
