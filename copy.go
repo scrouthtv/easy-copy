@@ -18,6 +18,7 @@ var buf []byte = make([]byte, buffersize)
  */
 func copyLoop() {
 	var i int = 0
+
 	for !done {
 		filesLock.Lock()
 		if len(folders) > 0 {
@@ -209,6 +210,7 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 		if err != nil && !errors.Is(err, io.EOF) {
 			errCopying(source.Name(), dest.Name(), err)
 		}
+
 		if readAmount == 0 {
 			// when the file is fully read
 			break

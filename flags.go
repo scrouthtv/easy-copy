@@ -48,8 +48,10 @@ var doReflinks uint8 = 0
 var progressLSColors bool = false
 
 func parseKeyValue(key string, value string) {
+	// Trim away spaces and tabs:
 	key = strings.ToLower(strings.Trim(key, " \t'\""))
 	value = strings.ToLower(strings.Trim(value, " \t'\""))
+
 	switch key {
 	case "verbose":
 		if configInterpretBoolean(value) {
@@ -100,12 +102,12 @@ func parseKeyValue(key string, value string) {
 			doReflinks = 2
 		}
 	case "buffersize":
-		var val int
-		var err error
-		val, err = strconv.Atoi(value)
+		val, err := strconv.Atoi(value)
 		if err == nil {
 			buffersize = uint(val)
 			buf = make([]byte, buffersize)
+		} else {
+			warnConfig(errors.New("bad value for buffersize: " + value))
 		}
 	default:
 		warnBadConfigKey(key)
@@ -113,11 +115,12 @@ func parseKeyValue(key string, value string) {
 }
 
 func parseOption(line string) {
-	var kv []string = strings.Split(line, "=")
+	kv := strings.Split(line, "=")
 	if len(kv) != 2 {
 		warnConfig(errors.New("missing '=' or too many '=' : " + line))
 		return
 	}
+
 	parseKeyValue(kv[0], kv[1])
 }
 
@@ -126,6 +129,7 @@ func parseFlag(prefix string, flag string) {
 		parseOption(flag)
 		return
 	}
+
 	switch flag {
 	case "h", "help":
 		printHelp()
@@ -135,6 +139,7 @@ func parseFlag(prefix string, flag string) {
 		os.Exit(0)
 	case "V", "verbose":
 		verbose = VerbInfo
+
 		verbVerboseEnabled()
 	case "q", "quiet":
 		verbose = VerbQuiet
