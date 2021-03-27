@@ -79,7 +79,7 @@ func copyLoop() {
 				// 2. we've tried to copy all files so far
 				// 3. all conflicts we had to ask the user are resolved
 				// 4. all conflicts the user already answered have been dealt with
-				if mode == MODE_MV {
+				if mode == ModeMove {
 					syncdel(&fileOrder)
 					syncdel(&sources)
 				}

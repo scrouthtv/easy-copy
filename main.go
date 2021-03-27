@@ -41,9 +41,9 @@ var (
 var mode int = -1
 
 const (
-	MODE_CP = iota
-	MODE_MV
-	MODE_RM
+	ModeCopy = iota
+	ModeMove
+	ModeRemove
 )
 
 var doReadConfig bool = true
@@ -175,11 +175,11 @@ func main() {
 
 	switch strings.ToLower(unsearchedPaths[0]) {
 	case "cp":
-		mode = MODE_CP
+		mode = ModeCopy
 	case "mv":
-		mode = MODE_MV
+		mode = ModeMove
 	case "rm":
-		mode = MODE_RM
+		mode = ModeRemove
 		panic("This mode is not implemented (yet).")
 	default:
 		errInvalidMode(strings.ToLower(unsearchedPaths[0]), "cp, mv")
