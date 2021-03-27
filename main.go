@@ -141,7 +141,9 @@ func iteratePaths() {
 	filesLock.RUnlock()
 	iteratorDone = true
 	full_amount = uint64(len(fileOrder))
+	verbDoneIterating()
 	verbTargets()
+
 	// as this function is forked anyways we can directly call this:
 	drawLoop()
 }

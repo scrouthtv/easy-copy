@@ -79,11 +79,19 @@ func printVersion() {
 }
 
 func printCopying() {
-	runPager(infoCopying())
+	_, err := runPager(infoCopying())
+	if err != nil {
+		fmt.Println(color.FGColors.Red + err.Error())
+		os.Exit(1)
+	}
 }
 
 func printWarranty() {
-	runPager(infoWarranty())
+	_, err := runPager(infoWarranty())
+	if err != nil {
+		fmt.Println(color.FGColors.Red + err.Error())
+		os.Exit(1)
+	}
 }
 
 func printColortest() {

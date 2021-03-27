@@ -62,8 +62,7 @@ func reflink(srcPath string, dstPath string, progressStorage *uint64) error {
 
 	if err3 != nil {
 		// write progress:
-		var stat os.FileInfo
-		stat, _ = dst.Stat() // this must work at this point
+		stat, _ := dst.Stat() //nolint:errcheck // this must work at this point
 		*progressStorage += uint64(stat.Size())
 	}
 

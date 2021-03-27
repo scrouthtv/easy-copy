@@ -33,7 +33,6 @@ func copyLoop() {
 				filepath.Base(sourcePath))
 			filesLock.Unlock()
 			copyFilePath(sourcePath, destPath)
-			done_amount += 1
 		} else if i < len(fileOrder) {
 			var sourcePath string = fileOrder[i]
 			var destPath string
@@ -48,9 +47,8 @@ func copyLoop() {
 			// check if file already exists and we even care about that:
 			var doCopy bool = true
 			if onExistingFile != 1 {
-				stat, _ := os.Lstat(destPath)
-				// TODO error handling
-				if stat != nil {
+				stat, err := os.Lstat(destPath)
+				if err == nil && stat != nil {
 					doCopy = false
 					// file exists
 					if onExistingFile == 2 {
