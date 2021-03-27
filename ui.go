@@ -4,7 +4,7 @@ import "fmt"
 import "strings"
 import "os"
 
-import "github.com/scrouthtv/easy-copy/color"
+import "easy-copy/color"
 
 func printUsage() {
 	fmt.Print(color.FGColors.LBlue)

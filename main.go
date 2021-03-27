@@ -6,8 +6,8 @@ import "strings"
 import "path/filepath"
 import "time"
 
-import "github.com/scrouthtv/easy-copy/color"
-import "github.com/scrouthtv/easy-copy/config"
+import "easy-copy/color"
+import "easy-copy/config"
 
 var createFoldersInTarget bool
 

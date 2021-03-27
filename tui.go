@@ -7,7 +7,7 @@ import "path/filepath"
 import "os"
 import "strconv"
 
-import "github.com/scrouthtv/easy-copy/color"
+import "easy-copy/color"
 
 const BAR_WIDTH int = 50
 const MAX_WIDTH int = 80

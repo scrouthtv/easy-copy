@@ -6,7 +6,7 @@ import "errors"
 import "strconv"
 import "path/filepath"
 
-import "github.com/scrouthtv/easy-copy/lscolors"
+import "easy-copy/lscolors"
 
 var BUFFERSIZE uint = 32768
 

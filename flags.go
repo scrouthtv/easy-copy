@@ -5,7 +5,7 @@ import "strings"
 import "errors"
 import "strconv"
 
-import "github.com/scrouthtv/easy-copy/color"
+import "easy-copy/color"
 
 var verbose int = VERB_NOTICE
 
