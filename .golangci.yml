@@ -1,0 +1,43 @@
+output:
+
+linters-settings:
+  errcheck:
+    check-type-assertion: true
+    check-blank: true
+  funlen:
+    lines: 100
+    statements: 80
+  gcognit:
+    min-complexity: 15
+  gocyclo:
+    min-complexity: 15
+  cyclop:
+    max-complexity: 15
+    package-average: 0.0
+  nestif:
+    min-complexity: 7
+  goconst:
+    min-len: 0
+    min-occurences: 3
+  gocritic:
+  godot:
+    comments: all
+  gomnd:
+    settings:
+      mnd:
+        checks: argument, case, condition, operation, return, assign
+        ignored-numbers: 0,1,2,10,16,100
+  lll:
+    line-length: 120
+  misspell:
+    local: US
+  predeclared:
+    q: true
+  unused:
+    check-exported: false
+  wsl:
+    allow-cuddle-declarations: true
+
+linters:
+  enable-all: true
+  disable: nlreturn,nolintlint,tparallel,testpackage,gci,scopelint,gochecknoglobals,interfacer,maligned,golint,dupl,gochecknoinits
