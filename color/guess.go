@@ -5,8 +5,10 @@ package color
 import "runtime"
 
 // save the evaluation of autoColors() to avoid this tedious calculation
-var autoColorsCache bool
-var autoColorsCacheSet bool = false
+var (
+	autoColorsCache    bool
+	autoColorsCacheSet bool = false
+)
 
 func AutoColors() bool {
 	if autoColorsCacheSet {

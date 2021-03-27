@@ -1,23 +1,28 @@
 package main
 
-import "os"
-import "sync"
-import "strings"
-import "path/filepath"
-import "time"
-
-import "easy-copy/color"
-import "easy-copy/config"
+import (
+	"easy-copy/color"
+	"easy-copy/config"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"time"
+)
 
 var createFoldersInTarget bool
 
-var unsearchedPaths []string
-var uPTargets map[string]string = make(map[string]string)
-var targetBase string
+var (
+	unsearchedPaths []string
+	uPTargets       map[string]string = make(map[string]string)
+	targetBase      string
+)
 
-var fileOrder []string
-var folders []string
-var targets map[string]string = make(map[string]string)
+var (
+	fileOrder []string
+	folders   []string
+	targets   map[string]string = make(map[string]string)
+)
 
 // read/write exclusion lock for the three arrays above
 var filesLock = sync.RWMutex{}
@@ -26,10 +31,12 @@ var iteratorDone, done bool = false, false
 
 var sources []string
 
-var done_amount uint64 = 0
-var full_amount uint64 = 0
-var done_size uint64 = 0
-var full_size uint64 = 0
+var (
+	done_amount uint64 = 0
+	full_amount uint64 = 0
+	done_size   uint64 = 0
+	full_size   uint64 = 0
+)
 
 var mode int = -1
 
@@ -197,7 +204,7 @@ func main() {
 		}
 	}
 	if len(unsearchedPaths) == 1 {
-		//folders = append(folders, targetBase);
+		// folders = append(folders, targetBase);
 		uPTargets[unsearchedPaths[0]] = targetBase
 		createFoldersInTarget = false
 	} else {

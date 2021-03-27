@@ -2,14 +2,16 @@
 
 package lscolors
 
-import "testing"
-import "io/ioutil"
-import "os"
-import "path/filepath"
-import "strconv"
-import "fmt"
-import "sort"
-import "strings"
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"testing"
+)
 
 func TestLoadLSC(t *testing.T) {
 	ReloadLsColors()

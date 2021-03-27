@@ -2,8 +2,10 @@
 
 package lscolors
 
-import "os"
-import "strings"
+import (
+	"os"
+	"strings"
+)
 
 type lscolors struct {
 	types map[string]string
@@ -16,10 +18,12 @@ var types []string = []string{
 	"sg", "ca", "tw", "ow", "st", "ex",
 }
 
-var lsc_loaded bool = false
-var lsc lscolors = lscolors{
-	make(map[string]string), make(map[string]string),
-}
+var (
+	lsc_loaded bool     = false
+	lsc        lscolors = lscolors{
+		make(map[string]string), make(map[string]string),
+	}
+)
 
 func FormatType(t string) string {
 	return lsc.types[t]

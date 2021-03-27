@@ -2,6 +2,8 @@
 
 package lscolors
 
+import "os"
+
 func FormatType(t string) string {
 	return ""
 }

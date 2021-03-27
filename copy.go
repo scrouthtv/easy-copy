@@ -1,12 +1,13 @@
 package main
 
-import "io"
-import "os"
-import "errors"
-import "strconv"
-import "path/filepath"
-
-import "easy-copy/lscolors"
+import (
+	"easy-copy/lscolors"
+	"errors"
+	"io"
+	"os"
+	"path/filepath"
+	"strconv"
+)
 
 var BUFFERSIZE uint = 32768
 
@@ -28,7 +29,7 @@ func copyLoop() {
 			var id int = pendingConflicts[0]
 			pendingConflicts = pendingConflicts[1:]
 			var sourcePath string = fileOrder[id]
-			var destPath = filepath.Join(targets[sourcePath],
+			destPath := filepath.Join(targets[sourcePath],
 				filepath.Base(sourcePath))
 			filesLock.Unlock()
 			copyFilePath(sourcePath, destPath)
@@ -116,7 +117,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		currentTaskType = 1
 		currentFile = sourcePath
 		var source, dest *os.File
-		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0644)
+		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0o644)
 		if err != nil {
 			errMissingFile(err, sourcePath)
 		}
@@ -125,7 +126,7 @@ func copyFilePath(sourcePath string, destPath string) {
 				currentFile + "\033[" + lscolors.FormatType("re") + "m"
 		}
 
-		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, 0644)
+		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, 0o644)
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
@@ -171,7 +172,7 @@ func createFolders(folders []string) {
 			currentFile = "\033[" + lscolors.FormatType("di") + "m" + currentFile +
 				"\033[" + lscolors.FormatType("rs") + "m"
 		}
-		var err error = os.MkdirAll(folder, 0755)
+		var err error = os.MkdirAll(folder, 0o755)
 		if err != nil {
 			errCreatingFile(err, folder)
 		}
@@ -202,6 +203,6 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 		}
 		*progressStorage += uint64(writtenAmount)
 	}
-	//verbCopyFinished(source.Name(), dest.Name());
+	// verbCopyFinished(source.Name(), dest.Name());
 	return nil
 }

@@ -2,9 +2,11 @@
 
 package config
 
-import "bufio"
-import "os"
-import "strings"
+import (
+	"bufio"
+	"os"
+	"strings"
+)
 
 func Load() ([]string, error) {
 	var kvs []string
@@ -21,7 +23,7 @@ func Load() ([]string, error) {
 			return nil, err
 		}
 	} else {
-		file, err := os.OpenFile(configPath, os.O_RDONLY, 0644)
+		file, err := os.OpenFile(configPath, os.O_RDONLY, 0o644)
 		if err != nil {
 			return nil, err
 		}
@@ -59,7 +61,7 @@ func findConfigFile() (string, error) {
 
 func createConfigFile(filePath string) error {
 	var err error
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0o644)
 	defer file.Close()
 	if err != nil {
 		return err

@@ -1,10 +1,11 @@
 package main
 
-import "fmt"
-import "strings"
-import "os"
-
-import "easy-copy/color"
+import (
+	"easy-copy/color"
+	"fmt"
+	"os"
+	"strings"
+)
 
 func printUsage() {
 	fmt.Print(color.FGColors.LBlue)

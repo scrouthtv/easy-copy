@@ -1,11 +1,13 @@
 package color
 
-import "os"
-import "os/exec"
-import "bytes"
-import "strings"
-import "strconv"
-import "path/filepath"
+import (
+	"bytes"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strconv"
+	"strings"
+)
 
 func LinuxIsPiped() bool {
 	fi, _ := os.Stdout.Stat()

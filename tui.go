@@ -1,31 +1,38 @@
 package main
 
-import "fmt"
-import "math"
-import "time"
-import "path/filepath"
-import "os"
-import "strconv"
+import (
+	"easy-copy/color"
+	"fmt"
+	"math"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
+)
 
-import "easy-copy/color"
-
-const BAR_WIDTH int = 50
-const MAX_WIDTH int = 80
+const (
+	BAR_WIDTH int = 50
+	MAX_WIDTH int = 80
+)
 
 // contains ids to files that should be recopied after the
 //  dialog whether to overwrite files has been answered.
 // once their respective dialogs have been answered, they are either
 //  added to pendingOverwrites or simply removed from piledOverwrites.
-var piledConflicts []int
-var pendingConflicts []int
+var (
+	piledConflicts   []int
+	pendingConflicts []int
+)
 
 // 0 undefined
 // 1 Copying
 // 2 Linking
 // 3 Creating Folder
 // 4 Deleting
-var currentTaskType int = -1
-var currentFile string
+var (
+	currentTaskType int = -1
+	currentFile     string
+)
 
 var lines int = 0
 

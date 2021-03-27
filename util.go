@@ -1,15 +1,16 @@
 package main
 
-import "os"
-import "os/exec"
-import "strconv"
-import "strings"
-import "bufio"
-import "errors"
-import "io"
-import "unicode"
-
-import "easy-copy/input"
+import (
+	"bufio"
+	"easy-copy/input"
+	"errors"
+	"io"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+	"unicode"
+)
 
 var noPagerError error = errors.New("No suitable pager found.")
 

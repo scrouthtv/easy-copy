@@ -7,8 +7,10 @@ var last_size uint64 = 0
 // in what intervals to measure time (millis)
 const ms int = 500
 
-var sizePerSecond float32 = 0
-var lastTime time.Time = time.Now()
+var (
+	sizePerSecond float32   = 0
+	lastTime      time.Time = time.Now()
+)
 
 func speedLoop() {
 	ticker := time.NewTicker(time.Duration(ms) * time.Millisecond)

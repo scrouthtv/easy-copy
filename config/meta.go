@@ -1,7 +1,9 @@
 package config
 
-import "path/filepath"
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 var config_locs []string
 
@@ -20,7 +22,8 @@ func init() {
 	config_locs = []string{
 		filepath.Join(config_dir, "ec.conf"),
 		filepath.Join(config_dir, "ec/", "ec.conf"),
-		filepath.Join(home_dir, "ec.conf")}
+		filepath.Join(home_dir, "ec.conf"),
+	}
 }
 
 var sample_config []string = []string{
@@ -33,4 +36,5 @@ var sample_config []string = []string{
 	"",
 	"# Handling of symbolic links in source:",
 	"#  ignore - link - dereference",
-	"symlinks = link"}
+	"symlinks = link",
+}

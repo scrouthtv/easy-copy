@@ -2,8 +2,10 @@
 
 package main
 
-import "os"
-import "syscall"
+import (
+	"os"
+	"syscall"
+)
 
 // #include <linux/fs.h>
 import "C"
@@ -18,11 +20,11 @@ import "C"
 func reflink(srcPath string, dstPath string, progressStorage *uint64) error {
 	var err error
 	var src, dst *os.File
-	src, err = os.OpenFile(srcPath, os.O_RDONLY, 0644)
+	src, err = os.OpenFile(srcPath, os.O_RDONLY, 0o644)
 	if err != nil {
 		return err
 	}
-	dst, err = os.OpenFile(dstPath, os.O_WRONLY|os.O_CREATE, 0644)
+	dst, err = os.OpenFile(dstPath, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
 		return err
 	}

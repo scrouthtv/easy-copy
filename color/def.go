@@ -1,8 +1,10 @@
 package color
 
-var FGColors colors
-var BGColors colors
-var Text textstyle
+var (
+	FGColors colors
+	BGColors colors
+	Text     textstyle
+)
 
 type colors struct {
 	Default  string

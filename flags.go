@@ -1,11 +1,12 @@
 package main
 
-import "os"
-import "strings"
-import "errors"
-import "strconv"
-
-import "easy-copy/color"
+import (
+	"easy-copy/color"
+	"errors"
+	"os"
+	"strconv"
+	"strings"
+)
 
 var verbose int = VERB_NOTICE
 
@@ -146,7 +147,7 @@ func parseFlag(prefix string, flag string) {
 		color.Init(true)
 	case "reflink":
 		doReflinks = 2
-	case "n", "no-clobber": //case "no-overwrite":
+	case "n", "no-clobber": // case "no-overwrite":
 		onExistingFile = 0
 	default:
 		errUnknownOption(prefix + flag)
