@@ -153,7 +153,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil {
 			errCreatingLink(err, sourcePath, destPath)
 		}
-		done_size += uint64(symlink_size)
+		done_size += uint64(symlinkSize)
 	}
 }
 
@@ -174,7 +174,7 @@ func createFolders(folders []string) {
 		if err != nil {
 			errCreatingFile(err, folder)
 		}
-		done_size += uint64(folder_size)
+		done_size += uint64(folderSize)
 	}
 }
 

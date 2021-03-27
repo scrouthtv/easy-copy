@@ -74,7 +74,7 @@ func printHelp() {
 
 func printVersion() {
 	fmt.Print(color.FGColors.Red)
-	fmt.Print(EASYCOPY_NAME + " v" + EASYCOPY_VERSION)
+	fmt.Print(EasyCopyName + " v" + EasyCopyVersion)
 	fmt.Println(color.Text.Reset)
 }
 
@@ -132,7 +132,7 @@ func verbDisablingColors(shellname string) {
 	// as this is called from the init function where verbose isn't set yet
 	fmt.Println("Color support for", shellname, "is currently not ipmlemented.")
 	fmt.Println("If your terminal does support colors, open an issue at")
-	fmt.Println(" " + EASYCOPY_ISSUES)
+	fmt.Println(" " + EasyCopyIssues)
 }
 
 func verbTargets() {

@@ -169,7 +169,7 @@ func skipFile(path string) {
 	if stat.Mode().IsRegular() {
 		done_size += uint64(stat.Size())
 	} else if stat.Mode()&os.ModeSymlink != 0 {
-		done_size += uint64(symlink_size)
+		done_size += uint64(symlinkSize)
 	}
 
 	done_amount += 1

@@ -106,7 +106,7 @@ func iteratePaths() {
 			//  - multiple files and folders are passed and should be copied
 			//    into a target, this variable was already set to true in main
 			createFoldersInTarget = true
-			full_size += uint64(folder_size)
+			full_size += uint64(folderSize)
 			filesLock.Unlock()
 		} else if stat.Mode().IsRegular() {
 			filesLock.Lock()
@@ -122,7 +122,7 @@ func iteratePaths() {
 			if followSymlinks == 1 {
 				fileOrder = append(fileOrder, next)
 				targets[next] = nextTarget
-				full_size += uint64(symlink_size)
+				full_size += uint64(symlinkSize)
 			} else if followSymlinks == 2 {
 				nextResolved, err := os.Readlink(next)
 				if err != nil {

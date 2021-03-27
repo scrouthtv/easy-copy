@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-var last_size uint64 = 0
+var lastSize uint64 = 0
 
 // in what intervals to measure time (millis)
 const ms int = 500
@@ -17,8 +17,8 @@ func speedLoop() {
 	for tick := range ticker.C {
 		var seconds float32 = float32(tick.Sub(lastTime).Seconds())
 		if seconds != 0 {
-			sizePerSecond = float32(done_size-last_size) / float32(seconds)
-			last_size = done_size
+			sizePerSecond = float32(done_size-lastSize) / float32(seconds)
+			lastSize = done_size
 		}
 	}
 	ticker.Stop()
