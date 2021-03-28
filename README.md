@@ -1,7 +1,7 @@
 # easy-copy
 Aims to provide a user-friendly &amp; fast alternative to cp, mv and rf.
 
-<!-- Put a catching GIF here -->
+![gif of easy-copy moving a folder](./.github/docs/demo01.gif)
 
 ## Warning
 This project is currently under development.
