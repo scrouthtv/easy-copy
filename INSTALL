@@ -1,0 +1,31 @@
+This file is free documentation; you have unlimited permission to copy, distribute and modify it.
+
+Basic Installation
+==================
+
+The simplest way to install this package is:
+
+ 1. Checkout the source:
+
+    git clone https://github.com/scrouthtv/easy-copy
+		cd easy-copy/
+
+ 2. Build the binary:
+
+    go build .
+
+		Optional build tags are supported:
+		 - `noconfig` disables config file support. Command-line parameters
+		   can still be used.
+		 - `goin` disables the raw input module. Users have to press confirm 
+		   their choice in dialogues using the enter key.
+		 - `nocolor` disables color support. No output will be colorized.
+		For a minimal build, use:
+
+		go build -tags noconfig,noclor,goin .
+
+ 3. Install the binary:
+
+		install -Dm755 easy-copy ~/.local/bin/easy-copy
+
+ 4. Install the additional files from the shared/ folder
