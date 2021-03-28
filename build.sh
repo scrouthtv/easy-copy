@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "this script is outdated and not working anymore"
+exit
+
 ROOTDIR="."
 echo "root is $ROOTDIR"
 SRCDIR="./"
@@ -9,7 +12,7 @@ OUTDIR="build"
 DOCDIR="doc"
 SHRDIR="shared"
 LICENSE="LICENSE"
-VERSION="$(grep 'EASYCOPY_VERSION' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
+VERSION="$(grep 'EasycopyVersion' $SRCDIR/meta.go | grep -oE '[0-9]+.[0-9]+.[0-9]+')"
 OUTPREFIX="easycopy-$VERSION"
 
 # using https://github.com/tpoechtrager/osxcross

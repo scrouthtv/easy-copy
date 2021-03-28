@@ -19,8 +19,7 @@ easy-copy
 ec
 
 # packages:
-easycopy*.zip
-easycopy*.zst
+build/
 
 # cross-compiler for osx:
 osxcross/
