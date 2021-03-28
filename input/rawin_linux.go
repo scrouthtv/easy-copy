@@ -1,58 +1,59 @@
-// +build linux
+// +build linux freebsd openbsd netbsd dragonfly darwin
 // +build !goin
 
 package input
 
-import "os"
+import (
+	"os"
 
-//#include <ctype.h>
-//#include <errno.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <termios.h>
-//#include <unistd.h>
-//
-//struct termios orig_termios;
-//
-//void disableRawMode() {
-//  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
-//    printf("tcsetattr");
-//}
-//
-//void enableRawMode() {
-//  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) printf("tcgetattr"); // TODO die
-//
-//  struct termios raw = orig_termios;
-//  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-//  raw.c_oflag &= ~(OPOST);
-//  raw.c_cflag |= (CS8);
-//  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-//  raw.c_cc[VMIN] = 0;
-//  raw.c_cc[VTIME] = 1;
-//
-//  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) printf("tcsetattr");
-//}
-//
-//char getOneKey() {
-//	enableRawMode();
-//
-//	while (1) {
-//		char c = '\0';
-//		if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) printf("read");
-//		if (c != '\0') {
-//			disableRawMode();
-//			return c;
-//		}
-//	}
-//
-//	return 0;
-//}
-import "C"
+	"golang.org/x/sys/unix"
+)
+
+var in int
+var oldMode unix.Termios
+var buf []byte = make([]byte, 8)
+
+func enter() error {
+	in, err := unix.Open("/dev/tty", unix.O_RDONLY, 0)
+	if err != nil {
+		return err
+	}
+
+	mode, err := unix.IoctlGetTermios(in, reqGetTermios)
+	if err != nil {
+		unix.Close(in)
+	}
+
+	oldMode = *mode
+
+	mode.Iflag &^= unix.BRKINT | unix.ICRNL | unix.INPCK | unix.ISTRIP | unix.IXON
+	mode.Oflag &^= unix.OPOST
+	mode.Lflag &^= unix.ECHO | unix.ECHONL | unix.ICANON | unix.ISIG | unix.IEXTEN
+	mode.Cflag &^= unix.CSIZE | unix.PARENB
+	mode.Cflag |= unix.CS8
+	mode.Cc[unix.VMIN] = 1
+	mode.Cc[unix.VTIME] = 0
+
+	return unix.IoctlSetTermios(in, reqSetTermios, mode)
+}
+
+func exit() {
+	unix.IoctlSetTermios(in, reqSetTermios, &oldMode)
+	unix.Close(in)
+}
 
 func Getch() rune {
-	var in rune = rune(C.getOneKey())
-	if in == rune(3) { // C-c
+	err := enter()
+	if err != nil {
 		os.Exit(8)
 	}
-	return in
+
+	n, err := unix.Read(in, buf)
+	exit()
+
+	if err != nil || n != 1 || buf[0] == 3 { // C-c
+		os.Exit(8)
+	}
+
+	return rune(buf[0])
 }
