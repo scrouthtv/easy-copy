@@ -7,8 +7,13 @@ package input
 //#include <conio.h>
 import "C"
 
-func Enter() error {}
-func Exit() {}
+func Enter() error {
+	return nil
+}
+
+func Exit() {
+	// nothing to do
+}
 
 func Getch() rune {
 	var ch int = int(C.getch())
