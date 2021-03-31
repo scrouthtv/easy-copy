@@ -2,6 +2,7 @@ package main
 
 import (
 	"easy-copy/color"
+	"easy-copy/input"
 	"fmt"
 	"math"
 	"os"
@@ -122,7 +123,7 @@ func drawLoop() {
 			fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
 			fmt.Println(color.Text.Reset)
 			lines++
-			in := getChoice("soavidreq")
+			in := input.GetChoice("soavidreq")
 
 			switch in {
 			case 's':

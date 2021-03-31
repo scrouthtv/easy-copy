@@ -2,14 +2,11 @@ package main
 
 import (
 	"bufio"
-	"easy-copy/input"
 	"errors"
 	"io"
 	"os"
 	"os/exec"
 	"strconv"
-	"strings"
-	"unicode"
 )
 
 var errNoPager error = errors.New("error: no suitable pager found")
@@ -67,17 +64,6 @@ func runPager(text string) (bool, error) {
 	cmd.Wait()
 
 	return true, nil
-}
-
-func getChoice(choices string) rune {
-	var in rune
-
-	for {
-		in = unicode.ToLower(input.Getch())
-		if strings.ContainsRune(choices, in) {
-			return in
-		}
-	}
 }
 
 func formatSeconds(seconds float64) string {
