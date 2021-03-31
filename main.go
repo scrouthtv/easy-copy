@@ -126,7 +126,9 @@ func main() {
 			uPTargets[uP] = targetBase
 		}
 	}
-	createFolders([]string{targetBase})
+	if createFoldersInTarget {
+		createFolders([]string{targetBase})
+	}
 
 	verbSearchStart()
 

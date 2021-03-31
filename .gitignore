@@ -1,10 +1,10 @@
 # test folders:
-foo/
-foo2/
-bar/
-qwertz/
+foo
+foo2
+bar
+qwertz
 *.img
-test/
+test
 
 # executables:
 a.out

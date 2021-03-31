@@ -49,6 +49,7 @@ func iteratePaths() {
 					uPTargets[filepath.Join(next, fileInFolder)] = uPTargets[next]
 				}
 			}
+
 			// three possibilities:
 			//  - only one *file* is passed and should be duplicated.
 			//    we don't care about creating folders in the target
