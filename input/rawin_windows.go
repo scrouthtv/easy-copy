@@ -7,6 +7,9 @@ package input
 //#include <conio.h>
 import "C"
 
+func Enter() error {}
+func Exit() {}
+
 func Getch() rune {
 	var ch int = int(C.getch())
 	return rune(ch)

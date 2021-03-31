@@ -13,7 +13,7 @@ var in int
 var oldMode unix.Termios
 var buf []byte = make([]byte, 8)
 
-func enter() error {
+func Enter() error {
 	in, err := unix.Open("/dev/tty", unix.O_RDONLY, 0)
 	if err != nil {
 		return err
@@ -37,19 +37,13 @@ func enter() error {
 	return unix.IoctlSetTermios(in, reqSetTermios, mode)
 }
 
-func exit() {
+func Exit() {
 	unix.IoctlSetTermios(in, reqSetTermios, &oldMode)
 	unix.Close(in)
 }
 
 func Getch() rune {
-	err := enter()
-	if err != nil {
-		os.Exit(8)
-	}
-
 	n, err := unix.Read(in, buf)
-	exit()
 
 	if err != nil || n != 1 || buf[0] == 3 { // C-c
 		os.Exit(8)
