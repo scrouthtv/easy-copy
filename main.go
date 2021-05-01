@@ -104,28 +104,39 @@ func main() {
 	}
 	unsearchedPaths = unsearchedPaths[0 : len(unsearchedPaths)-1]
 	sources = unsearchedPaths
-	if len(unsearchedPaths) > 1 {
-		stat, err := os.Stat(targetBase)
+
+	if len(unsearchedPaths) == 1 {
+		// if there is only one source, we want to duplicate it:
+
+		uPTargets[unsearchedPaths[0]] = targetBase
+		createFoldersInTarget = false
+
+		// if the source is a folder, we have to create the duplicated folder:
+		stat, err := os.Stat(unsearchedPaths[0])
 		if err != nil {
-			errMissingFile(err, targetBase)
+			errMissingFile(err, unsearchedPaths[0])
 		}
+		if stat.IsDir() {
+			os.MkdirAll(targetBase, 0o755)
+		}
+	} else {
+		// if there is more than one source, we want to copy the files
+		// into the target directory:
+		stat, err := os.Stat(targetBase)
 		if os.IsNotExist(err) {
-			errMissingFile(err, targetBase)
+			os.MkdirAll(targetBase, 0o755)
+		} else if err != nil {
+			errCreatingFile(err, targetBase)
 		} else if !stat.IsDir() {
 			errTargetNoDir(targetBase)
 		}
-	}
-	if len(unsearchedPaths) == 1 {
-		// folders = append(folders, targetBase);
-		uPTargets[unsearchedPaths[0]] = targetBase
-		createFoldersInTarget = false
-	} else {
+
 		createFoldersInTarget = true
-		var uP string
-		for _, uP = range unsearchedPaths {
+		for _, uP := range unsearchedPaths {
 			uPTargets[uP] = targetBase
 		}
 	}
+
 	if createFoldersInTarget {
 		createFolders([]string{targetBase})
 	}
