@@ -35,13 +35,19 @@ func copyLoop() {
 			var id int = pendingConflicts[0]
 			pendingConflicts = pendingConflicts[1:]
 			var sourcePath string = fileOrder[id]
-			destPath := filepath.Join(targets[sourcePath],
-				filepath.Base(sourcePath))
+			var destPath string
+			if createFoldersInTarget {
+				destPath = filepath.Join(targets[sourcePath],
+					filepath.Base(sourcePath))
+			} else {
+				destPath = targets[sourcePath]
+			}
 
 			filesLock.Unlock()
 
 			os.Remove(destPath)
 			copyFilePath(sourcePath, destPath)
+			doneAmount += 1
 		} else if i < len(fileOrder) {
 
 			// Copy normal files:

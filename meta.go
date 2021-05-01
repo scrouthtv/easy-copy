@@ -6,7 +6,7 @@ const (
 	EasyCopyName    string = "EasyCopy"
 
 	// EasyCopyVersion is the version of the program.
-	EasyCopyVersion string = "0.4.3"
+	EasyCopyVersion string = "0.4.4"
 
 	// EasyCopyIssues is the location of the bug tracker.
 	EasyCopyIssues  string = "https://github.com/scrouthtv/easy-copy"
