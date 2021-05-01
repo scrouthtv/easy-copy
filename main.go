@@ -108,10 +108,18 @@ func main() {
 		// if there is only one source, we want to duplicate it:
 
 		uPTargets[unsearchedPaths[0]] = targetBase
-		createFoldersInTarget = false
+
+		stat, err := os.Stat(targetBase)
+
+		// if the target already exists as a folder, we want to copy into it:
+		if err == nil && stat.IsDir() {
+			createFoldersInTarget = true
+		} else {
+			createFoldersInTarget = false
+		}
 
 		// if the source is a folder, we have to create the duplicated folder:
-		stat, err := os.Stat(unsearchedPaths[0])
+		stat, err = os.Stat(unsearchedPaths[0])
 		if err != nil {
 			errMissingFile(err, unsearchedPaths[0])
 		}
