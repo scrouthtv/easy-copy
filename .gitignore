@@ -6,6 +6,8 @@ qwertz
 *.img
 test
 test2
+old.txt
+new.txt
 
 # executables:
 a.out

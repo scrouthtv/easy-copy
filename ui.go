@@ -120,7 +120,7 @@ func printColortest() {
 }
 
 func verbVerboseEnabled() {
-	fmt.Print(color.FGColors.Yellow + "Verbose mode enabled." + color.Text.Reset)
+	fmt.Println(color.FGColors.Yellow + "Verbose mode enabled." + color.Text.Reset)
 }
 
 func verbFlags() {

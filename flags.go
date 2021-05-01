@@ -27,11 +27,18 @@ const (
 	VerbDebug
 )
 
-// onExistingFile takes one of these values:
-// 0 skip
-// 1 overwrite
-// 2 ask.
-var onExistingFile uint8 = 2
+var onExistingFile uint8 = Ask
+
+const (
+	// Skip existing files.
+	Skip uint8 = iota
+
+	// Overwrite existing files.
+	Overwrite
+
+	// Ask the user on existing files.
+	Ask
+)
 
 // followSymlinks takes one of these values:
 // 0 ignore symlinks
@@ -64,11 +71,11 @@ func parseKeyValue(key string, value string) {
 	case "overwrite":
 		switch value {
 		case "skip":
-			onExistingFile = 0
+			onExistingFile = Skip
 		case "overwrite":
-			onExistingFile = 1
+			onExistingFile = Overwrite
 		case "ask":
-			onExistingFile = 2
+			onExistingFile = Ask
 		}
 	case "symlinks":
 		switch value {
@@ -154,18 +161,18 @@ func parseFlag(prefix string, flag string) {
 	case "colortest":
 		printColortest()
 		os.Exit(0)
-	case "f", "force":
-		onExistingFile = 1
+	case "n", "no-clobber", "no-overwrite":
+		onExistingFile = Skip
+	case "f", "force", "overwrite":
+		onExistingFile = Overwrite
 	case "i", "interactive":
-		onExistingFile = 2
+		onExistingFile = Ask
 	case "no-config":
 		doReadConfig = false
 	case "color":
 		color.Init(true)
 	case "reflink":
 		doReflinks = 2
-	case "n", "no-clobber": // case "no-overwrite":
-		onExistingFile = 0
 	default:
 		errUnknownOption(prefix + flag)
 	}
