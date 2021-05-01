@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Load reads and parses the first config that can be found.
 func Load() ([]string, error) {
 	var kvs []string
 	configPath, err := findConfigFile()

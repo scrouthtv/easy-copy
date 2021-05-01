@@ -284,7 +284,7 @@ func errEmptySource() {
 
 func errTargetNoDir(file string) {
 	fmt.Print(color.FGColors.Red)
-	fmt.Print(file, "is not a directory.")
+	fmt.Print(file, " is not a directory.")
 	fmt.Println(color.Text.Reset)
 	os.Exit(2)
 }

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"fmt"
 	"time"
 )
 
@@ -51,8 +52,6 @@ const (
 	ModeRemove
 )
 
-var doReadConfig bool = true
-
 // Maybe these are too small:
 // uint64 goes up to 18446744073709551615
 // or 2097152 TB
@@ -63,8 +62,8 @@ func main() {
 	var err error
 
 	color.Init(color.AutoColors())
-	parseArgs()
-	if doReadConfig {
+
+	if readConfig() {
 		var kvs []string
 		kvs, err = config.Load()
 		if err == nil {
@@ -75,6 +74,7 @@ func main() {
 			warnConfig(err)
 		}
 	}
+	parseArgs()
 
 	if verbose >= VerbInfo {
 		printVersion()
@@ -122,6 +122,7 @@ func main() {
 	} else {
 		// if there is more than one source, we want to copy the files
 		// into the target directory:
+		fmt.Println("ups:", unsearchedPaths)
 		stat, err := os.Stat(targetBase)
 		if os.IsNotExist(err) {
 			os.MkdirAll(targetBase, 0o755)

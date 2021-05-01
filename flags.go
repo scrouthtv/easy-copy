@@ -54,6 +54,19 @@ var doReflinks uint8 = 0
 
 var progressLSColors bool = false
 
+// readConfig checks if the config should be read.
+func readConfig() bool {
+	for _, arg := range os.Args {
+		if arg == "--" {
+			return false
+		} else if arg == "--no-config" {
+			return true
+		}
+	}
+
+	return false
+}
+
 func parseKeyValue(key string, value string) {
 	// Trim away spaces and tabs:
 	key = strings.ToLower(strings.Trim(key, " \t'\""))
@@ -167,8 +180,6 @@ func parseFlag(prefix string, flag string) {
 		onExistingFile = Overwrite
 	case "i", "interactive":
 		onExistingFile = Ask
-	case "no-config":
-		doReadConfig = false
 	case "color":
 		color.Init(true)
 	case "reflink":

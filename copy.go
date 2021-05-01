@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"fmt"
 )
 
 var buffersize uint = 32768
@@ -39,6 +40,8 @@ func copyLoop() {
 				filepath.Base(sourcePath))
 
 			filesLock.Unlock()
+
+			os.Remove(destPath)
 			copyFilePath(sourcePath, destPath)
 		} else if i < len(fileOrder) {
 
@@ -57,19 +60,26 @@ func copyLoop() {
 
 			// check if file already exists and we even care about that:
 			var doCopy bool = true
-			if onExistingFile != 1 {
-				stat, err := os.Lstat(destPath)
-				if err == nil && stat != nil {
+			stat, err := os.Lstat(destPath)
+			if err == nil && stat != nil {
+				// file exists
+				switch onExistingFile {
+				case Skip:
 					doCopy = false
-					// file exists
-					if onExistingFile == 2 {
-						// save it to the conflicts:
-						filesLock.Lock()
-						piledConflicts = append(piledConflicts, i)
-						filesLock.Unlock()
-					}
+				case Overwrite:
+					os.Remove(destPath)
+				case Ask:
+					// save it to the conflicts:
+					filesLock.Lock()
+					piledConflicts = append(piledConflicts, i)
+					filesLock.Unlock()
+					doCopy = false
+				default:
+					// better safe than sorry
+					doCopy = false
 				}
 			}
+
 			if doCopy {
 				copyFilePath(sourcePath, destPath)
 				doneAmount += 1
@@ -108,6 +118,7 @@ func copyLoop() {
  *  dest will be created as a link that links to that file as well.
  */
 func copyFilePath(sourcePath string, destPath string) {
+	fmt.Printf("Copying %s to %s\n\n\n\n\n\n\n\n\n", sourcePath, destPath)
 	var err error
 	if doReflinks > 0 {
 		err = reflink(sourcePath, destPath, &doneSize)
