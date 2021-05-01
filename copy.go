@@ -154,7 +154,7 @@ func copyFilePath(sourcePath string, destPath string) {
 				currentFile + "\033[" + lscolors.FormatType("re") + "m"
 		}
 
-		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, 0o644)
+		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, stat.Mode().Perm())
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
