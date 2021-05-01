@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"fmt"
 )
 
 var buffersize uint = 32768
@@ -118,7 +117,6 @@ func copyLoop() {
  *  dest will be created as a link that links to that file as well.
  */
 func copyFilePath(sourcePath string, destPath string) {
-	fmt.Printf("Copying %s to %s\n\n\n\n\n\n\n\n\n", sourcePath, destPath)
 	var err error
 	if doReflinks > 0 {
 		err = reflink(sourcePath, destPath, &doneSize)

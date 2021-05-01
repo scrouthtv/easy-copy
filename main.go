@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-	"fmt"
 	"time"
 )
 
@@ -122,7 +121,6 @@ func main() {
 	} else {
 		// if there is more than one source, we want to copy the files
 		// into the target directory:
-		fmt.Println("ups:", unsearchedPaths)
 		stat, err := os.Stat(targetBase)
 		if os.IsNotExist(err) {
 			os.MkdirAll(targetBase, 0o755)
