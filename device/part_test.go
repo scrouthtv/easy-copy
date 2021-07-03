@@ -2,10 +2,16 @@ package device
 
 import "testing"
 
-func TestPartitionReader(t *testing.T) {
-	reloadDevices()
+func TestPartitionFinder(t *testing.T) {
+	fs := []string{"/home/lenni/cut.mp4",
+	"/home/lenni/out.mp4",
+	"/tmp/service-list.new",
+	"/usr/share/",
+	"/this is my folder/adsf" }
 
-	for id, part := range currentPartTable {
-		t.Logf("Device #%d (%s) is mounted at %s", id, part.dev, part.mnt)
+	for i, f := range fs {
+		dev := GetDevice(f)
+		t.Log(fs[i], "on", dev.Name(), "free:", dev.Usage().Free)
 	}
+
 }

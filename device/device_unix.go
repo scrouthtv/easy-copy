@@ -2,24 +2,46 @@
 
 package device
 
+import "os"
 import "fmt"
 
 import "golang.org/x/sys/unix"
 
 type unixDevice struct {
 	id uint64
+	afile string /* any file on this device */
 }
 
+// GetDevice finds the device that hosts the file at the specified path.
+// If an error occurs, it is pushed to the modules' error stack.
 func GetDevice(path string) Device {
 	var stat unix.Stat_t
 
 	unix.Stat(path, &stat)
 
-	return &unixDevice{stat.Dev}
+	return &unixDevice{stat.Dev, path}
 }
 
 func (d *unixDevice) Usage() SpaceUsage {
-	return SpaceUsage{}
+	var stat unix.Statfs_t
+
+	unix.Statfs(d.afile, &stat)
+
+	var free uint64
+	if isElevated() {
+		free = stat.Bfree * uint64(stat.Bsize)
+	} else {
+		free = stat.Bavail * uint64(stat.Bsize)
+	}
+
+	return SpaceUsage{
+		Total: stat.Blocks * uint64(stat.Bsize),
+		Free: free,
+	}
+}
+
+func isElevated() bool {
+	return os.Geteuid() == 0
 }
 
 func (d *unixDevice) Name() string {
