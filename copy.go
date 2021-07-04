@@ -89,6 +89,7 @@ func copyLoop() {
 				copyFilePath(sourcePath, destPath)
 				doneAmount += 1
 			}
+
 			i += 1
 		} else {
 			filesLock.Unlock()
@@ -104,12 +105,13 @@ func copyLoop() {
 				// 2. we've tried to copy all files so far
 				// 3. all conflicts we had to ask the user are resolved
 				// 4. all conflicts the user already answered have been dealt with
+				done = true
+
 				if mode == ModeMove {
 					syncdel(&fileOrder)
 					syncdel(&sources)
 				}
 
-				done = true
 			}
 			filesLock.RUnlock()
 		}
