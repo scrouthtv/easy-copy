@@ -13,6 +13,7 @@ var buf []byte = make([]byte, 32678)
 
 func setBuffersize(size int) {
 	buf = make([]byte, size)
+	verbSetBuffersize(size)
 }
 
 /**
