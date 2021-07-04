@@ -40,12 +40,17 @@ var lines int = 0
 
 func drawLoop() {
 	go speedLoop()
+
+	if verbose <= VerbCrit {
+		return
+	}
+
 	for !done {
 
-		var i int
-		for i = 0; i < lines; i++ {
+		for i := 0; i < lines; i++ {
 			fmt.Print("\033[1A\033[2K")
 		}
+
 		lines = 0
 
 		if verbose > VerbQuiet {
@@ -59,28 +64,34 @@ func drawLoop() {
 			}
 
 			fmt.Print("  [")
-			var i int
-			for i = 0; i < barFilled-1; i++ {
+
+			for i := 0; i < barFilled-1; i++ {
 				fmt.Print("=")
 			}
+
 			if barFilled == barWidth {
 				fmt.Print("=")
 			} else {
 				fmt.Print(">")
 			}
-			for i = barFilled; i < barWidth; i++ {
+
+			for i := barFilled; i < barWidth; i++ {
 				fmt.Print(" ")
 			}
-			fmt.Print("] ")
+
 			unit := sizeAutoUnit(float64(fullSize))
+
+			fmt.Print("] ")
 			fmt.Print(formatSize(float64(doneSize), unit))
 			fmt.Print(" / ")
 			fmt.Print(formatSize(float64(fullSize), unit))
 			fmt.Println()
+
 			lines++
 
 			// speed:
 			fmt.Print("   ")
+
 			switch currentTaskType {
 			case 1:
 				fmt.Print("Copying " + shrinkPath(currentFile, maxWidth/2))
@@ -89,16 +100,19 @@ func drawLoop() {
 			case 3:
 				fmt.Print("Creating " + shrinkPath(currentFile, maxWidth/2))
 			}
+
 			fmt.Print(" @ ")
 			fmt.Print(formatSize(float64(sizePerSecond),
 				sizeAutoUnit(float64(sizePerSecond))))
 			fmt.Print("/s")
 
 			// remaining time:
-			fmt.Print(", ")
 			secondsLeft := float32(fullSize-doneSize) / sizePerSecond
+
+			fmt.Print(", ")
 			fmt.Print(formatSeconds(float64(secondsLeft)))
 			fmt.Println(" remaining")
+
 			lines++
 		}
 
@@ -119,12 +133,15 @@ func drawLoop() {
 			fmt.Print(filepath.Dir(cTarget))
 			fmt.Println(color.Text.Reset + color.FGColors.Magenta)
 			lines++
+
 			fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All")
 			lines++
+
 			fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
 			fmt.Println(color.Text.Reset)
 			lines++
-			in := input.GetChoice("soavidreq")
+
+			in := input.GetChoice("saovirq")
 
 			switch in {
 			case 's':
@@ -179,7 +196,12 @@ func skipFile(path string) {
 }
 
 func printSummary() {
+	if verbose <= VerbCrit {
+		return
+	}
+
 	elapsed := time.Since(start)
+
 	for i := 0; i < lines; i++ {
 		fmt.Print("\033[1A\033[2K")
 	}
@@ -193,6 +215,7 @@ func printSummary() {
 
 		fmt.Println("]")
 		fmt.Print("   ")
+
 		switch mode {
 		case ModeCopy:
 			fmt.Print("Copied ")
@@ -201,15 +224,18 @@ func printSummary() {
 		case ModeRemove:
 			fmt.Print("Deleted ")
 		}
+
 		if fullAmount == 1 {
 			fmt.Print("1 file in ")
 		} else {
 			fmt.Print(strconv.FormatUint(fullAmount, 9))
 			fmt.Print(" files in ")
 		}
+
+		fullSpeed := float64(fullSize) / elapsed.Seconds()
+
 		fmt.Print(formatSeconds(elapsed.Seconds()))
 		fmt.Print(" (")
-		fullSpeed := float64(fullSize) / elapsed.Seconds()
 		fmt.Print(formatSize(fullSpeed, sizeAutoUnit(fullSpeed)))
 		fmt.Print("/s).")
 		fmt.Println()

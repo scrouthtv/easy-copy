@@ -8,9 +8,15 @@ import (
 	"strconv"
 )
 
-var errNoPager error = errors.New("error: no suitable pager found")
+const (
+	bfactor  = 1024 // bytes in a kb
+	mfactor  = 60   // minutes in an hour
+	hfactor  = 24   // hours in a day
+	nicesize = 300  // highest file size before choosing the bigger unit
+	nicetime = 100  // highest time before choosing the bigge runit
+)
 
-const bfactor = 1024 // bytes in a kb
+var errNoPager = errors.New("no suitable pager found")
 
 type errOpeningPager struct {
 	err error
@@ -45,6 +51,7 @@ func runPager(text string) (bool, error) {
 	}
 
 	cmd := exec.Command(pager)
+
 	out, err := cmd.StdinPipe()
 	if err != nil {
 		return false, &errOpeningPager{err}
@@ -52,12 +59,14 @@ func runPager(text string) (bool, error) {
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
 	err = cmd.Start()
 	if err != nil {
 		return false, &errOpeningPager{err}
 	}
 
 	writer := bufio.NewWriter(out)
+
 	_, err = writer.WriteString(text)
 	if err != nil {
 		out.Close()
@@ -66,6 +75,7 @@ func runPager(text string) (bool, error) {
 
 	writer.Flush()
 	out.Close()
+
 	err = cmd.Wait()
 	if err != nil {
 		return false, &errOpeningPager{err}
@@ -75,14 +85,14 @@ func runPager(text string) (bool, error) {
 }
 
 func formatSeconds(seconds float64) string {
-	if seconds < 100 {
+	if seconds < nicetime {
 		return strconv.FormatFloat(seconds, 'f', 0, 32) + " s"
-	} else if seconds < 60*100 {
-		return strconv.FormatFloat(seconds/60, 'f', 1, 32) + " m"
-	} else if seconds < 60*60*72 {
-		return strconv.FormatFloat(seconds/60/60, 'f', 2, 32) + " h"
+	} else if seconds < nicetime*mfactor {
+		return strconv.FormatFloat(seconds/mfactor, 'f', 1, 32) + " m"
+	} else if seconds < nicetime*mfactor*mfactor {
+		return strconv.FormatFloat(seconds/mfactor/mfactor, 'f', 2, 32) + " h"
 	} else {
-		return strconv.FormatFloat(seconds/60/60/24, 'f', 2, 32) + " days"
+		return strconv.FormatFloat(seconds/mfactor/mfactor/hfactor, 'f', 2, 32) + " days"
 	}
 }
 
@@ -94,13 +104,13 @@ func formatSeconds(seconds float64) string {
 // 3: best print in gb
 // 4: best print in tb
 func sizeAutoUnit(size float64) int {
-	if size < 300 {
+	if size < nicesize {
 		return 0 //  B up to 300
-	} else if size < 300*bfactor {
+	} else if size < nicesize*bfactor {
 		return 1 // kB up to 300
-	} else if size < 300*bfactor*bfactor {
+	} else if size < nicesize*bfactor*bfactor {
 		return 2 // MB up to 300
-	} else if size < 300*bfactor*bfactor*bfactor {
+	} else if size < nicesize*bfactor*bfactor*bfactor {
 		return 3 // GB up to 300
 	} else {
 		return 4 // no one copies more than 300 tb

@@ -124,7 +124,7 @@ func verbVerboseEnabled() {
 }
 
 func verbSetBuffersize(size int) {
-	if verbose >= VerbInfo {
+	if verbose >= VerbDebug {
 		fmt.Print(color.FGColors.Yellow + "Set buffersize to ")
 		fmt.Print(formatSize(float64(size), sizeAutoUnit(float64(size))))
 		fmt.Println(color.Text.Reset)
@@ -132,7 +132,7 @@ func verbSetBuffersize(size int) {
 }
 
 func verbNativeMoveFailed(sourcePath string, destPath string, err error) {
-	if verbose >= VerbInfo {
+	if verbose >= VerbDebug {
 		fmt.Println(color.FGColors.Yellow + "Native moving")
 		fmt.Print(sourcePath, "to", destPath, "failed:")
 		fmt.Println(color.FGColors.Red + err.Error() + color.Text.Reset)
@@ -176,7 +176,7 @@ func verbDoneIterating() {
 }
 
 func verbSearchStart() {
-	if verbose >= VerbInfo {
+	if verbose >= VerbDebug {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Println("Have to search", unsearchedPaths)
 		fmt.Print("Target is ", targetBase)
@@ -245,7 +245,7 @@ func errCopying(sourcePath string, destPath string, err error) {
 
 func errUnknownOption(option string) {
 	fmt.Print(color.FGColors.Red)
-	fmt.Print("Unrecognized Option:", option)
+	fmt.Print("Unrecognized Option: ", option)
 	fmt.Println(color.Text.Reset)
 	printUsage()
 	os.Exit(2)

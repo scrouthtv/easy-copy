@@ -3,22 +3,32 @@ package main
 import (
 	"easy-copy/lscolors"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
 var buf []byte = make([]byte, 32678)
+
+// ErrWritingData is returned by the copy loop
+// if not all data could be written,
+// but no other is returned.
+type ErrWritingData struct {
+	read    int
+	written int
+}
+
+func (e *ErrWritingData) Error() string {
+	return fmt.Sprintf("could only write %d b out of %d b", e.written, e.read)
+}
 
 func setBuffersize(size int) {
 	buf = make([]byte, size)
 	verbSetBuffersize(size)
 }
 
-/**
- * Loops checking / waiting for any left work.
- */
+// copyLoop checks for any work and does it synchronously.
 func copyLoop() {
 	var i int = 0
 
@@ -156,10 +166,8 @@ func copyFilePath(sourcePath string, destPath string) {
 		if err != nil {
 			errCreatingFile(err, destPath)
 		}
-		err := copyFile(source, dest, &doneSize)
-		if err != nil {
-			errCopying(source.Name(), dest.Name(), err)
-		}
+
+		copyFile(source, dest, &doneSize)
 		source.Close()
 		dest.Close()
 	} else if stat.Mode()&os.ModeSymlink != 0 {
@@ -188,10 +196,6 @@ func copyFilePath(sourcePath string, destPath string) {
 	}
 }
 
-/**
- * Create the folders specified in folders.
- * filesLock will not be locked.
- */
 func createFolders(folders []string) {
 	var folder string
 
@@ -213,7 +217,10 @@ func createFolders(folders []string) {
 	}
 }
 
-func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
+// copyFile copies the openend source file to the already
+// created dest file. Any error is handled over to 
+// errCopying()
+func copyFile(source *os.File, dest *os.File, progressStorage *uint64) {
 	var readAmount, writtenAmount int
 	var err error
 
@@ -231,17 +238,14 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) error {
 
 		writtenAmount, err = dest.Write(buf[:readAmount])
 		if err != nil {
-			return err
+			errCopying(source.Name(), dest.Name(), err)
 		}
 
 		if readAmount != writtenAmount {
-			return errors.New("couldn't write all the data: " +
-				strconv.Itoa(readAmount) + " read, " +
-				strconv.Itoa(writtenAmount) + "written")
+			errCopying(source.Name(), dest.Name(),
+				&ErrWritingData{read: readAmount, written: writtenAmount})
 		}
 
 		*progressStorage += uint64(writtenAmount)
 	}
-
-	return nil
 }
