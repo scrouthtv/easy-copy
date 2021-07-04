@@ -31,7 +31,8 @@ func printHelp() {
 	fmt.Print("These options are supported:")
 	fmt.Println()
 	fmt.Print(color.Text.Reset)
-	const indent string = "                     "
+	const indent = "                     "
+
 	fmt.Println("  -f, --force      ", color.FGColors.LGray,
 		"overwrite existing files without asking", color.FGColors.Default)
 	fmt.Println("  -i, --interactive", color.FGColors.LGray,
@@ -159,8 +160,9 @@ func verbTargets() {
 		for _, v := range folders {
 			fmt.Println("need to create folder", v)
 		}
+
 		for _, v := range fileOrder {
-			fmt.Println(v, "will be copied to", targets[v]+"/")
+			fmt.Println(v, "will be copied into", targets[v]+"/")
 		}
 
 		filesLock.RUnlock()
@@ -310,6 +312,7 @@ func parseMode() {
 		mode = ModeMove
 	case "rm":
 		mode = ModeRemove
+
 		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
 	default:
 		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
@@ -320,12 +323,13 @@ func parseArgs() {
 	parseMode()
 
 	args := os.Args[2:]
-	var isFiles bool = false
+	isFiles := false
+
 	for _, arg := range args {
-		if arg == "--" {
-			isFiles = true
-		} else if isFiles {
+		if isFiles {
 			unsearchedPaths = append(unsearchedPaths, arg)
+		} else if arg == "--" {
+			isFiles = true
 		} else if strings.HasPrefix(arg, "--") {
 			parseFlag("--", arg[2:])
 		} else if strings.HasPrefix(arg, "-") {

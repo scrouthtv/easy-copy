@@ -77,6 +77,7 @@ func main() {
 	if err != nil {
 		errResolvingTarget(unsearchedPaths[len(unsearchedPaths)-1], err)
 	}
+
 	unsearchedPaths = unsearchedPaths[0 : len(unsearchedPaths)-1]
 	sources = unsearchedPaths
 
@@ -93,11 +94,13 @@ func main() {
 		} else {
 			createFoldersInTarget = false
 		}
+
 		// if the source is a folder, we have to create the duplicated folder:
 		stat, err = os.Stat(unsearchedPaths[0])
 		if err != nil {
 			errMissingFile(err, unsearchedPaths[0])
 		}
+
 		if stat.IsDir() {
 			err := os.MkdirAll(targetBase, 0o755)
 			if err != nil {
@@ -130,6 +133,7 @@ func main() {
 	}
 
 	verbSearchStart()
+
 	go setOptimalBuffersize()
 
 	start = time.Now()
