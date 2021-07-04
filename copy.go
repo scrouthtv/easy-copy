@@ -121,12 +121,11 @@ func copyLoop() {
 	}
 }
 
-/**
- * This function copies source to dest, while
- *  adding the progress to done_size
- * If source is a symlink that links to a file,
- *  dest will be created as a link that links to that file as well.
- */
+// copyFilePath clones the file (!) at sourcePath to
+// destPath while adding the progress to done_size.
+// If source is a symlink that links to a file,
+// dest will be created as a link that links to the
+// original file.
 func copyFilePath(sourcePath string, destPath string) {
 	var err error
 	if doReflinks > 0 {
@@ -147,6 +146,15 @@ func copyFilePath(sourcePath string, destPath string) {
 	if err != nil {
 		errCopying(sourcePath, destPath, err)
 	} else if stat.Mode().IsRegular() {
+
+		if mode == ModeMove {
+			// first attempt native move
+			if isSameDevice(sourcePath, destPath) {
+				panic("native move " + sourcePath + " to " + destPath)
+				os.Rename(sourcePath, destPath)
+			}
+		}
+
 		currentTaskType = 1
 		currentFile = sourcePath
 		var source, dest *os.File

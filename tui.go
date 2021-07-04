@@ -191,8 +191,21 @@ func printSummary() {
 		}
 
 		fmt.Println("]")
-		fmt.Print("   Copied " + strconv.FormatUint(fullAmount, 9))
-		fmt.Print(" files in ")
+		fmt.Print("   ")
+		switch mode {
+		case ModeCopy:
+			fmt.Print("Copied ")
+		case ModeMove:
+			fmt.Print("Moved ")
+		case ModeRemove:
+			fmt.Print("Deleted ")
+		}
+		if fullAmount == 1 {
+			fmt.Print("1 file in ")
+		} else {
+			fmt.Print(strconv.FormatUint(fullAmount, 9))
+			fmt.Print(" files in ")
+		}
 		fmt.Print(formatSeconds(elapsed.Seconds()))
 		fmt.Print(" (")
 		fullSpeed := float64(fullSize) / float64(elapsed.Seconds())
