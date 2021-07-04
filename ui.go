@@ -131,6 +131,14 @@ func verbSetBuffersize(size int) {
 	}
 }
 
+func verbNativeMoveFailed(sourcePath string, destPath string, err error) {
+	if verbose >= VerbInfo {
+		fmt.Println(color.FGColors.Yellow + "Native moving")
+		fmt.Print(sourcePath, "to", destPath, "failed:")
+		fmt.Println(color.FGColors.Red + err.Error() + color.Text.Reset)
+	}
+}
+
 func verbFlags() {
 	if verbose >= VerbInfo {
 		fmt.Printf(color.FGColors.Green)

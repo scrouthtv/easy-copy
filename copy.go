@@ -149,9 +149,13 @@ func copyFilePath(sourcePath string, destPath string) {
 
 		if mode == ModeMove {
 			// first attempt native move
-			if isSameDevice(sourcePath, destPath) {
-				panic("native move " + sourcePath + " to " + destPath)
-				os.Rename(sourcePath, destPath)
+			if isSameDevice(sourcePath, targetBase) {
+				err := os.Rename(sourcePath, destPath)
+				if err == nil {
+					return
+				} else {
+					verbNativeMoveFailed(sourcePath, destPath, err)
+				}
 			}
 		}
 
