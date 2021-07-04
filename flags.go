@@ -2,6 +2,7 @@ package main
 
 import (
 	"easy-copy/color"
+	"easy-copy/config"
 	"errors"
 	"os"
 	"strconv"
@@ -48,17 +49,26 @@ var followSymlinks uint8 = 1
 
 var progressLSColors bool = false
 
-// readConfig checks if the config should be read.
-func readConfig() bool {
+// readConfig checks if the config file should be read
+// (e.g. option no-config is not present),
+// and reads it if we want to.
+func readConfig() {
 	for _, arg := range os.Args {
-		if arg == "--" {
-			return false
-		} else if arg == "--no-config" {
-			return true
+		if arg == "--no-config" {
+			return
+		} else if arg == "--" {
+			break
 		}
 	}
 
-	return false
+	kvs, err := config.Load()
+	if err != nil {
+		warnConfig(err)
+	}
+
+	for _, line := range kvs {
+		parseOption(line)
+	}
 }
 
 func parseKeyValue(key string, value string) {

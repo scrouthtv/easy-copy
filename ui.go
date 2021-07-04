@@ -251,6 +251,14 @@ func errUnknownOption(option string) {
 	os.Exit(2)
 }
 
+func errMissingOperation() {
+	fmt.Print(color.FGColors.Red)
+	fmt.Print("No operation specified")
+	fmt.Println(color.Text.Reset)
+	printUsage()
+	os.Exit(2)
+}
+
 func errEmptySource() {
 	fmt.Print(color.FGColors.Red)
 	fmt.Print("No sources specified.")
@@ -290,8 +298,28 @@ func errDeletingFile(path string, err error) {
 	os.Exit(2)
 }
 
+func parseMode() {
+	if len(os.Args) < 2 {
+		errMissingOperation()
+	}
+
+	switch strings.ToLower(os.Args[1]) {
+	case "cp":
+		mode = ModeCopy
+	case "mv":
+		mode = ModeMove
+	case "rm":
+		mode = ModeRemove
+		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
+	default:
+		errInvalidMode(strings.ToLower(os.Args[1]), "cp, mv")
+	}
+}
+
 func parseArgs() {
-	args := os.Args[1:]
+	parseMode()
+
+	args := os.Args[2:]
 	var isFiles bool = false
 	for _, arg := range args {
 		if arg == "--" {

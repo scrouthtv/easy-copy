@@ -40,7 +40,6 @@ var (
 var lines int = 0
 
 func drawLoop() {
-
 	for !done {
 		for i := 0; i < lines; i++ {
 			fmt.Print("\033[1A\033[2K")
@@ -67,7 +66,6 @@ func drawLoop() {
 
 			fmt.Println()
 			lines++
-
 		}
 
 		printConflict()

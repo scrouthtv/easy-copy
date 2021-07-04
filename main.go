@@ -2,10 +2,8 @@ package main
 
 import (
 	"easy-copy/color"
-	"easy-copy/config"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 )
@@ -62,17 +60,7 @@ func main() {
 
 	color.Init(color.AutoColors())
 
-	if readConfig() {
-		var kvs []string
-		kvs, err = config.Load()
-		if err == nil {
-			for _, line := range kvs {
-				parseOption(line)
-			}
-		} else {
-			warnConfig(err)
-		}
-	}
+	readConfig()
 
 	parseArgs()
 
@@ -81,22 +69,9 @@ func main() {
 		verbFlags()
 	}
 
-	if len(unsearchedPaths) < 3 {
+	if len(unsearchedPaths) < 2 {
 		errEmptySource()
 	}
-
-	switch strings.ToLower(unsearchedPaths[0]) {
-	case "cp":
-		mode = ModeCopy
-	case "mv":
-		mode = ModeMove
-	case "rm":
-		mode = ModeRemove
-		panic("This mode is not implemented (yet).")
-	default:
-		errInvalidMode(strings.ToLower(unsearchedPaths[0]), "cp, mv")
-	}
-	unsearchedPaths = unsearchedPaths[1:]
 
 	targetBase, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths)-1])
 	if err != nil {

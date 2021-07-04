@@ -18,7 +18,7 @@ linters-settings:
     min-complexity: 7
   goconst:
     min-len: 0
-    min-occurences: 4
+    min-occurences: 5
   gocritic:
   godot:
     comments: all
