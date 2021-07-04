@@ -4,6 +4,10 @@ import "easy-copy/device"
 
 func setOptimalBuffersize() {
 	dev := device.GetDevice(targetBase)
+	if dev == nil {
+		return
+	}
+
 	setBuffersize(dev.OptimalBuffersize())
 }
 
