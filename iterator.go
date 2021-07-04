@@ -38,8 +38,8 @@ func iteratePaths() {
 				folders = append(folders,
 					filepath.Join(uPTargets[next], filepath.Base(next)))
 			}
-			var fileInFolder string
-			for _, fileInFolder = range names {
+
+			for _, fileInFolder := range names {
 				unsearchedPaths = append(unsearchedPaths, filepath.Join(next, fileInFolder))
 
 				if createFoldersInTarget {

@@ -40,4 +40,4 @@ linters-settings:
 
 linters:
   enable-all: true
-  disable: nlreturn,nolintlint,tparallel,testpackage,gci,scopelint,gochecknoglobals,interfacer,maligned,golint,dupl,gochecknoinits
+  disable: nlreturn,nolintlint,tparallel,testpackage,gci,scopelint,gochecknoglobals,interfacer,maligned,golint,dupl,gochecknoinits,goconst

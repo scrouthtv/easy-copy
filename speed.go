@@ -8,8 +8,8 @@ var (
 )
 
 const (
-	speedTicker    = 500     // how often the speed should be recalculated
-	watchdogTicker = 60*1000 // how fast the watchdog should run
+	speedTicker    = 500       // how often the speed should be recalculated
+	watchdogTicker = 60 * 1000 // how fast the watchdog should run
 )
 
 var (
@@ -22,7 +22,7 @@ func speedLoop() {
 	for tick := range ticker.C {
 		var seconds float32 = float32(tick.Sub(lastTime).Seconds())
 		if seconds != 0 {
-			sizePerSecond = float32(doneSize-lastSize) / float32(seconds)
+			sizePerSecond = float32(doneSize-lastSize) / seconds
 			lastSize = doneSize
 		}
 	}
@@ -32,8 +32,8 @@ func speedLoop() {
 
 func watchdog() {
 	ticker := time.NewTicker(time.Duration(watchdogTicker) * time.Millisecond)
-	for _ = range ticker.C {
-		if doneSize - lastWatchdogSize < 8 {
+	for range ticker.C {
+		if doneSize-lastWatchdogSize < 8 {
 			errStall()
 		}
 	}

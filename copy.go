@@ -137,16 +137,15 @@ func copyFilePath(sourcePath string, destPath string) {
 	if err != nil {
 		errCopying(sourcePath, destPath, err)
 	} else if stat.Mode().IsRegular() {
-
 		if mode == ModeMove {
 			// first attempt native move
 			if isSameDevice(sourcePath, targetBase) {
 				err := os.Rename(sourcePath, destPath)
-				if err == nil {
+				if err == nil { // yes, this should be == nil
 					return
-				} else {
-					verbNativeMoveFailed(sourcePath, destPath, err)
 				}
+
+				verbNativeMoveFailed(sourcePath, destPath, err)
 			}
 		}
 
@@ -219,7 +218,7 @@ func createFolders(folders []string) {
 
 // copyFile copies the openend source file to the already
 // created dest file. Any error is handled over to
-// errCopying()
+// errCopying().
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) {
 	var readAmount, writtenAmount int
 	var err error

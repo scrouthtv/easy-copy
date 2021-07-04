@@ -81,7 +81,7 @@ func printVersion() {
 }
 
 func printCopying() {
-	_, err := runPager(infoCopying())
+	err := runPager(infoCopying())
 	if errors.Is(err, errNoPager) {
 		fmt.Println(infoCopying())
 	} else if err != nil {
@@ -91,7 +91,7 @@ func printCopying() {
 }
 
 func printWarranty() {
-	_, err := runPager(infoWarranty())
+	err := runPager(infoWarranty())
 	if errors.Is(err, errNoPager) {
 		fmt.Println(infoCopying())
 	} else if err != nil {

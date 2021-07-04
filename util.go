@@ -30,11 +30,10 @@ func (err *errOpeningPager) Error() string {
 	return "error opening pager: " + err.err.Error()
 }
 
-/**
-* Tries to find a pager in $PAGER or defaults to less or more.
-* If none of those are available, runPager returns false and noPagerError.
- */
-func runPager(text string) (bool, error) {
+// runPager tries to find a suitable pager.
+// If one's found, the specified text is displayed via it.
+// If none could be opened, an error is returned.
+func runPager(text string) error {
 	pager, ok := os.LookupEnv("PAGER")
 	if !ok {
 		_, err := exec.LookPath("less")
@@ -45,7 +44,7 @@ func runPager(text string) (bool, error) {
 			if err == nil {
 				pager = "more"
 			} else {
-				return false, &errOpeningPager{err}
+				return &errOpeningPager{err}
 			}
 		}
 	}
@@ -54,7 +53,7 @@ func runPager(text string) (bool, error) {
 
 	out, err := cmd.StdinPipe()
 	if err != nil {
-		return false, &errOpeningPager{err}
+		return &errOpeningPager{err}
 	}
 
 	cmd.Stdout = os.Stdout
@@ -62,7 +61,7 @@ func runPager(text string) (bool, error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return false, &errOpeningPager{err}
+		return &errOpeningPager{err}
 	}
 
 	writer := bufio.NewWriter(out)
@@ -70,7 +69,7 @@ func runPager(text string) (bool, error) {
 	_, err = writer.WriteString(text)
 	if err != nil {
 		out.Close()
-		return false, &errOpeningPager{err}
+		return &errOpeningPager{err}
 	}
 
 	writer.Flush()
@@ -78,10 +77,10 @@ func runPager(text string) (bool, error) {
 
 	err = cmd.Wait()
 	if err != nil {
-		return false, &errOpeningPager{err}
+		return &errOpeningPager{err}
 	}
 
-	return true, nil
+	return nil
 }
 
 func formatSeconds(seconds float64) string {

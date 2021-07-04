@@ -3,11 +3,31 @@ package main
 import (
 	"easy-copy/color"
 	"easy-copy/config"
-	"errors"
 	"os"
 	"strconv"
 	"strings"
 )
+
+// ErrBadValue is used when an attempt to set a configuration value
+// was unsuccessful.
+type ErrBadValue struct {
+	key   string
+	value string
+}
+
+func (e *ErrBadValue) Error() string {
+	return "bad value for " + e.key + ": " + e.value
+}
+
+// ErrBadConfigLine is used when there's a config line
+// with too little or too many '='.
+type ErrBadConfigLine struct {
+	line string
+}
+
+func (e *ErrBadConfigLine) Error() string {
+	return "couldn't parse this line: " + e.line
+}
 
 var verbose int = VerbNotice
 
@@ -121,7 +141,7 @@ func parseKeyValue(key string, value string) {
 		if err == nil {
 			setBuffersize(val)
 		} else {
-			warnConfig(errors.New("bad value for buffersize: " + value))
+			warnConfig(&ErrBadValue{key: "buffersize", value: value})
 		}
 	default:
 		warnBadConfigKey(key)
@@ -131,7 +151,7 @@ func parseKeyValue(key string, value string) {
 func parseOption(line string) {
 	kv := strings.Split(line, "=")
 	if len(kv) != 2 {
-		warnConfig(errors.New("missing '=' or too many '=' : " + line))
+		warnConfig(&ErrBadConfigLine{line: line})
 		return
 	}
 
