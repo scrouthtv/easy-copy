@@ -123,6 +123,14 @@ func verbVerboseEnabled() {
 	fmt.Println(color.FGColors.Yellow + "Verbose mode enabled." + color.Text.Reset)
 }
 
+func verbSetBuffersize(size int) {
+	if verbose >= VerbInfo {
+		fmt.Print(color.FGColors.Yellow + "Set buffersize to ")
+		fmt.Print(formatSize(float64(size), sizeAutoUnit(float64(size))))
+		fmt.Println(color.Text.Reset)
+	}
+}
+
 func verbFlags() {
 	if verbose >= VerbInfo {
 		fmt.Printf(color.FGColors.Green)
@@ -131,13 +139,6 @@ func verbFlags() {
 		fmt.Print(" Follow symlinks: ", followSymlinks)
 		fmt.Println(color.Text.Reset)
 	}
-}
-
-func verbDisablingColors(shellname string) {
-	// as this is called from the init function where verbose isn't set yet
-	fmt.Println("Color support for", shellname, "is currently not ipmlemented.")
-	fmt.Println("If your terminal does support colors, open an issue at")
-	fmt.Println(" " + EasyCopyIssues)
 }
 
 func verbTargets() {
@@ -169,22 +170,6 @@ func verbSearchStart() {
 		fmt.Print(color.FGColors.Yellow)
 		fmt.Println("Have to search", unsearchedPaths)
 		fmt.Print("Target is ", targetBase)
-		fmt.Println(color.Text.Reset)
-	}
-}
-
-func verbCopyStart(sourcePath string, destPath string) {
-	if verbose >= VerbInfo {
-		fmt.Print(color.FGColors.Yellow)
-		fmt.Print("src: ", sourcePath, " dest: ", destPath)
-		fmt.Println(color.Text.Reset)
-	}
-}
-
-func verbCopyFinished(srcPath string, destPath string) {
-	if verbose >= VerbInfo {
-		fmt.Print(color.FGColors.Yellow)
-		fmt.Print("finished copying ", srcPath, " to ", destPath)
 		fmt.Println(color.Text.Reset)
 	}
 }
@@ -311,13 +296,6 @@ func errDeletingFile(path string, err error) {
 	fmt.Print(err)
 	fmt.Println(color.Text.Reset)
 	os.Exit(2)
-}
-
-func warnCreatingConfig(err error) {
-	fmt.Println("Could not create a default configuration file:")
-	fmt.Print(color.FGColors.LRed)
-	fmt.Print(err)
-	fmt.Println(color.Text.Reset)
 }
 
 func parseArgs() {

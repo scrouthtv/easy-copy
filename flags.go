@@ -124,8 +124,7 @@ func parseKeyValue(key string, value string) {
 	case "buffersize":
 		val, err := strconv.Atoi(value)
 		if err == nil {
-			buffersize = uint(val)
-			buf = make([]byte, buffersize)
+			setBuffersize(val)
 		} else {
 			warnConfig(errors.New("bad value for buffersize: " + value))
 		}

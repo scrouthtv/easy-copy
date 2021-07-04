@@ -78,24 +78,24 @@ func formatSeconds(seconds float64) string {
 	}
 }
 
-/**
- * 0: best print in bytes
- * 1: best print in kb
- * 2: best print in mb
- * 3: best print in gb
- * 4: best print in tb
- */
+// sizeAutoUnit determines which unit this size in bytes
+// prints the nicest in
+// 0: best print in bytes
+// 1: best print in kb
+// 2: best print in mb
+// 3: best print in gb
+// 4: best print in tb
 func sizeAutoUnit(size float64) int {
-	if size < 1000 {
-		return 0
-	} else if size < 1000*1000 {
-		return 1
-	} else if size < 1000*1000*1000 {
-		return 2
-	} else if size < 1000*1000*1000*1000 {
-		return 3
+	if size < 300 {
+		return 0 //  B up to 300
+	} else if size < 300*1024 {
+		return 1 // kB up to 300
+	} else if size < 300*1024*1024 {
+		return 2 // MB up to 300
+	} else if size < 300*1024*1024*1024 {
+		return 3 // GB up to 300
 	} else {
-		return 4
+		return 4 // no one copies more than 300 tb
 	}
 }
 
@@ -104,13 +104,13 @@ func formatSize(size float64, unit int) string {
 	case 0:
 		return strconv.FormatFloat(size, 'f', 0, 32) + " b"
 	case 1:
-		return strconv.FormatFloat(size/1000, 'f', 0, 32) + " kB"
+		return strconv.FormatFloat(size/1024, 'f', 1, 32) + " kB"
 	case 2:
-		return strconv.FormatFloat(size/1000/1000, 'f', 1, 32) + " MB"
+		return strconv.FormatFloat(size/1024/1024, 'f', 2, 32) + " MB"
 	case 3:
-		return strconv.FormatFloat(size/1000/1000/1000, 'f', 2, 32) + " GB"
+		return strconv.FormatFloat(size/1024/1024/1024, 'f', 2, 32) + " GB"
 	default:
-		return strconv.FormatFloat(size/1000/1000/1000/1000, 'f', 2, 32) + " TB"
+		return strconv.FormatFloat(size/1024/1024/1024/1024, 'f', 2, 32) + " TB"
 	}
 }
 

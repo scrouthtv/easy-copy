@@ -9,9 +9,11 @@ import (
 	"strconv"
 )
 
-var buffersize uint = 32768
+var buf []byte = make([]byte, 32678)
 
-var buf []byte = make([]byte, buffersize)
+func setBuffersize(size int) {
+	buf = make([]byte, size)
+}
 
 /**
  * Loops checking / waiting for any left work.
