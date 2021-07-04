@@ -21,7 +21,7 @@ Use it at your own risk. I take zero responsibility for any damage linked to thi
  - Feel free to fork *EasyCopy* and open PRs with new features.
 
 # Copyright
-Copyright &#169; 2020 The *EasyCopy* authors.
+Copyright &#169; 2021 The *EasyCopy* authors.
 This software is licensed under GNU GPL v3.0.
 This means that you are free to change and redistribute *EasyCopy* as a whole or any part of it, as long as the source to any derived work is as well publicly disclosed and licensed under GNU GPL v3.0.
 Absolutely no warranty is provided for this software.
@@ -29,4 +29,3 @@ For more information read the LICENSE file that is distributed with *EasyCopy*.
 
 This software uses third-party source code.
  - Salvatore Sanfilippo's `kilo.c`, accessible on the internet via [https://github.com/snaptoken/kilo-src/blob/sections/kilo.c](GitHub). It is licensed under BSD 2-Clause "Simplified", a copy of which comes included with EasyCopy, named `LICENSE.2`.
- - Karpelès Lab Inc.'s `reflink` project, accessible on the internet via [https://github.com/KarpelesLab/reflink/](GitHub). It is licensed under the MIT License, a copy of which comes included with EasyCopy, named `LICENSE.3`.

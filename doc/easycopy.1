@@ -1,6 +1,6 @@
-.TH EC 1 "05 Oct 2020" "\[u00A9] EasyCopy User Manual"
+.TH EC 1 "4 Jul 2021" "\[u00A9] EasyCopy User Manual"
 .SH NAME
-ec \- copy files and directories with ease
+ec \- easier file handling
 .SH SYNOPSIS
 .SY ec
 .I OPERATION
@@ -113,7 +113,7 @@ A major problem caused the program to abort it's task. More information can be f
 .SH EXAMPLES
 .TP
 .EX
-.BI ec " foo/ bar"
+.BI ec " cp foo/ bar"
 .EE
 Duplicate the folder
 .I foo/
@@ -121,19 +121,19 @@ as
 .IR bar/ .
 .TP
 .EX
-.BI ec " /tmp/foo /mnt/bar ~/baz/"
+.BI ec " cp /tmp/foo /mnt/bar ~/baz/"
 .EE
 Copy
 .I /tmp/foo
 and
 .I /mnt/bar
-to
+into
 .IR ~/baz/ .
 .TP
 .EX
-.BI ec " -fV foo bar"
+.BI ec " mv -fV foo bar"
 .EE
-Duplicate
+Move
 .I foo
 as
 .IR bar
@@ -153,7 +153,7 @@ Report bugs to the issue tracker of this project:
 .UR https://github.com/scrouthtv/easy-copy/issues/
 .UE
 .SH COPYRIGHT
-Copyright \[u00A9] 2020 The EasyCopy authors.
+Copyright \[u00A9] 2021 The EasyCopy authors.
 This software is licensed under GNU GPL v3.
 For more information, read the LICENSE file that was distributed with this software.
 .PP
