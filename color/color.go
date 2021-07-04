@@ -1,12 +1,9 @@
+// +build windows linux freebsd openbsd netbsd dragonfly darwin
 // +build !nocolor
 
 package color
 
-/**
- * Value determines whether colors should be enabled.
- * true  - colors are enabled
- * false - colors are disabled
- */
+// Init initializes the colors module
 func Init(value bool) {
 	if value {
 		FGColors = colors{

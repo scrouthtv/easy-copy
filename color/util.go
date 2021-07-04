@@ -9,14 +9,8 @@ import (
 	"strings"
 )
 
-func LinuxIsPiped() bool {
-	fi, _ := os.Stdout.Stat()
-
-	return (fi.Mode() & os.ModeCharDevice) == 0
-}
-
 func WindowsParentProcessName() (string, error) {
-	cmd := exec.Command("tasklist") //, "/fi \"pid eq " + strconv.Itoa(ppid) + "\" /nh", "") does not work
+	cmd := exec.Command("tasklist")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
