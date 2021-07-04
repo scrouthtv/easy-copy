@@ -160,6 +160,7 @@ func main() {
 	start = time.Now()
 
 	go iteratePaths()
+	go speedLoop()
 	copyLoop()
 
 	printSummary()

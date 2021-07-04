@@ -218,7 +218,7 @@ func createFolders(folders []string) {
 }
 
 // copyFile copies the openend source file to the already
-// created dest file. Any error is handled over to 
+// created dest file. Any error is handled over to
 // errCopying()
 func copyFile(source *os.File, dest *os.File, progressStorage *uint64) {
 	var readAmount, writtenAmount int
