@@ -140,6 +140,8 @@ func main() {
 
 	go iteratePaths()
 	go speedLoop()
+	go watchdog()
+
 	copyLoop()
 
 	printSummary()

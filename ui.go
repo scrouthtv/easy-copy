@@ -300,6 +300,13 @@ func errDeletingFile(path string, err error) {
 	os.Exit(2)
 }
 
+func errStall() {
+	fmt.Print(color.FGColors.Red)
+	fmt.Print("Aborting because less than 8 b have been transferred in 1 minute")
+	fmt.Println(color.Text.Reset)
+	os.Exit(2)
+}
+
 func parseMode() {
 	if len(os.Args) < 2 {
 		errMissingOperation()

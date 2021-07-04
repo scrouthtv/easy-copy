@@ -14,13 +14,12 @@ func iteratePaths() {
 		unsearchedPaths = unsearchedPaths[1:] // discard that element
 		filesLock.RUnlock()
 
-		var err error
-		var stat os.FileInfo
-		stat, err = os.Lstat(next)
+		stat, err := os.Lstat(next)
 		// TODO don't exit on missing file, coreutils cp doesnt do that
 		if err != nil {
 			errMissingFile(err, next)
 		}
+
 		if stat.IsDir() {
 			dir, err := os.Open(next)
 			if err != nil {
