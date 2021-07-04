@@ -155,12 +155,14 @@ func verbTargets() {
 		fmt.Println("-------------------------")
 		fmt.Println("these tasks will be done:")
 		filesLock.RLock()
+
 		for _, v := range folders {
 			fmt.Println("need to create folder", v)
 		}
 		for _, v := range fileOrder {
 			fmt.Println(v, "will be copied to", targets[v]+"/")
 		}
+
 		filesLock.RUnlock()
 		fmt.Println("-------------------------")
 		fmt.Print(color.Text.Reset)
@@ -321,7 +323,6 @@ func parseArgs() {
 				parseFlag("-", arg[i:i+1])
 			}
 		} else {
-			// TODO: clean & abs arg
 			unsearchedPaths = append(unsearchedPaths, arg)
 			uPTargets[arg] = targetBase
 		}

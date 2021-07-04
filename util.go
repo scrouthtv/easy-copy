@@ -3,13 +3,14 @@ package main
 import (
 	"bufio"
 	"errors"
-	"io"
 	"os"
 	"os/exec"
 	"strconv"
 )
 
 var errNoPager error = errors.New("error: no suitable pager found")
+
+const bfactor = 1024 // bytes in a kb
 
 type errOpeningPager struct {
 	err error
@@ -28,12 +29,9 @@ func (err *errOpeningPager) Error() string {
 * If none of those are available, runPager returns false and noPagerError.
  */
 func runPager(text string) (bool, error) {
-	var pager string
-	var ok bool
-	var err error
-	pager, ok = os.LookupEnv("PAGER")
+	pager, ok := os.LookupEnv("PAGER")
 	if !ok {
-		_, err = exec.LookPath("less")
+		_, err := exec.LookPath("less")
 		if err == nil {
 			pager = "less"
 		} else {
@@ -45,23 +43,33 @@ func runPager(text string) (bool, error) {
 			}
 		}
 	}
+
 	cmd := exec.Command(pager)
-	var out io.WriteCloser
-	out, err = cmd.StdinPipe()
+	out, err := cmd.StdinPipe()
 	if err != nil {
 		return false, &errOpeningPager{err}
 	}
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Start()
 	if err != nil {
 		return false, &errOpeningPager{err}
 	}
+
 	writer := bufio.NewWriter(out)
-	writer.WriteString(text)
+	_, err = writer.WriteString(text)
+	if err != nil {
+		out.Close()
+		return false, &errOpeningPager{err}
+	}
+
 	writer.Flush()
 	out.Close()
-	cmd.Wait()
+	err = cmd.Wait()
+	if err != nil {
+		return false, &errOpeningPager{err}
+	}
 
 	return true, nil
 }
@@ -88,11 +96,11 @@ func formatSeconds(seconds float64) string {
 func sizeAutoUnit(size float64) int {
 	if size < 300 {
 		return 0 //  B up to 300
-	} else if size < 300*1024 {
+	} else if size < 300*bfactor {
 		return 1 // kB up to 300
-	} else if size < 300*1024*1024 {
+	} else if size < 300*bfactor*bfactor {
 		return 2 // MB up to 300
-	} else if size < 300*1024*1024*1024 {
+	} else if size < 300*bfactor*bfactor*bfactor {
 		return 3 // GB up to 300
 	} else {
 		return 4 // no one copies more than 300 tb
@@ -104,13 +112,13 @@ func formatSize(size float64, unit int) string {
 	case 0:
 		return strconv.FormatFloat(size, 'f', 0, 32) + " b"
 	case 1:
-		return strconv.FormatFloat(size/1024, 'f', 1, 32) + " kB"
+		return strconv.FormatFloat(size/bfactor, 'f', 1, 32) + " kB"
 	case 2:
-		return strconv.FormatFloat(size/1024/1024, 'f', 2, 32) + " MB"
+		return strconv.FormatFloat(size/bfactor/bfactor, 'f', 2, 32) + " MB"
 	case 3:
-		return strconv.FormatFloat(size/1024/1024/1024, 'f', 2, 32) + " GB"
+		return strconv.FormatFloat(size/bfactor/bfactor/bfactor, 'f', 2, 32) + " GB"
 	default:
-		return strconv.FormatFloat(size/1024/1024/1024/1024, 'f', 2, 32) + " TB"
+		return strconv.FormatFloat(size/bfactor/bfactor/bfactor/bfactor, 'f', 2, 32) + " TB"
 	}
 }
 

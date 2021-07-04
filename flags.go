@@ -104,21 +104,21 @@ func parseKeyValue(key string, value string) {
 			progressLSColors = true
 		}
 	case "color":
-		switch value {
-		case "never", "false", "no", "none":
+		switch configInterpretAutoOrBoolean(value) {
+		case 0:
 			color.Init(false)
-		case "auto":
+		case 1:
 			color.Init(color.AutoColors())
-		case "always", "true", "yes", "all":
+		case 2:
 			color.Init(true)
 		}
 	case "reflink":
-		switch value {
-		case "never", "false", "no", "none":
+		switch configInterpretAutoOrBoolean(value) {
+		case 0:
 			doReflinks = 0
-		case "auto":
+		case 1:
 			doReflinks = 1
-		case "always", "true", "yes", "all":
+		case 2:
 			doReflinks = 2
 		}
 	case "buffersize":
@@ -185,6 +185,19 @@ func parseFlag(prefix string, flag string) {
 		doReflinks = 2
 	default:
 		errUnknownOption(prefix + flag)
+	}
+}
+
+func configInterpretAutoOrBoolean(v string) int {
+	switch v {
+	case "never", "false", "no", "none":
+		return 0
+	case "auto":
+		return 1
+	case "always", "true", "yes", "all":
+		return 2
+	default:
+		return -1
 	}
 }
 

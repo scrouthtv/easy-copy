@@ -162,7 +162,7 @@ func copyFilePath(sourcePath string, destPath string) {
 		currentTaskType = 1
 		currentFile = sourcePath
 		var source, dest *os.File
-		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0o644)
+		source, err = os.OpenFile(sourcePath, os.O_RDONLY, 0)
 		if err != nil {
 			errMissingFile(err, sourcePath)
 		}

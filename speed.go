@@ -4,7 +4,7 @@ import "time"
 
 var lastSize uint64 = 0
 
-// in what intervals to measure time (millis)
+// ms specifies how often the speed should be recalculated.
 const ms int = 500
 
 var (

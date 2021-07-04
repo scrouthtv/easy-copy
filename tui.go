@@ -208,9 +208,8 @@ func printSummary() {
 		}
 		fmt.Print(formatSeconds(elapsed.Seconds()))
 		fmt.Print(" (")
-		fullSpeed := float64(fullSize) / float64(elapsed.Seconds())
-		fmt.Print(formatSize(float64(fullSpeed),
-			sizeAutoUnit(float64(fullSpeed))))
+		fullSpeed := float64(fullSize) / elapsed.Seconds()
+		fmt.Print(formatSize(fullSpeed, sizeAutoUnit(fullSpeed)))
 		fmt.Print("/s).")
 		fmt.Println()
 	}

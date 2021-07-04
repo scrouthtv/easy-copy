@@ -24,7 +24,7 @@ var (
 	targets   map[string]string = make(map[string]string)
 )
 
-// read/write exclusion lock for the three arrays above
+// filesLock is an exclusion lock for the three arrays above.
 var filesLock = sync.RWMutex{}
 
 var iteratorDone, done bool = false, false
@@ -133,7 +133,10 @@ func main() {
 		// into the target directory:
 		stat, err := os.Stat(targetBase)
 		if os.IsNotExist(err) {
-			os.MkdirAll(targetBase, 0o755)
+			err = os.MkdirAll(targetBase, 0o755)
+			if err != nil {
+				errCreatingFile(err, targetBase)
+			}
 		} else if err != nil {
 			errCreatingFile(err, targetBase)
 		} else if !stat.IsDir() {
