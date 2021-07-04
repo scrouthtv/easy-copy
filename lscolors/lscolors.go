@@ -19,27 +19,34 @@ var types []string = []string{
 }
 
 var (
-	lsc_loaded bool     = false
-	lsc        lscolors = lscolors{
+	lscLoaded bool     = false
+	lsc       lscolors = lscolors{
 		make(map[string]string), make(map[string]string),
 	}
 )
 
+// FormatType formats a file type.
+// The available types are identical to the ones available
+// to $LSCOLORS.
 func FormatType(t string) string {
 	return lsc.types[t]
 }
 
+// FormatFile formats a file based on it's type and name.
 func FormatFile(info os.FileInfo) string {
-	if !lsc_loaded {
+	if !lscLoaded {
 		ReloadLsColors()
 	}
+
 	if info == nil {
 		return ""
 	}
+
 	//                      rwxrwxrwx
 	if info.Mode().Perm()&0b001000000 != 0 && info.Mode().IsRegular() {
 		return lsc.types["ex"]
 	}
+
 	switch info.Mode() & os.ModeType {
 	case os.ModeDir:
 		return lsc.types["di"]
@@ -75,35 +82,36 @@ func formatByExtension(name string) string {
 	// the coreutils ls implementation of LS_COLORS matching only works
 	// if there is a single * in the beginning, so I'm going to do the same thing:
 	name = strings.ToLower(name)
-	var ext, format string
-	for ext, format = range lsc.exts {
+
+	for ext, format := range lsc.exts {
 		if strings.HasSuffix(name, ext) {
 			return format
 		}
 	}
+
 	return lsc.types["fi"]
 }
 
+// ReloadLsColors parses $LS_COLORS.
 func ReloadLsColors() {
-	var lscvar string
-	var ok bool
-	lscvar, ok = os.LookupEnv("LS_COLORS")
+	lscvar, ok := os.LookupEnv("LS_COLORS")
 	if !ok {
 		lscvar, ok = os.LookupEnv("LS_COLOURS")
 	}
+
 	if !ok {
 		return
 	}
 
-	var colors []string
 	var eqsym int
-	colors = strings.Split(lscvar, ":")
-	var clr string
-	for _, clr = range colors {
+
+	colors := strings.Split(lscvar, ":")
+	for _, clr := range colors {
 		eqsym = strings.IndexRune(clr, '=')
 		if eqsym == -1 {
 			continue
 		}
+
 		if lscIsType(clr[0:eqsym]) {
 			lsc.types[clr[:eqsym]] = clr[eqsym+1:]
 		} else {
@@ -112,7 +120,8 @@ func ReloadLsColors() {
 			lsc.exts[clr[1:eqsym]] = strings.ToLower(clr[eqsym+1:])
 		}
 	}
-	lsc_loaded = true
+
+	lscLoaded = true
 }
 
 func lscIsType(key string) bool {
@@ -122,5 +131,6 @@ func lscIsType(key string) bool {
 			return true
 		}
 	}
+
 	return false
 }

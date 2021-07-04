@@ -15,9 +15,11 @@ import (
 
 func TestLoadLSC(t *testing.T) {
 	ReloadLsColors()
+
 	for k, v := range lsc.types {
 		t.Logf("%s => %s\n", k, v)
 	}
+
 	t.Logf("%d extensions", len(lsc.exts))
 }
 
@@ -26,11 +28,12 @@ func TestFormatSingleFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var info os.FileInfo
-	info, err = os.Lstat(f.Name())
+
+	info, err := os.Lstat(f.Name())
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	format := FormatFile(info)
 
 	t.Logf("formatting with %s:\n", format)
@@ -45,27 +48,30 @@ func TestFormatSingleFolder(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	info, err := os.Lstat(home)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	t.Logf("%t", info.IsDir())
 	t.Logf(FormatFile(info))
 }
 
 // Simulate an ls output on ~
-// Compare to ls -A -w 81 -x --color=auto ~
+// Compare to ls -A -w 81 -x --color=auto ~.
 func TestFormatHomeFolder(t *testing.T) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	hf, err := os.Open(home)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var names []string
-	names, err = hf.Readdirnames(0)
+
+	names, err := hf.Readdirnames(0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,14 +98,18 @@ func TestFormatHomeFolder(t *testing.T) {
 	var path string
 	var info os.FileInfo
 	var line string
+
 	for row = 0; row < rows; row++ {
 		line = ""
+
 		for col = 0; col < epl; col++ {
 			path = filepath.Join(home, names[row*epl+col])
 			info, err = os.Lstat(path)
+
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			line += fmt.Sprintf("\033[%sm%-"+strconv.Itoa(longest+1)+"s\033[0m",
 				FormatFile(info), names[row*epl+col])
 		}

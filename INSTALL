@@ -20,9 +20,10 @@ The simplest way to install this package is:
 		 - `goin` disables the raw input module. Users have to press confirm 
 		   their choice in dialogues using the enter key.
 		 - `nocolor` disables color support. No output will be colorized.
+		 - `nolscolors` only disables support for lscolors.
 		For a minimal build, use:
 
-		go build -tags noconfig,noclor,goin .
+		go build -tags noconfig,noclor,nolscolors,goin .
 
  3. Install the binary:
 

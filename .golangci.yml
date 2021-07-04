@@ -8,11 +8,11 @@ linters-settings:
     lines: 100
     statements: 80
   gcognit:
-    min-complexity: 15
+    min-complexity: 20
   gocyclo:
-    min-complexity: 15
+    min-complexity: 20
   cyclop:
-    max-complexity: 15
+    max-complexity: 20
     package-average: 0.0
   nestif:
     min-complexity: 7
@@ -26,7 +26,7 @@ linters-settings:
     settings:
       mnd:
         checks: argument, case, condition, operation, return, assign
-        ignored-numbers: 0,1,2,10,16,100,1000
+        ignored-numbers: 0,1,2,10,16,1000
   lll:
     line-length: 120
   misspell:
