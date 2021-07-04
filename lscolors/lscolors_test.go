@@ -83,6 +83,10 @@ func TestFormatHomeFolder(t *testing.T) {
 		}
 	}
 
+	if longest == 0 {
+		return
+	}
+
 	sort.Slice(names, func(i int, j int) bool {
 		return strings.Compare(
 			strings.ToLower(strings.TrimLeft(names[i], ".")),
@@ -93,7 +97,13 @@ func TestFormatHomeFolder(t *testing.T) {
 	// entries per line
 	var epl int = 81 / longest
 
-	var rows int = len(names) / epl
+	var rows int
+	if epl <= 1 {
+		rows = 1
+	} else {
+		rows = len(names) / epl
+	}
+
 	var row, col int
 	var path string
 	var info os.FileInfo

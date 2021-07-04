@@ -73,6 +73,7 @@ func main() {
 			warnConfig(err)
 		}
 	}
+
 	parseArgs()
 
 	if verbose >= VerbInfo {
