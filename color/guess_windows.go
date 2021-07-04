@@ -49,6 +49,7 @@ func parentProcessName() (string, error) {
 	cmd := exec.Command("tasklist")
 	var out bytes.Buffer
 	cmd.Stdout = &out
+
 	err := cmd.Run()
 	if err != nil {
 		return "", err
@@ -73,5 +74,6 @@ func parentProcessName() (string, error) {
 			}
 		}
 	}
+
 	return "", nil
 }

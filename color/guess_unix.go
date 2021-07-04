@@ -9,7 +9,7 @@ import (
 
 var (
 	autoColorsCacheSet = false
-	autoColorsCache = false
+	autoColorsCache    = false
 )
 
 func isPiped() bool {
@@ -24,13 +24,16 @@ func AutoColors() bool {
 	if autoColorsCacheSet {
 		return autoColorsCache
 	}
+
 	if isPiped() {
 		autoColorsCacheSet = true
 		autoColorsCache = false
+
 		return false
 	}
 
 	autoColorsCacheSet = true
 	autoColorsCache = true
+
 	return true
 }
