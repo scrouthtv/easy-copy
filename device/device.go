@@ -13,6 +13,10 @@ type Device interface {
 	// It is used for considering renaming a file instead of
 	// copying + deleting it.
 	Equal(other Device) bool
+
+	// OptimalBuffersize determines the optimal buffersize
+	// for this device in bytes.
+	OptimalBuffersize() int
 }
 
 // SpaceUsage holds the space usage of a device.

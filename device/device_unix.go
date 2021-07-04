@@ -66,3 +66,15 @@ func (d *unixDevice) Equal(other Device) bool {
 
 	return d.id == o.id
 }
+
+func (d *unixDevice) OptimalBuffersize() int {
+	var stat unix.Statfs_t
+
+	err := unix.Statfs(d.afile, &stat)
+	if err != nil {
+		pushError(err)
+		return 32678
+	}
+
+	return int(stat.Bsize)
+}
