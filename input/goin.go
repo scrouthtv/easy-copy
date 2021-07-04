@@ -1,10 +1,18 @@
-// +build !windows,!linux,!freebsd,!openbsd,!netbsd,!dragonfly,!darwin
-// +build !goin
+// +build goin !windows,!linux,!freebsd,!openbsd,!netbsd,!dragonfly,!darwin
 
 package input
 
-import "bufio"
+// Enter does nothing if rawin is not used.
+func Enter() error {
+	return nil
+}
 
+// Exit does nothing if rawin is not used.
+func Exit() {
+}
+
+// Getch uses the fallback goin implementation by default
+// if rawin is not used.
 func Getch() rune {
-	rdr := bufio.NewReader(os.Stdin)
+	return goin()
 }
