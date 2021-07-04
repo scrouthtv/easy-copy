@@ -19,5 +19,9 @@ type Device interface {
 // Unit is 1 byte.
 type SpaceUsage struct {
 	Total uint64
-	Free uint64
+	Free  uint64
 }
+
+// UnknownUsage is returned if the space usage of the requested
+// device could not be determined.
+var UnknownUsage = SpaceUsage{Total: 0, Free: 0}

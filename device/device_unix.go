@@ -2,13 +2,15 @@
 
 package device
 
-import "os"
-import "fmt"
+import (
+	"fmt"
+	"os"
 
-import "golang.org/x/sys/unix"
+	"golang.org/x/sys/unix"
+)
 
 type unixDevice struct {
-	id uint64
+	id    uint64
 	afile string /* any file on this device */
 }
 
@@ -17,7 +19,11 @@ type unixDevice struct {
 func GetDevice(path string) Device {
 	var stat unix.Stat_t
 
-	unix.Stat(path, &stat)
+	err := unix.Stat(path, &stat)
+	if err != nil {
+		pushError(err)
+		return nil
+	}
 
 	return &unixDevice{stat.Dev, path}
 }
@@ -25,7 +31,11 @@ func GetDevice(path string) Device {
 func (d *unixDevice) Usage() SpaceUsage {
 	var stat unix.Statfs_t
 
-	unix.Statfs(d.afile, &stat)
+	err := unix.Statfs(d.afile, &stat)
+	if err != nil {
+		pushError(err)
+		return UnknownUsage
+	}
 
 	var free uint64
 	if isElevated() {
@@ -36,7 +46,7 @@ func (d *unixDevice) Usage() SpaceUsage {
 
 	return SpaceUsage{
 		Total: stat.Blocks * uint64(stat.Bsize),
-		Free: free,
+		Free:  free,
 	}
 }
 
