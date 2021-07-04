@@ -1,8 +1,8 @@
 package main
 
 import (
-	"errors"
 	"easy-copy/color"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
