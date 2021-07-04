@@ -124,6 +124,12 @@ func verbVerboseEnabled() {
 	fmt.Println(color.FGColors.Yellow + "Verbose mode enabled." + color.Text.Reset)
 }
 
+func verbDryrun() {
+	fmt.Print(color.FGColors.Yellow)
+	fmt.Print("Dry run - nothing on the disk will be changed.")
+	fmt.Println(color.Text.Reset)
+}
+
 func verbSetBuffersize(size int) {
 	if verbose >= VerbDebug {
 		fmt.Print(color.FGColors.Yellow + "Set buffersize to ")
@@ -142,7 +148,7 @@ func verbNativeMoveFailed(sourcePath string, destPath string, err error) {
 
 func verbFlags() {
 	if verbose >= VerbInfo {
-		fmt.Printf(color.FGColors.Green)
+		fmt.Print(color.FGColors.Green)
 		fmt.Println(" Verbose:", verbose)
 		fmt.Println(" Overwrite Mode:", onExistingFile)
 		fmt.Print(" Follow symlinks: ", followSymlinks)

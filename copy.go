@@ -46,7 +46,7 @@ func copyLoop() {
 			id := pendingConflicts[0]
 			pendingConflicts = pendingConflicts[1:]
 
-			var sourcePath string = fileOrder[id]
+			sourcePath := fileOrder[id]
 			var destPath string
 			if createFoldersInTarget {
 				destPath = filepath.Join(targets[sourcePath],
@@ -57,7 +57,9 @@ func copyLoop() {
 
 			filesLock.Unlock()
 
-			os.Remove(destPath)
+			if !dryrun {
+				os.Remove(destPath)
+			}
 			copyFilePath(sourcePath, destPath)
 			doneAmount += 1
 		} else if i < len(fileOrder) {
@@ -83,7 +85,9 @@ func copyLoop() {
 				case Skip:
 					doCopy = false
 				case Overwrite:
-					os.Remove(destPath)
+					if !dryrun {
+						os.Remove(destPath)
+					}
 				case Ask:
 					// save it to the conflicts:
 					filesLock.Lock()
@@ -137,7 +141,7 @@ func copyFilePath(sourcePath string, destPath string) {
 	if err != nil {
 		errCopying(sourcePath, destPath, err)
 	} else if stat.Mode().IsRegular() {
-		if mode == ModeMove {
+		if mode == ModeMove && !dryrun {
 			// first attempt native move
 			if isSameDevice(sourcePath, targetBase) {
 				err := os.Rename(sourcePath, destPath)
@@ -161,9 +165,11 @@ func copyFilePath(sourcePath string, destPath string) {
 				currentFile + "\033[" + lscolors.FormatType("re") + "m"
 		}
 
-		dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, stat.Mode().Perm())
-		if err != nil {
-			errCreatingFile(err, destPath)
+		if !dryrun {
+			dest, err = os.OpenFile(destPath, os.O_CREATE|os.O_RDWR, stat.Mode().Perm())
+			if err != nil {
+				errCreatingFile(err, destPath)
+			}
 		}
 
 		copyFile(source, dest, &doneSize)
@@ -183,14 +189,18 @@ func copyFilePath(sourcePath string, destPath string) {
 			errMissingFile(err, sourcePath)
 		}
 		sourcePath = resolvedSourcePath
-		if onExistingFile == 1 {
-			os.Remove(destPath)
-		}
-		err = os.Symlink(sourcePath, destPath)
 
-		if err != nil {
-			errCreatingLink(err, sourcePath, destPath)
+		if !dryrun {
+			if onExistingFile == 1 {
+				os.Remove(destPath)
+			}
+			err = os.Symlink(sourcePath, destPath)
+
+			if err != nil {
+				errCreatingLink(err, sourcePath, destPath)
+			}
 		}
+
 		doneSize += uint64(symlinkSize)
 	}
 }
@@ -207,9 +217,11 @@ func createFolders(folders []string) {
 				"\033[" + lscolors.FormatType("rs") + "m"
 		}
 
-		var err error = os.MkdirAll(folder, 0o755)
-		if err != nil {
-			errCreatingFile(err, folder)
+		if !dryrun {
+			var err error = os.MkdirAll(folder, 0o755)
+			if err != nil {
+				errCreatingFile(err, folder)
+			}
 		}
 
 		doneSize += uint64(folderSize)
@@ -235,14 +247,16 @@ func copyFile(source *os.File, dest *os.File, progressStorage *uint64) {
 			break
 		}
 
-		writtenAmount, err = dest.Write(buf[:readAmount])
-		if err != nil {
-			errCopying(source.Name(), dest.Name(), err)
-		}
+		if !dryrun {
+			writtenAmount, err = dest.Write(buf[:readAmount])
+			if err != nil {
+				errCopying(source.Name(), dest.Name(), err)
+			}
 
-		if readAmount != writtenAmount {
-			errCopying(source.Name(), dest.Name(),
-				&ErrWritingData{read: readAmount, written: writtenAmount})
+			if readAmount != writtenAmount {
+				errCopying(source.Name(), dest.Name(),
+					&ErrWritingData{read: readAmount, written: writtenAmount})
+			}
 		}
 
 		*progressStorage += uint64(writtenAmount)

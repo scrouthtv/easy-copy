@@ -101,7 +101,7 @@ func main() {
 			errMissingFile(err, unsearchedPaths[0])
 		}
 
-		if stat.IsDir() {
+		if stat.IsDir() && !dryrun {
 			err := os.MkdirAll(targetBase, 0o755)
 			if err != nil {
 				errCreatingFile(err, targetBase)
@@ -111,7 +111,7 @@ func main() {
 		// if there is more than one source, we want to copy the files
 		// into the target directory:
 		stat, err := os.Stat(targetBase)
-		if os.IsNotExist(err) {
+		if os.IsNotExist(err) && !dryrun {
 			err = os.MkdirAll(targetBase, 0o755)
 			if err != nil {
 				errCreatingFile(err, targetBase)

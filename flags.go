@@ -69,6 +69,8 @@ var followSymlinks uint8 = 1
 
 var progressLSColors bool = false
 
+var dryrun bool = false
+
 // readConfig checks if the config file should be read
 // (e.g. option no-config is not present),
 // and reads it if we want to.
@@ -196,6 +198,10 @@ func parseFlag(prefix string, flag string) {
 		onExistingFile = Ask
 	case "color":
 		color.Init(true)
+	case "dry":
+		dryrun = true
+
+		verbDryrun()
 	default:
 		errUnknownOption(prefix + flag)
 	}

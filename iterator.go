@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -20,15 +21,18 @@ func iteratePaths() {
 			errMissingFile(err, next)
 		}
 
-		if stat.IsDir() {
+		switch {
+		case stat.IsDir():
+			wormholeCheck(next)
+
 			dir, err := os.Open(next)
 			if err != nil {
 				errMissingFile(err, next)
 			}
-			var names []string
+
 			// TODO dont read all files at once, specify an amount of files to read
 			//  and recall Readdirnames until io.EOF is returned (I guess)
-			names, err = dir.Readdirnames(0)
+			names, err := dir.Readdirnames(0)
 			if err != nil {
 				errMissingFile(err, next)
 			}
@@ -55,21 +59,22 @@ func iteratePaths() {
 			//    as there aren't any to create anyways
 			//  - only one *folder* is passed and should be duplicated.
 			//    this if statement is the very first to be called and
-			//    this variable is subsequently set to true
+			//    createFoldersInTarget is subsequently set to true
 			//  - multiple files and folders are passed and should be copied
-			//    into a target, this variable was already set to true in main
+			//    into a target, createFoldersInTarget was already
+			//    set to true in main
 			createFoldersInTarget = true
 			fullSize += uint64(folderSize)
 			filesLock.Unlock()
-		} else if stat.Mode().IsRegular() {
+		case stat.Mode().IsRegular():
 			filesLock.Lock()
 			fileOrder = append(fileOrder, next)
 			targets[next] = uPTargets[next]
 			filesLock.Unlock()
 			fullSize += uint64(stat.Size())
-		} else if stat.Mode()&os.ModeDevice != 0 {
+		case stat.Mode()&os.ModeDevice != 0:
 			warnBadFile(next)
-		} else if stat.Mode()&os.ModeSymlink != 0 {
+		case stat.Mode()&os.ModeSymlink != 0:
 			filesLock.Lock()
 			var nextTarget string = uPTargets[next]
 			if followSymlinks == 1 {
@@ -85,7 +90,7 @@ func iteratePaths() {
 				uPTargets[nextResolved] = nextTarget
 			}
 			filesLock.Unlock()
-		} else {
+		default:
 			warnBadFile(next)
 		}
 
@@ -104,4 +109,12 @@ func iteratePaths() {
 
 	// as this function is forked anyways we can directly call this:
 	drawLoop()
+}
+
+// wormholeCheck detectes attempts to copy folders into themselves:
+func wormholeCheck(src string) {
+	return
+	fmt.Println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+	fmt.Println("is src:", src, "targetBase:", targetBase, "a wormhole?")
+	fmt.Println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 }
