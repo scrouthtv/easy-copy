@@ -25,11 +25,12 @@ var (
 	pendingConflicts []int
 )
 
-// 0 undefined
-// 1 Copying
-// 2 Linking
-// 3 Creating Folder
-// 4 Deleting
+// currentTaskType should be one of:
+//  0 undefined
+//  1 Copying
+//  2 Linking
+//  3 Creating Folder
+//  4 Deleting
 var (
 	currentTaskType int = -1
 	currentFile     string

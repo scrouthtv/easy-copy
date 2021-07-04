@@ -46,12 +46,6 @@ const (
 // 2 fully dereference.
 var followSymlinks uint8 = 1
 
-// doReflinks takes one of these values:
-// 0 never  -> no reflinks
-// 1 auto   -> attempt reflink, if that fails simply copy
-// 2 always -> attempt reflink, if that fails, fail.
-var doReflinks uint8 = 0
-
 var progressLSColors bool = false
 
 // readConfig checks if the config should be read.
@@ -111,15 +105,6 @@ func parseKeyValue(key string, value string) {
 			color.Init(color.AutoColors())
 		case 2:
 			color.Init(true)
-		}
-	case "reflink":
-		switch configInterpretAutoOrBoolean(value) {
-		case 0:
-			doReflinks = 0
-		case 1:
-			doReflinks = 1
-		case 2:
-			doReflinks = 2
 		}
 	case "buffersize":
 		val, err := strconv.Atoi(value)
@@ -181,8 +166,6 @@ func parseFlag(prefix string, flag string) {
 		onExistingFile = Ask
 	case "color":
 		color.Init(true)
-	case "reflink":
-		doReflinks = 2
 	default:
 		errUnknownOption(prefix + flag)
 	}

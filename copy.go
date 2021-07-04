@@ -25,7 +25,6 @@ func copyLoop() {
 	for !done {
 		filesLock.Lock()
 		if len(folders) > 0 {
-
 			// Create all folders:
 			localFolders := folders
 			folders = nil
@@ -33,10 +32,10 @@ func copyLoop() {
 			filesLock.Unlock()
 			createFolders(localFolders)
 		} else if len(pendingConflicts) > 0 {
-
 			// Work resolved conflicts:
-			var id int = pendingConflicts[0]
+			id := pendingConflicts[0]
 			pendingConflicts = pendingConflicts[1:]
+
 			var sourcePath string = fileOrder[id]
 			var destPath string
 			if createFoldersInTarget {
@@ -52,7 +51,6 @@ func copyLoop() {
 			copyFilePath(sourcePath, destPath)
 			doneAmount += 1
 		} else if i < len(fileOrder) {
-
 			// Copy normal files:
 			var sourcePath string = fileOrder[i]
 			var destPath string
@@ -103,7 +101,6 @@ func copyLoop() {
 			filesLock.RLock()
 			if len(folders) == 0 && len(fileOrder) == i &&
 				len(piledConflicts) == 0 && len(pendingConflicts) == 0 {
-
 				// 1. all folders have been created
 				// 2. we've tried to copy all files so far
 				// 3. all conflicts we had to ask the user are resolved
@@ -114,7 +111,6 @@ func copyLoop() {
 					syncdel(&fileOrder)
 					syncdel(&sources)
 				}
-
 			}
 			filesLock.RUnlock()
 		}
@@ -127,21 +123,6 @@ func copyLoop() {
 // dest will be created as a link that links to the
 // original file.
 func copyFilePath(sourcePath string, destPath string) {
-	var err error
-	if doReflinks > 0 {
-		err = reflink(sourcePath, destPath, &doneSize)
-		if err == nil {
-			return
-		} else {
-			if doReflinks == 1 {
-				verbReflinkFailed(sourcePath, destPath, err)
-			} else {
-				errReflinkFailed(sourcePath, destPath, err)
-				// os.Exit(2);
-			}
-		}
-	}
-
 	stat, err := os.Lstat(sourcePath)
 	if err != nil {
 		errCopying(sourcePath, destPath, err)

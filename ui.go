@@ -235,24 +235,6 @@ func warnBadFile(file string) {
 	fmt.Println(color.Text.Reset)
 }
 
-func verbReflinkFailed(sourcePath string, destPath string, err error) {
-	if verbose >= VerbInfo {
-		fmt.Print(color.FGColors.Yellow)
-		fmt.Println("Error reflinking", sourcePath, "to", destPath+":")
-		fmt.Println(err)
-		fmt.Println("Going to copy it instead.")
-		fmt.Print(color.Text.Reset)
-	}
-}
-
-func errReflinkFailed(sourcePath string, destPath string, err error) {
-	fmt.Println("Error reflinking", sourcePath, "to", destPath+":")
-	fmt.Print(color.FGColors.Red)
-	fmt.Println(err)
-	fmt.Print(color.Text.Reset)
-	os.Exit(2)
-}
-
 func errCopying(sourcePath string, destPath string, err error) {
 	fmt.Println("Error copying", sourcePath, "to", destPath+":")
 	fmt.Print(color.FGColors.Red)

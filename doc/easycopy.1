@@ -50,28 +50,6 @@ Ask before overwriting a file.
 Skip existing files.
 .SS Special Options
 .TP
-.IB "   \-\-reflink" "[=WHEN]"
-Create reflinks instead of copies (only if supported by the environment).
-.B WHEN
-can be any of
-.RS
-.TP
-.B always
-always create reflinks. If that fails, exit with an error.
-.TP
-.B auto
-attempt to create reflinks. If that fails, simply copy the file.
-.TP
-.B never
-always copy files.
-.PP
-If
-.B WHEN
-is not given, 
-.B always
-is assumed.
-.RE
-.TP
 .I "   \-\-no\-config"
 Do not read any user configuration files.
 .SS User Interface
