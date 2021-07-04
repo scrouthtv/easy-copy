@@ -13,6 +13,10 @@ func TestPartitionFinder(t *testing.T) {
 
 	for i, f := range fs {
 		dev := GetDevice(f)
-		t.Log(fs[i], "on", dev.Name(), "free:", dev.Usage().Free)
+		if dev == nil {
+			t.Log("Couldn't find partition for", fs[i])
+		} else {
+			t.Log(fs[i], "on", dev.Name(), "free:", dev.Usage().Free)
+		}
 	}
 }
