@@ -5,9 +5,19 @@ import (
 	"testing"
 )
 
-func TestBasicIterate(t *testing.T) {
-	tasks.SetBase("/mnt")
-	err := AddAll("/tmp/asdf")
+func TestIterateSingleFolder(t *testing.T) {
+	tasks.Setup("d:/tmp/target", true)
+	err := Add(&tasks.Path{Base: "c:/tmp/asdf/foo", Sub: ""})
+	if err != nil {
+		t.Error(err)
+	}
+
+	tasks.PrintTasks()
+}
+
+func TestIterateMultiFolders(t *testing.T) {
+	tasks.Setup("d:/tmp/target", true)
+	err := Add(&tasks.Path{Base: "c:/tmp/asdf", Sub: ""})
 	if err != nil {
 		t.Error(err)
 	}

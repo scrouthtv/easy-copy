@@ -6,17 +6,17 @@ import (
 	"path/filepath"
 )
 
-func Add(p tasks.Path) error {
-	info, err := os.Lstat(f)
+func Add(p *tasks.Path) error {
+	info, err := os.Lstat(p.AsAbs())
 	if err != nil {
 		return err
 	}
 
 	switch {
 	case info.IsDir():
-		return addAllInFolder(f)
-	case info.Mode.IsRegular():
-		tasks.AddTask(p.Base, p.Sub)
+		return addAllInFolder(p)
+	case info.Mode().IsRegular():
+		tasks.AddTask(p)
 	default:
 		panic("mode not impl: " + info.Mode().String())
 	}
@@ -25,8 +25,8 @@ func Add(p tasks.Path) error {
 }
 
 // addAllInFolder creates tasks for all files in the specified folder.
-func addAllInFolder(base string) error {
-	f, err := os.Open(base)
+func addAllInFolder(folder *tasks.Path) error {
+	f, err := os.Open(folder.AsAbs())
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func addAllInFolder(base string) error {
 	defer f.Close()
 
 	return walk(f, func(f string) {
-		return Add(filepath.Join(base, f))
+		Add(&tasks.Path{folder.Base, filepath.Join(folder.Sub, f)})
 	})
 }
 
