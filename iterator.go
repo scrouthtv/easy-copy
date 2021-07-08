@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -10,6 +9,7 @@ func iteratePaths() {
 	filesLock.RLock()
 	uPlen := len(unsearchedPaths)
 
+	fileloop:
 	for uPlen > 0 {
 		next := unsearchedPaths[0]
 		unsearchedPaths = unsearchedPaths[1:] // discard that element
@@ -23,11 +23,16 @@ func iteratePaths() {
 
 		switch {
 		case stat.IsDir():
-			wormholeCheck(next)
-
 			dir, err := os.Open(next)
 			if err != nil {
 				errMissingFile(err, next)
+			}
+
+			if wormholeCheck(next) {
+				warnWormhole(next)
+				filesLock.RLock()
+				uPlen = len(unsearchedPaths)
+				continue fileloop
 			}
 
 			// TODO dont read all files at once, specify an amount of files to read
@@ -112,9 +117,12 @@ func iteratePaths() {
 }
 
 // wormholeCheck detectes attempts to copy folders into themselves:
-func wormholeCheck(src string) {
-	return
-	fmt.Println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-	fmt.Println("is src:", src, "targetBase:", targetBase, "a wormhole?")
-	fmt.Println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+func wormholeCheck(src string) bool {
+	src, _ = filepath.Abs(src)
+	if src == targetBase {
+		nodelete = append(nodelete, src)
+		return true
+	}
+
+	return false
 }

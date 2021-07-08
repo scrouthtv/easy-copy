@@ -28,6 +28,7 @@ var filesLock = sync.RWMutex{}
 var iteratorDone, done bool = false, false
 
 var sources []string
+var nodelete []string
 
 var (
 	doneAmount uint64 = 0

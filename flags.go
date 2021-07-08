@@ -173,6 +173,10 @@ func parseFlag(prefix string, flag string) {
 	case "v", "version":
 		printVersion()
 		os.Exit(0)
+	case "debug":
+		verbose = VerbDebug
+
+		verbVerboseEnabled()
 	case "V", "verbose":
 		verbose = VerbInfo
 

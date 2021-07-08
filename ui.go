@@ -239,7 +239,13 @@ func warnBadConfigKey(key string) {
 
 func warnBadFile(file string) {
 	fmt.Print(color.FGColors.LRed)
-	fmt.Println(file, "is not a regular file, skipping it.")
+	fmt.Print(file, " is not a regular file, skipping it.")
+	fmt.Println(color.Text.Reset)
+}
+
+func warnWormhole(src string) {
+	fmt.Print(color.FGColors.LRed)
+	fmt.Print("Cannot copy ", src, " into itself, skipping it.")
 	fmt.Println(color.Text.Reset)
 }
 
