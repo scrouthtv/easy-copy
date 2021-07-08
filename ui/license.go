@@ -1,4 +1,4 @@
-package main
+package ui
 
 func infoWarranty() string {
 	return `15. Disclaimer of Warranty.

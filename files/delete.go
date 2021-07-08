@@ -1,10 +1,12 @@
-package main
+package files
 
-import "fmt"
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
-// syncdel deletes a list of files synchronously.
-func syncdel(files *[]string) {
+// Syncdel deletes a list of files synchronously.
+func Syncdel(files *[]string) {
 	var err error
 
 	for _, path := range *files {

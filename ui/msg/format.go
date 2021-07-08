@@ -1,10 +1,6 @@
-package main
+package msg
 
 import (
-	"bufio"
-	"errors"
-	"os"
-	"os/exec"
 	"strconv"
 )
 
@@ -16,74 +12,7 @@ const (
 	nicetime = 100  // highest time before choosing the bigge runit
 )
 
-var errNoPager = errors.New("no suitable pager found")
-
-type errOpeningPager struct {
-	err error
-}
-
-func (err *errOpeningPager) Unwrap() error {
-	return err.err
-}
-
-func (err *errOpeningPager) Error() string {
-	return "error opening pager: " + err.err.Error()
-}
-
-// runPager tries to find a suitable pager.
-// If one's found, the specified text is displayed via it.
-// If none could be opened, an error is returned.
-func runPager(text string) error {
-	pager, ok := os.LookupEnv("PAGER")
-	if !ok {
-		_, err := exec.LookPath("less")
-		if err == nil {
-			pager = "less"
-		} else {
-			_, err = exec.LookPath("more")
-			if err == nil {
-				pager = "more"
-			} else {
-				return &errOpeningPager{err}
-			}
-		}
-	}
-
-	cmd := exec.Command(pager)
-
-	out, err := cmd.StdinPipe()
-	if err != nil {
-		return &errOpeningPager{err}
-	}
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err = cmd.Start()
-	if err != nil {
-		return &errOpeningPager{err}
-	}
-
-	writer := bufio.NewWriter(out)
-
-	_, err = writer.WriteString(text)
-	if err != nil {
-		out.Close()
-		return &errOpeningPager{err}
-	}
-
-	writer.Flush()
-	out.Close()
-
-	err = cmd.Wait()
-	if err != nil {
-		return &errOpeningPager{err}
-	}
-
-	return nil
-}
-
-func formatSeconds(seconds float64) string {
+func FormatSeconds(seconds float64) string {
 	if seconds < nicetime {
 		return strconv.FormatFloat(seconds, 'f', 0, 32) + " s"
 	} else if seconds < nicetime*mfactor {
@@ -102,7 +31,7 @@ func formatSeconds(seconds float64) string {
 // 2: best print in mb
 // 3: best print in gb
 // 4: best print in tb
-func sizeAutoUnit(size float64) int {
+func SizeAutoUnit(size float64) int {
 	if size < nicesize {
 		return 0 //  B up to 300
 	} else if size < nicesize*bfactor {
@@ -116,7 +45,7 @@ func sizeAutoUnit(size float64) int {
 	}
 }
 
-func formatSize(size float64, unit int) string {
+func FormatSize(size float64, unit int) string {
 	switch unit {
 	case 0:
 		return strconv.FormatFloat(size, 'f', 0, 32) + " b"
@@ -131,7 +60,7 @@ func formatSize(size float64, unit int) string {
 	}
 }
 
-func shrinkPath(path string, length int) string {
+func ShrinkPath(path string, length int) string {
 	if len(path) > length {
 		return path[0:length-8] + "..." + path[len(path)-5:]
 	} else {

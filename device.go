@@ -1,6 +1,9 @@
 package main
 
-import "easy-copy/device"
+import (
+	"easy-copy/device"
+	"easy-copy/files"
+)
 
 func setOptimalBuffersize() {
 	dev := device.GetDevice(targetBase)
@@ -8,7 +11,7 @@ func setOptimalBuffersize() {
 		return
 	}
 
-	setBuffersize(dev.OptimalBuffersize())
+	files.SetBuffersize(dev.OptimalBuffersize())
 }
 
 func isSameDevice(pathA string, pathB string) bool {

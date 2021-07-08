@@ -9,25 +9,6 @@ import (
 	"path/filepath"
 )
 
-var buf []byte = make([]byte, 32678)
-
-// ErrWritingData is returned by the copy loop
-// if not all data could be written,
-// but no other is returned.
-type ErrWritingData struct {
-	read    int
-	written int
-}
-
-func (e *ErrWritingData) Error() string {
-	return fmt.Sprintf("could only write %d b out of %d b", e.written, e.read)
-}
-
-func setBuffersize(size int) {
-	buf = make([]byte, size)
-	verbSetBuffersize(size)
-}
-
 // copyLoop checks for any work and does it synchronously.
 func copyLoop() {
 	var i int = 0
@@ -225,40 +206,5 @@ func createFolders(folders []string) {
 		}
 
 		doneSize += uint64(folderSize)
-	}
-}
-
-// copyFile copies the openend source file to the already
-// created dest file. Any error is handled over to
-// errCopying().
-func copyFile(source *os.File, dest *os.File, progressStorage *uint64) {
-	var readAmount, writtenAmount int
-	var err error
-
-	for {
-		readAmount, err = source.Read(buf)
-
-		if err != nil && !errors.Is(err, io.EOF) {
-			errCopying(source.Name(), dest.Name(), err)
-		}
-
-		if readAmount == 0 {
-			// when the file is fully read
-			break
-		}
-
-		if !dryrun {
-			writtenAmount, err = dest.Write(buf[:readAmount])
-			if err != nil {
-				errCopying(source.Name(), dest.Name(), err)
-			}
-
-			if readAmount != writtenAmount {
-				errCopying(source.Name(), dest.Name(),
-					&ErrWritingData{read: readAmount, written: writtenAmount})
-			}
-		}
-
-		*progressStorage += uint64(writtenAmount)
 	}
 }

@@ -2,40 +2,18 @@ package main
 
 import (
 	"easy-copy/color"
+	"easy-copy/flags"
+	"easy-copy/ui"
+	"easy-copy/ui/msg"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 )
-
-var createFoldersInTarget bool
-
-var (
-	unsearchedPaths []string
-	uPTargets       map[string]string = make(map[string]string)
-	targetBase      string
-)
-
-var (
-	fileOrder []string
-	folders   []string
-	targets   map[string]string = make(map[string]string)
-)
-
-// filesLock is an exclusion lock for the three arrays above.
-var filesLock = sync.RWMutex{}
 
 var iteratorDone, done bool = false, false
 
 var sources []string
 var nodelete []string
-
-var (
-	doneAmount uint64 = 0
-	fullAmount uint64 = 0
-	doneSize   uint64 = 0
-	fullSize   uint64 = 0
-)
 
 var mode int = -1
 
@@ -61,13 +39,13 @@ func main() {
 
 	color.Init(color.AutoColors())
 
-	readConfig()
+	flags.ReadConfig()
 
-	parseArgs()
+	flags.ParseArgs()
 
-	if verbose >= VerbInfo {
-		printVersion()
-		verbFlags()
+	if msg.Verbosity() >= msg.VerbInfo {
+		ui.PrintVersion()
+		flags.VerbFlags()
 	}
 
 	if len(unsearchedPaths) < 2 {

@@ -18,7 +18,7 @@ func Add(p *tasks.Path) error {
 	case info.Mode().IsRegular():
 		tasks.AddTask(p)
 	default:
-		panic("mode not impl: " + info.Mode().String())
+		return &ErrBadType{p.AsAbs(), info}
 	}
 
 	return nil
@@ -34,7 +34,7 @@ func addAllInFolder(folder *tasks.Path) error {
 	defer f.Close()
 
 	return walk(f, func(f string) {
-		Add(&tasks.Path{folder.Base, filepath.Join(folder.Sub, f)})
+		Add(&tasks.Path{Base: folder.Base, Sub: filepath.Join(folder.Sub, f)})
 	})
 }
 
