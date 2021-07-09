@@ -3,6 +3,7 @@ package iterator
 import (
 	"easy-copy/flags"
 	"easy-copy/tasks"
+	"easy-copy/ui/msg"
 	"os"
 	"path/filepath"
 )
@@ -13,8 +14,13 @@ func Iterate() {
 	tasks.Setup(flags.Current.Target(), shouldCreateFolders())
 
 	for _, p := range flags.Current.Sources() {
-		add(&tasks.Path{Base: p, Sub: ""})
+		err := add(&tasks.Path{Base: p, Sub: ""})
+		if err != nil {
+			msg.ErrMissingFile(err, p)
+		}
 	}
+
+	tasks.PrintTasks()
 }
 
 func shouldCreateFolders() bool {

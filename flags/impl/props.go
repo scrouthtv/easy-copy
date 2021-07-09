@@ -12,9 +12,9 @@ func (s *settingsImpl) parseMode() {
 	}
 
 	switch os.Args[1] {
-	case "copy":
+	case "cp":
 		s.mode = flags.ModeCopy
-	case "move":
+	case "mv":
 		s.mode = flags.ModeMove
 	default:
 		panic("mode not supported")

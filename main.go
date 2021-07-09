@@ -57,4 +57,6 @@ func main() {
 	//copyLoop()
 
 	//printSummary()
+
+	time.Sleep(1 * time.Minute)
 }
