@@ -1,12 +1,51 @@
 package impl
 
 import (
+	"easy-copy/ui"
 	"easy-copy/ui/msg"
 	"os"
 	"strings"
 )
 
+func (s *settingsImpl) searchStopFlag() {
+	if len(os.Args) == 1 {
+		return
+	}
+
+	for _, arg := range os.Args[1:] {
+		if arg == "--" {
+			return
+		} else if strings.HasPrefix(arg, "--") {
+			s.isStopFlag(arg[2:])
+		} else if strings.HasPrefix(arg, "-") {
+			s.isStopFlag(arg[1:])
+		}
+	}
+}
+
+func (s *settingsImpl) isStopFlag(arg string) {
+	switch arg {
+	case "h", "help":
+		ui.PrintHelp()
+		os.Exit(0)
+	case "v", "version":
+		ui.PrintVersion()
+		os.Exit(0)
+	case "copying":
+		ui.ShowCopying()
+		os.Exit(0)
+	case "warranty":
+		ui.ShowWarranty()
+		os.Exit(0)
+	case "colortest":
+		ui.ShowColortest()
+		os.Exit(0)
+	}
+}
+
 func (s *settingsImpl) ParseLine() {
+	s.searchStopFlag()
+
 	s.parseMode()
 
 	isFiles := false

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"easy-copy/color"
-	"easy-copy/input"
+	"easy-copy/flags"
+	"easy-copy/progress"
+	"easy-copy/ui/msg"
 	"fmt"
 	"math"
-	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -47,14 +46,14 @@ func drawLoop() {
 
 		lines = 0
 
-		if verbose > VerbQuiet {
+		if flags.Current.Verbosity() > flags.VerbQuiet {
 			printBar()
 
-			unit := sizeAutoUnit(float64(fullSize))
+			unit := msg.SizeAutoUnit(float64(progress.FullSize))
 
-			fmt.Print(formatSize(float64(doneSize), unit))
+			fmt.Print(msg.FormatSize(float64(progress.DoneSize), unit))
 			fmt.Print(" / ")
-			fmt.Print(formatSize(float64(fullSize), unit))
+			fmt.Print(msg.FormatSize(float64(progress.FullSize), unit))
 			fmt.Println()
 
 			lines++
@@ -68,7 +67,7 @@ func drawLoop() {
 			lines++
 		}
 
-		printConflict()
+		//printConflict()
 
 		time.Sleep(redrawSpeed * time.Millisecond)
 	}
@@ -77,11 +76,11 @@ func drawLoop() {
 func printBar() {
 	var barFilled int
 
-	if fullSize == 0 {
+	if progress.FullSize == 0 {
 		// unneeded as this is only called after the iterator is done
 		barFilled = barWidth / 2
 	} else {
-		barFilled = int(math.Round(float64(barWidth) * float64(doneSize) / float64(fullSize)))
+		barFilled = int(math.Round(float64(barWidth) * float64(progress.DoneSize) / float64(progress.FullSize)))
 	}
 
 	fmt.Print("  [")
@@ -108,26 +107,27 @@ func printOperation() {
 
 	switch currentTaskType {
 	case 1:
-		fmt.Print("Copying " + shrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Copying " + msg.ShrinkPath(currentFile, maxWidth/2))
 	case 2:
-		fmt.Print("Linking " + shrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Linking " + msg.ShrinkPath(currentFile, maxWidth/2))
 	case 3:
-		fmt.Print("Creating " + shrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Creating " + msg.ShrinkPath(currentFile, maxWidth/2))
 	}
 
 	fmt.Print(" @ ")
-	fmt.Print(formatSize(float64(sizePerSecond),
-		sizeAutoUnit(float64(sizePerSecond))))
+	fmt.Print(msg.FormatSize(float64(progress.SizePerSecond),
+		msg.SizeAutoUnit(float64(progress.SizePerSecond))))
 	fmt.Print("/s")
 
 	// remaining time:
-	secondsLeft := float32(fullSize-doneSize) / sizePerSecond
+	secondsLeft := float32(progress.FullSize-progress.DoneSize) / progress.SizePerSecond
 
 	fmt.Print(", ")
-	fmt.Print(formatSeconds(float64(secondsLeft)))
+	fmt.Print(msg.FormatSeconds(float64(secondsLeft)))
 	fmt.Print(" remaining")
 }
 
+/*
 func printConflict() {
 	if len(piledConflicts) > 0 {
 		filesLock.RLock()
@@ -191,7 +191,7 @@ func printConflict() {
 
 /**
  * Add the file size to done_size and 1 to done_amount.
- */
+*/ /*
 func skipFile(path string) {
 	stat, err := os.Lstat(path)
 
@@ -204,51 +204,49 @@ func skipFile(path string) {
 	}
 
 	doneAmount++
-}
+}*/
 
 func printSummary() {
-	if verbose <= VerbCrit {
+	if flags.Current.Verbosity() <= flags.VerbCrit {
 		return
 	}
 
-	elapsed := time.Since(start)
+	elapsed := time.Since(progress.Start)
 
 	for i := 0; i < lines; i++ {
 		fmt.Print("\033[1A\033[2K")
 	}
 
-	if verbose > VerbQuiet {
-		fmt.Print("  [")
+	fmt.Print("  [")
 
-		for i := 0; i < barWidth; i++ {
-			fmt.Print("=")
-		}
-
-		fmt.Println("]")
-		fmt.Print("   ")
-
-		switch mode {
-		case ModeCopy:
-			fmt.Print("Copied ")
-		case ModeMove:
-			fmt.Print("Moved ")
-		case ModeRemove:
-			fmt.Print("Deleted ")
-		}
-
-		if fullAmount == 1 {
-			fmt.Print("1 file in ")
-		} else {
-			fmt.Print(strconv.FormatUint(fullAmount, 9))
-			fmt.Print(" files in ")
-		}
-
-		fullSpeed := float64(fullSize) / elapsed.Seconds()
-
-		fmt.Print(formatSeconds(elapsed.Seconds()))
-		fmt.Print(" (")
-		fmt.Print(formatSize(fullSpeed, sizeAutoUnit(fullSpeed)))
-		fmt.Print("/s).")
-		fmt.Println()
+	for i := 0; i < barWidth; i++ {
+		fmt.Print("=")
 	}
+
+	fmt.Println("]")
+	fmt.Print("   ")
+
+	switch mode {
+	case ModeCopy:
+		fmt.Print("Copied ")
+	case ModeMove:
+		fmt.Print("Moved ")
+	case ModeRemove:
+		fmt.Print("Deleted ")
+	}
+
+	if progress.FullAmount == 1 {
+		fmt.Print("1 file in ")
+	} else {
+		fmt.Print(strconv.FormatUint(progress.FullAmount, 9))
+		fmt.Print(" files in ")
+	}
+
+	fullSpeed := float64(progress.FullSize) / elapsed.Seconds()
+
+	fmt.Print(msg.FormatSeconds(elapsed.Seconds()))
+	fmt.Print(" (")
+	fmt.Print(msg.FormatSize(fullSpeed, msg.SizeAutoUnit(fullSpeed)))
+	fmt.Print("/s).")
+	fmt.Println()
 }

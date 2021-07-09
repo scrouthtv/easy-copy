@@ -4,9 +4,7 @@ import (
 	"easy-copy/color"
 	"easy-copy/files"
 	"easy-copy/flags"
-	"easy-copy/ui"
 	"easy-copy/ui/msg"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -18,12 +16,6 @@ func (s *settingsImpl) parseFlag(prefix string, flag string) {
 	}
 
 	switch flag {
-	case "h", "help":
-		ui.PrintHelp()
-		os.Exit(0)
-	case "v", "version":
-		ui.PrintVersion()
-		os.Exit(0)
 	case "debug":
 		s.verbosity = flags.VerbDebug
 
@@ -34,17 +26,8 @@ func (s *settingsImpl) parseFlag(prefix string, flag string) {
 		msg.VerbVerboseEnabled()
 	case "q", "quiet":
 		s.verbosity = flags.VerbQuiet
-	case "copying":
-		ui.ShowCopying()
-		os.Exit(0)
-	case "warranty":
-		ui.ShowWarranty()
-		os.Exit(0)
 	case "e", "extended-colors":
 		lscolors = true
-	case "colortest":
-		ui.ShowColortest()
-		os.Exit(0)
 	case "n", "no-clobber", "no-overwrite":
 		s.onConflict = flags.ConflictSkip
 	case "f", "force", "overwrite":

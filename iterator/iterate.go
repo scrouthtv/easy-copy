@@ -1,12 +1,32 @@
 package iterator
 
 import (
+	"easy-copy/flags"
 	"easy-copy/tasks"
 	"os"
 	"path/filepath"
 )
 
-func Add(p *tasks.Path) error {
+// Iterate initializes the task manager with the target provided by
+// the flags package. Afterwards, it iterates all sources.
+func Iterate() {
+	tasks.Setup(flags.Current.Target(), shouldCreateFolders())
+
+	for _, p := range flags.Current.Sources() {
+		add(&tasks.Path{Base: p, Sub: ""})
+	}
+}
+
+func shouldCreateFolders() bool {
+	if len(flags.Current.Sources()) > 1 {
+		return true
+	}
+
+	_, err := os.Open(flags.Current.Target())
+	return err == nil // if target already exists, create folders inside it
+}
+
+func add(p *tasks.Path) error {
 	info, err := os.Lstat(p.AsAbs())
 	if err != nil {
 		return err
@@ -34,7 +54,7 @@ func addAllInFolder(folder *tasks.Path) error {
 	defer f.Close()
 
 	return walk(f, func(f string) {
-		Add(&tasks.Path{Base: folder.Base, Sub: filepath.Join(folder.Sub, f)})
+		add(&tasks.Path{Base: folder.Base, Sub: filepath.Join(folder.Sub, f)})
 	})
 }
 

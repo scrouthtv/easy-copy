@@ -3,10 +3,10 @@ package main
 import (
 	"easy-copy/color"
 	"easy-copy/flags"
+	"easy-copy/flags/impl"
+	"easy-copy/iterator"
+	"easy-copy/progress"
 	"easy-copy/ui"
-	"easy-copy/ui/msg"
-	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -32,96 +32,29 @@ const (
 // uint64 goes up to 18446744073709551615
 // or 2097152 TB
 
-var start time.Time
-
 func main() {
-	var err error
+	flags.Current = impl.New()
 
 	color.Init(color.AutoColors())
 
-	flags.ReadConfig()
+	flags.Current.LoadConfig()
 
-	flags.ParseArgs()
+	flags.Current.ParseLine()
 
-	if msg.Verbosity() >= msg.VerbInfo {
+	if flags.Current.Verbosity() >= flags.VerbInfo {
 		ui.PrintVersion()
 		flags.VerbFlags()
 	}
 
-	if len(unsearchedPaths) < 2 {
-		errEmptySource()
-	}
+	//go setOptimalBuffersize()
 
-	targetBase, err = filepath.Abs(unsearchedPaths[len(unsearchedPaths)-1])
-	if err != nil {
-		errResolvingTarget(unsearchedPaths[len(unsearchedPaths)-1], err)
-	}
+	progress.Start = time.Now()
 
-	unsearchedPaths = unsearchedPaths[0 : len(unsearchedPaths)-1]
-	sources = unsearchedPaths
+	go iterator.Iterate()
+	//go speedLoop()
+	//go watchdog()
 
-	if len(unsearchedPaths) == 1 {
-		// if there is only one source, we want to duplicate it:
+	//copyLoop()
 
-		uPTargets[unsearchedPaths[0]] = targetBase
-
-		stat, err := os.Stat(targetBase)
-
-		// if the target already exists as a folder, we want to copy into it:
-		if err == nil && stat.IsDir() {
-			createFoldersInTarget = true
-		} else {
-			createFoldersInTarget = false
-		}
-
-		// if the source is a folder, we have to create the duplicated folder:
-		stat, err = os.Stat(unsearchedPaths[0])
-		if err != nil {
-			errMissingFile(err, unsearchedPaths[0])
-		}
-
-		if stat.IsDir() && !dryrun {
-			err := os.MkdirAll(targetBase, 0o755)
-			if err != nil {
-				errCreatingFile(err, targetBase)
-			}
-		}
-	} else {
-		// if there is more than one source, we want to copy the files
-		// into the target directory:
-		stat, err := os.Stat(targetBase)
-		if os.IsNotExist(err) && !dryrun {
-			err = os.MkdirAll(targetBase, 0o755)
-			if err != nil {
-				errCreatingFile(err, targetBase)
-			}
-		} else if err != nil {
-			errCreatingFile(err, targetBase)
-		} else if !stat.IsDir() {
-			errTargetNoDir(targetBase)
-		}
-
-		createFoldersInTarget = true
-		for _, uP := range unsearchedPaths {
-			uPTargets[uP] = targetBase
-		}
-	}
-
-	if createFoldersInTarget {
-		createFolders([]string{targetBase})
-	}
-
-	verbSearchStart()
-
-	go setOptimalBuffersize()
-
-	start = time.Now()
-
-	go iteratePaths()
-	go speedLoop()
-	go watchdog()
-
-	copyLoop()
-
-	printSummary()
+	//printSummary()
 }
