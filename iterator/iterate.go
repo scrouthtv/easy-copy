@@ -8,10 +8,14 @@ import (
 	"path/filepath"
 )
 
+var Done = false
+
 // Iterate initializes the task manager with the target provided by
 // the flags package. Afterwards, it iterates all sources.
 func Iterate() {
 	tasks.Setup(flags.Current.Target(), shouldCreateFolders())
+
+	defer func() { Done = true }()
 
 	for _, p := range flags.Current.Sources() {
 		err := add(&tasks.Path{Base: p, Sub: ""})
@@ -40,6 +44,7 @@ func add(p *tasks.Path) error {
 
 	switch {
 	case info.IsDir():
+		tasks.AddFolder(p.Sub)
 		return addAllInFolder(p)
 	case info.Mode().IsRegular():
 		tasks.AddTask(p)
