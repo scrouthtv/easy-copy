@@ -85,12 +85,12 @@ func printBar() {
 func printOperation() {
 	fmt.Print("   ")
 
-	switch flags.Current.Mode() {
-	case 1:
+	switch progress.CurrentTask {
+	case progress.TaskCopy:
 		fmt.Print("Copying " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
-	case 2:
+	case progress.TaskLink:
 		fmt.Print("Linking " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
-	case 3:
+	case progress.TaskMkdir:
 		fmt.Print("Creating " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
 	}
 
