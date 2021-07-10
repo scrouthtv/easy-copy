@@ -2,13 +2,12 @@ package iterator
 
 import (
 	"easy-copy/flags"
+	"easy-copy/progress"
 	"easy-copy/tasks"
 	"easy-copy/ui"
 	"os"
 	"path/filepath"
 )
-
-var Done = false
 
 type ErrMissingFile struct {
 	Path string
@@ -28,8 +27,6 @@ func (e *ErrMissingFile) Unwrap() error {
 func Iterate() {
 	tasks.Setup(flags.Current.Target(), shouldCreateFolders())
 
-	defer func() { Done = true }()
-
 	for _, p := range flags.Current.Sources() {
 		err := add(&tasks.Path{Base: p, Sub: ""})
 		if err != nil {
@@ -38,6 +35,7 @@ func Iterate() {
 	}
 
 	tasks.PrintTasks()
+	progress.IteratorDone = true
 }
 
 func shouldCreateFolders() bool {

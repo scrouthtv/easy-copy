@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"easy-copy/tasks"
+	"easy-copy/color"
+	"easy-copy/progress"
 	"easy-copy/ui"
-	"fmt"
 )
 
 func Handle() {
-	for !tasks.Done {
+	for !progress.CopyDone {
 		select {
 		case w := <-ui.Warns:
-			fmt.Println(w)
+			println(color.FGColors.Red + w.Error() + color.Text.Reset)
 		case i := <-ui.Infos:
-			fmt.Println(i)
+			println(color.FGColors.Cyan + i.Info() + color.Text.Reset)
 		}
 	}
 }

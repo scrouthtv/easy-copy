@@ -3,15 +3,14 @@ package tasks
 import (
 	"fmt"
 	"path/filepath"
-	"sync"
 )
 
 var targetBase string
 var createFoldersInTarget bool
 
-var lock *sync.RWMutex = &sync.RWMutex{}
+var lock *LoggedLock = newLock()
 var sources []Path
-var pendingConflicts, solvedConflicts []Path
+var pendingConflicts, solvedConflicts []Task
 var folders []string
 
 type Task struct {
@@ -19,13 +18,13 @@ type Task struct {
 	Dest   string
 }
 
-var Done = false
-
 // Setup is called once for setting the target base
 // and whether to recreate the root folders inside the target.
 func Setup(base string, cloneFolders bool) {
 	targetBase = base
 	createFoldersInTarget = cloneFolders
+
+	AddFolder(base)
 }
 
 // PopTask pops the next available task from the task list.
@@ -43,13 +42,19 @@ func PopPendingConflict() Task {
 	return Task{}
 }
 
+func PushPendingConflict(t Task) {
+	lock.Lock()
+	pendingConflicts = append(pendingConflicts, t)
+	lock.Unlock()
+}
+
 func PopSolvedConflict() *Task {
 	lock.Lock()
 	pop := solvedConflicts[0]
 	solvedConflicts = solvedConflicts[1:]
 	lock.Unlock()
 
-	return &Task{Source: pop.AsAbs(), Dest: destFor(&pop)}
+	return &pop
 }
 
 func AddTask(p *Path) {

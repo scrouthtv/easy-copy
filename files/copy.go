@@ -25,29 +25,22 @@ func SetBuffersize(size int) {
 	ui.Infos <- &InfoSetBuffersize{size}
 }
 
-func Copy(source string, dest string) error {
-	s, err := os.Open(source)
-	if err != nil {
-		return err
-	}
+type InfoStartCopy struct {
+	Source string
+	Dest   string
+}
 
-	defer s.Close()
-
-	d, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-
-	defer d.Close()
-
-	return copyFile(s, d)
+func (i *InfoStartCopy) Info() string {
+	return fmt.Sprintf("copy %s to %s", i.Source, i.Dest)
 }
 
 // copyFile copies the openend source file to the already
 // created dest file.
-func copyFile(source *os.File, dest *os.File) error {
+func CopyFile(source *os.File, dest *os.File) error {
 	var readAmount, writtenAmount int
 	var err error
+
+	ui.Infos <- &InfoStartCopy{source.Name(), dest.Name()}
 
 	for {
 		readAmount, err = source.Read(buf)

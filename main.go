@@ -36,12 +36,12 @@ func main() {
 
 	go iterator.Iterate()
 
+	go drawLoop()
+
 	go progress.WatchSpeed()
 	go progress.Watchdog()
 
 	tasks.CopyLoop()
 
-	//printSummary()
-
-	time.Sleep(1 * time.Minute)
+	printSummary()
 }

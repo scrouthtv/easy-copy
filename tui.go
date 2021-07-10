@@ -3,7 +3,6 @@ package main
 import (
 	"easy-copy/flags"
 	"easy-copy/progress"
-	"easy-copy/tasks"
 	"easy-copy/ui"
 	"fmt"
 	"math"
@@ -40,7 +39,7 @@ var (
 var lines int = 0
 
 func drawLoop() {
-	for !tasks.Done {
+	for !progress.CopyDone {
 		for i := 0; i < lines; i++ {
 			fmt.Print("\033[1A\033[2K")
 		}

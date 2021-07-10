@@ -39,3 +39,8 @@ const (
 	TaskDelete
 	TaskMkdir
 )
+
+var (
+	IteratorDone = false
+	CopyDone     = false
+)
