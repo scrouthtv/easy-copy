@@ -15,7 +15,16 @@ type settingsImpl struct {
 }
 
 func New() flags.Settings {
-	return &settingsImpl{}
+	return &settingsImpl{
+		sources:    []string{},
+		target:     "",
+		mode:       flags.ModeCopy,
+		verbosity:  flags.VerbNotice,
+		onConflict: flags.ConflictAsk,
+		onSymlink:  flags.SymlinkDeref,
+		doLScolors: true,
+		dryrun:     false,
+	}
 }
 
 func (s *settingsImpl) Sources() []string {

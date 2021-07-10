@@ -64,6 +64,10 @@ func AddTask(p *Path) {
 }
 
 func AddFolder(folder string) {
+	if folder == "" {
+		return
+	}
+
 	lock.Lock()
 	folders = append(folders, folder)
 	lock.Unlock()

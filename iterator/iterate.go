@@ -34,7 +34,9 @@ func Iterate() {
 		}
 	}
 
-	tasks.PrintTasks()
+	if flags.Current.Verbosity() >= flags.VerbInfo {
+		tasks.PrintTasks()
+	}
 	progress.IteratorDone = true
 }
 
@@ -56,8 +58,10 @@ func add(p *tasks.Path) error {
 	switch {
 	case info.IsDir():
 		tasks.AddFolder(p.Sub)
+		progress.FullSize += uint64(progress.FolderSize)
 		return addAllInFolder(p)
 	case info.Mode().IsRegular():
+		progress.FullSize += uint64(info.Size())
 		tasks.AddTask(p)
 	default:
 		return &ErrBadType{p.AsAbs(), info}

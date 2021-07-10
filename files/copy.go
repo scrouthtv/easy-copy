@@ -20,6 +20,10 @@ func (i *InfoSetBuffersize) Info() string {
 	return fmt.Sprintf("buffersize set to %d b", i.Size) // TODO auto format size
 }
 
+func (i *InfoSetBuffersize) Required() flags.Verbose {
+	return flags.VerbInfo
+}
+
 func SetBuffersize(size int) {
 	buf = make([]byte, size)
 	ui.Infos <- &InfoSetBuffersize{size}
@@ -34,13 +38,15 @@ func (i *InfoStartCopy) Info() string {
 	return fmt.Sprintf("copy %s to %s", i.Source, i.Dest)
 }
 
+func (i *InfoStartCopy) Required() flags.Verbose {
+	return flags.VerbDebug
+}
+
 // copyFile copies the openend source file to the already
 // created dest file.
 func CopyFile(source *os.File, dest *os.File) error {
 	var readAmount, writtenAmount int
 	var err error
-
-	ui.Infos <- &InfoStartCopy{source.Name(), dest.Name()}
 
 	for {
 		readAmount, err = source.Read(buf)

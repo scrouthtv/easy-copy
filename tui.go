@@ -16,26 +16,6 @@ const (
 	redrawSpeed = 100 // in ms
 )
 
-// contains ids to files that should be recopied after the
-//  dialog whether to overwrite files has been answered.
-// once their respective dialogs have been answered, they are either
-//  added to pendingOverwrites or simply removed from piledOverwrites.
-var (
-	piledConflicts   []int
-	pendingConflicts []int
-)
-
-// currentTaskType should be one of:
-//  0 undefined
-//  1 Copying
-//  2 Linking
-//  3 Creating Folder
-//  4 Deleting
-var (
-	currentTaskType int = -1
-	currentFile     string
-)
-
 var lines int = 0
 
 func drawLoop() {
@@ -105,13 +85,13 @@ func printBar() {
 func printOperation() {
 	fmt.Print("   ")
 
-	switch currentTaskType {
+	switch flags.Current.Mode() {
 	case 1:
-		fmt.Print("Copying " + ui.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Copying " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
 	case 2:
-		fmt.Print("Linking " + ui.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Linking " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
 	case 3:
-		fmt.Print("Creating " + ui.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Creating " + ui.ShrinkPath(progress.CurrentFile, maxWidth/2))
 	}
 
 	fmt.Print(" @ ")

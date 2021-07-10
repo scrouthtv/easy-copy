@@ -15,10 +15,18 @@ func (i *InfoVerboseEnabled) Info() string {
 	return "verbose mode enabled"
 }
 
+func (i *InfoVerboseEnabled) Required() flags.Verbose {
+	return flags.VerbInfo
+}
+
 type InfoDryrun struct{}
 
 func (i *InfoDryrun) Info() string {
 	return "dry run mode enabled"
+}
+
+func (i *InfoDryrun) Required() flags.Verbose {
+	return flags.VerbInfo
 }
 
 type ErrUnknownOption struct {

@@ -2,12 +2,14 @@ package ui
 
 import (
 	"easy-copy/color"
+	"easy-copy/flags"
 	"fmt"
 	"os"
 )
 
 type Info interface {
 	Info() string
+	Required() flags.Verbose
 }
 
 var Infos = make(chan Info, 8)
