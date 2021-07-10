@@ -1,7 +1,7 @@
 package progress
 
 import (
-	"easy-copy/ui/msg"
+	"errors"
 	"time"
 )
 
@@ -35,11 +35,13 @@ func WatchSpeed() {
 	ticker.Stop()
 }
 
-func Watchdog() {
+var ErrStall = errors.New("less than 8 bytes transferred in 1 minute")
+
+func Watchdog(err chan error) {
 	ticker := time.NewTicker(time.Duration(watchdogTicker) * time.Millisecond)
 	for range ticker.C {
 		if DoneSize-lastWatchdogSize < 8 {
-			msg.ErrStall()
+			err <- ErrStall
 		}
 	}
 

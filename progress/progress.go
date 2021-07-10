@@ -1,5 +1,19 @@
 package progress
 
+const (
+	// FolderSize is the size that should be used for progress calculation
+	// for a folder.
+	// It should resemble the "complexity" of creating a folder compared
+	// to writing 1 byte.
+	FolderSize int = 4
+
+	// SymlinkSize is the size that should be used for progress calculation
+	// for a symbolic link.
+	// It should resemble the "complexity" of creating a link compared
+	// to writing 1 byte.
+	SymlinkSize int = 16
+)
+
 var (
 	DoneAmount uint64 = 0
 	FullAmount uint64 = 0

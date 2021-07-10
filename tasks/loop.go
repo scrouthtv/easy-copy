@@ -1,5 +1,13 @@
 package tasks
 
+import (
+	"easy-copy/flags"
+	"easy-copy/lscolors"
+	"easy-copy/progress"
+	"easy-copy/ui/msg"
+	"os"
+)
+
 func CopyLoop() {
 	lock.Lock()
 	switch {
@@ -18,5 +26,24 @@ func CopyLoop() {
 }
 
 func createFolders(f []string) {
+	progress.CurrentTask = progress.TaskFolder
 
+	for _, folder := range f {
+		if flags.Current.DoLSColors() {
+			progress.CurrentFile = "\033[" + lscolors.FormatType("di") + "m" +
+				folder + "\033[" + lscolors.FormatType("rs") + "m"
+		} else {
+			progress.CurrentFile = folder
+		}
+
+		if !flags.Current.Dryrun() {
+			err := os.MkdirAll(folder, 0o755)
+			if err != nil {
+				msg.ErrCreatingFile(err, folder)
+			}
+		}
+
+		progress.DoneSize += progress.FolderSize
+
+	}
 }
