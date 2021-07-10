@@ -4,10 +4,38 @@ import (
 	"easy-copy/color"
 	"easy-copy/files"
 	"easy-copy/flags"
-	"easy-copy/ui/msg"
+	"easy-copy/ui"
 	"strconv"
 	"strings"
 )
+
+type InfoVerboseEnabled struct{}
+
+func (i *InfoVerboseEnabled) Info() string {
+	return "verbose mode enabled"
+}
+
+type InfoDryrun struct{}
+
+func (i *InfoDryrun) Info() string {
+	return "dry run mode enabled"
+}
+
+type ErrUnknownOption struct {
+	option string
+}
+
+func (e *ErrUnknownOption) Error() string {
+	return "unknown option: " + e.option
+}
+
+type ErrBadConfigKey struct {
+	Key string
+}
+
+func (e *ErrBadConfigKey) Error() string {
+	return "invalid config key '" + e.Key + "'"
+}
 
 func (s *settingsImpl) parseFlag(prefix string, flag string) {
 	if strings.ContainsRune(flag, '=') {
@@ -19,29 +47,29 @@ func (s *settingsImpl) parseFlag(prefix string, flag string) {
 	case "debug":
 		s.verbosity = flags.VerbDebug
 
-		msg.VerbVerboseEnabled()
+		ui.Infos <- &InfoVerboseEnabled{}
 	case "V", "verbose":
 		s.verbosity = flags.VerbInfo
 
-		msg.VerbVerboseEnabled()
+		ui.Infos <- &InfoVerboseEnabled{}
 	case "q", "quiet":
 		s.verbosity = flags.VerbQuiet
 	case "e", "extended-colors":
-		lscolors = true
+		s.doLScolors = true
 	case "n", "no-clobber", "no-overwrite":
 		s.onConflict = flags.ConflictSkip
 	case "f", "force", "overwrite":
-		conflict = flags.ConflictOverwrite
+		s.onConflict = flags.ConflictOverwrite
 	case "i", "interactive":
-		conflict = flags.ConflictAsk
+		s.onConflict = flags.ConflictAsk
 	case "color":
 		color.Init(true)
 	case "dry":
 		s.dryrun = true
 
-		msg.VerbDryrun()
+		ui.Infos <- &InfoDryrun{}
 	default:
-		msg.ErrUnknownOption(prefix + flag)
+		ui.Warns <- &ErrUnknownOption{prefix + flag}
 	}
 }
 
@@ -95,9 +123,9 @@ func (s *settingsImpl) parseKeyValue(key string, value string) {
 		if err == nil {
 			files.SetBuffersize(val)
 		} else {
-			msg.WarnConfig(&ErrBadValue{key: "buffersize", value: value})
+			ui.Warns <- &ErrBadValue{key: "buffersize", value: value}
 		}
 	default:
-		msg.WarnBadConfigKey(key)
+		ui.Warns <- &ErrBadConfigKey{key}
 	}
 }

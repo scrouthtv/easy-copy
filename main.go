@@ -8,13 +8,15 @@ import (
 	"easy-copy/progress"
 	"easy-copy/tasks"
 	"easy-copy/ui"
-	"easy-copy/ui/msg"
+	"easy-copy/ui/handler"
 	"time"
 )
 
 var nodelete []string
 
 func main() {
+	go handler.Handle()
+
 	flags.Current = impl.New()
 
 	color.Init(color.AutoColors())
@@ -33,23 +35,13 @@ func main() {
 	progress.Start = time.Now()
 
 	go iterator.Iterate()
-	go speed()
+
+	go progress.WatchSpeed()
+	go progress.Watchdog()
 
 	tasks.CopyLoop()
 
 	//printSummary()
 
 	time.Sleep(1 * time.Minute)
-}
-
-func speed() {
-	go progress.WatchSpeed()
-
-	c := make(chan error)
-	go progress.Watchdog(c)
-
-	err := <-c
-	if err != nil {
-		msg.ErrStall()
-	}
 }

@@ -3,7 +3,8 @@ package main
 import (
 	"easy-copy/flags"
 	"easy-copy/progress"
-	"easy-copy/ui/msg"
+	"easy-copy/tasks"
+	"easy-copy/ui"
 	"fmt"
 	"math"
 	"strconv"
@@ -39,7 +40,7 @@ var (
 var lines int = 0
 
 func drawLoop() {
-	for !done {
+	for !tasks.Done {
 		for i := 0; i < lines; i++ {
 			fmt.Print("\033[1A\033[2K")
 		}
@@ -49,11 +50,11 @@ func drawLoop() {
 		if flags.Current.Verbosity() > flags.VerbQuiet {
 			printBar()
 
-			unit := msg.SizeAutoUnit(float64(progress.FullSize))
+			unit := ui.SizeAutoUnit(float64(progress.FullSize))
 
-			fmt.Print(msg.FormatSize(float64(progress.DoneSize), unit))
+			fmt.Print(ui.FormatSize(float64(progress.DoneSize), unit))
 			fmt.Print(" / ")
-			fmt.Print(msg.FormatSize(float64(progress.FullSize), unit))
+			fmt.Print(ui.FormatSize(float64(progress.FullSize), unit))
 			fmt.Println()
 
 			lines++
@@ -107,23 +108,23 @@ func printOperation() {
 
 	switch currentTaskType {
 	case 1:
-		fmt.Print("Copying " + msg.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Copying " + ui.ShrinkPath(currentFile, maxWidth/2))
 	case 2:
-		fmt.Print("Linking " + msg.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Linking " + ui.ShrinkPath(currentFile, maxWidth/2))
 	case 3:
-		fmt.Print("Creating " + msg.ShrinkPath(currentFile, maxWidth/2))
+		fmt.Print("Creating " + ui.ShrinkPath(currentFile, maxWidth/2))
 	}
 
 	fmt.Print(" @ ")
-	fmt.Print(msg.FormatSize(float64(progress.SizePerSecond),
-		msg.SizeAutoUnit(float64(progress.SizePerSecond))))
+	fmt.Print(ui.FormatSize(float64(progress.SizePerSecond),
+		ui.SizeAutoUnit(float64(progress.SizePerSecond))))
 	fmt.Print("/s")
 
 	// remaining time:
 	secondsLeft := float32(progress.FullSize-progress.DoneSize) / progress.SizePerSecond
 
 	fmt.Print(", ")
-	fmt.Print(msg.FormatSeconds(float64(secondsLeft)))
+	fmt.Print(ui.FormatSeconds(float64(secondsLeft)))
 	fmt.Print(" remaining")
 }
 
@@ -226,12 +227,12 @@ func printSummary() {
 	fmt.Println("]")
 	fmt.Print("   ")
 
-	switch mode {
-	case ModeCopy:
+	switch flags.Current.Mode() {
+	case flags.ModeCopy:
 		fmt.Print("Copied ")
-	case ModeMove:
+	case flags.ModeMove:
 		fmt.Print("Moved ")
-	case ModeRemove:
+	case flags.ModeRemove:
 		fmt.Print("Deleted ")
 	}
 
@@ -244,9 +245,9 @@ func printSummary() {
 
 	fullSpeed := float64(progress.FullSize) / elapsed.Seconds()
 
-	fmt.Print(msg.FormatSeconds(elapsed.Seconds()))
+	fmt.Print(ui.FormatSeconds(elapsed.Seconds()))
 	fmt.Print(" (")
-	fmt.Print(msg.FormatSize(fullSpeed, msg.SizeAutoUnit(fullSpeed)))
+	fmt.Print(ui.FormatSize(fullSpeed, ui.SizeAutoUnit(fullSpeed)))
 	fmt.Print("/s).")
 	fmt.Println()
 }

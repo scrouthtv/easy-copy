@@ -3,9 +3,22 @@ package files
 import (
 	"easy-copy/flags"
 	"easy-copy/progress"
-	"easy-copy/ui/msg"
+	"easy-copy/ui"
 	"os"
 )
+
+type ErrDeletingFile struct {
+	Path string
+	Err  error
+}
+
+func (e *ErrDeletingFile) Error() string {
+	return "deleting " + e.Path + ": " + e.Err.Error()
+}
+
+func (e *ErrDeletingFile) Unwrap() error {
+	return e.Err
+}
 
 // Syncdel deletes a list of files synchronously.
 func Syncdel(files *[]string) {
@@ -19,7 +32,7 @@ func Syncdel(files *[]string) {
 			err = os.RemoveAll(path)
 
 			if err != nil {
-				msg.ErrDeletingFile(path, err)
+				ui.Warns <- &ErrDeletingFile{path, err}
 			}
 		}
 	}

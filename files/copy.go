@@ -3,17 +3,26 @@ package files
 import (
 	"easy-copy/flags"
 	"easy-copy/progress"
-	"easy-copy/ui/msg"
+	"easy-copy/ui"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 )
 
 var buf []byte = make([]byte, 32678)
 
+type InfoSetBuffersize struct {
+	Size int
+}
+
+func (i *InfoSetBuffersize) Info() string {
+	return fmt.Sprintf("buffersize set to %d b", i.Size) // TODO auto format size
+}
+
 func SetBuffersize(size int) {
 	buf = make([]byte, size)
-	msg.VerbSetBuffersize(size)
+	ui.Infos <- &InfoSetBuffersize{size}
 }
 
 func Copy(source string, dest string) error {
@@ -31,9 +40,7 @@ func Copy(source string, dest string) error {
 
 	defer d.Close()
 
-	copyFile(s, d)
-
-	return nil
+	return copyFile(s, d)
 }
 
 // copyFile copies the openend source file to the already

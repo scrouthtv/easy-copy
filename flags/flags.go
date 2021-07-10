@@ -23,6 +23,8 @@ const (
 	ModeCopy Mode = iota
 
 	ModeMove
+
+	ModeRemove
 )
 
 type Verbose uint8

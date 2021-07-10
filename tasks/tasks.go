@@ -29,13 +29,13 @@ func Setup(base string, cloneFolders bool) {
 }
 
 // PopTask pops the next available task from the task list.
-func PopTask() Task {
+func PopTask() *Task {
 	lock.Lock()
 	next := sources[0]
 	sources = sources[1:]
 	lock.Unlock()
 
-	return Task{Source: next.AsAbs(), Dest: destFor(&next)}
+	return &Task{Source: next.AsAbs(), Dest: destFor(&next)}
 }
 
 func PopPendingConflict() Task {

@@ -1,4 +1,4 @@
-package msg
+package handler
 
 import (
 	"easy-copy/color"

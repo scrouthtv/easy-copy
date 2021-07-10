@@ -72,7 +72,7 @@ func PrintHelp() {
 }
 
 func PrintVersion() {
-	fmt.Print(color.FGColors.Red)
+	fmt.Print(color.FGColors.Green)
 	fmt.Print(EasyCopyName + " v" + EasyCopyVersion)
 	fmt.Println(color.Text.Reset)
 }

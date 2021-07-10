@@ -4,7 +4,7 @@ import (
 	"easy-copy/flags"
 	"easy-copy/lscolors"
 	"easy-copy/progress"
-	"easy-copy/ui/msg"
+	"easy-copy/ui"
 	"os"
 )
 
@@ -19,14 +19,33 @@ func CopyLoop() {
 	case len(solvedConflicts) > 0:
 		lock.Unlock()
 		t := PopSolvedConflict()
+		work(t)
 	case len(sources) > 0:
 		lock.Unlock()
 		t := PopTask()
+		work(t)
 	}
 }
 
+func work(t *Task) {
+	// TODO
+}
+
+type ErrCreatingFolder struct {
+	Path string
+	Err  error
+}
+
+func (e *ErrCreatingFolder) Error() string {
+	return "creating folder " + e.Path + ": " + e.Err.Error()
+}
+
+func (e *ErrCreatingFolder) Unwrap() error {
+	return e.Err
+}
+
 func createFolders(f []string) {
-	progress.CurrentTask = progress.TaskFolder
+	progress.CurrentTask = progress.TaskMkdir
 
 	for _, folder := range f {
 		if flags.Current.DoLSColors() {
@@ -39,11 +58,11 @@ func createFolders(f []string) {
 		if !flags.Current.Dryrun() {
 			err := os.MkdirAll(folder, 0o755)
 			if err != nil {
-				msg.ErrCreatingFile(err, folder)
+				ui.Warns <- &ErrCreatingFolder{folder, err}
 			}
 		}
 
-		progress.DoneSize += progress.FolderSize
+		progress.DoneSize += uint64(progress.FolderSize)
 
 	}
 }

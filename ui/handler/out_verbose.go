@@ -1,9 +1,10 @@
-package msg
+package handler
 
 import (
 	"easy-copy/color"
 	"easy-copy/flags"
 	"easy-copy/tasks"
+	"easy-copy/ui"
 	"fmt"
 )
 
@@ -20,7 +21,7 @@ func VerbDryrun() {
 func VerbSetBuffersize(size int) {
 	if flags.Current.Verbosity() >= flags.VerbDebug {
 		fmt.Print(color.FGColors.Yellow + "Set buffersize to ")
-		fmt.Print(FormatSize(float64(size), SizeAutoUnit(float64(size))))
+		fmt.Print(ui.FormatSize(float64(size), ui.SizeAutoUnit(float64(size))))
 		fmt.Println(color.Text.Reset)
 	}
 }

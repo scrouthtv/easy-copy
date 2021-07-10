@@ -2,10 +2,15 @@ package impl
 
 import (
 	"easy-copy/ui"
-	"easy-copy/ui/msg"
 	"os"
 	"strings"
 )
+
+type ErrEmptySource struct{}
+
+func (e *ErrEmptySource) Error() string {
+	return "empty source"
+}
 
 func (s *settingsImpl) searchStopFlag() {
 	if len(os.Args) == 1 {
@@ -67,7 +72,7 @@ func (s *settingsImpl) ParseLine() {
 	}
 
 	if len(s.sources) < 2 {
-		msg.ErrEmptySource()
+		ui.Error(&ErrEmptySource{})
 	}
 
 	s.target = s.sources[len(s.sources)-1]

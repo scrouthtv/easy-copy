@@ -3,12 +3,25 @@ package iterator
 import (
 	"easy-copy/flags"
 	"easy-copy/tasks"
-	"easy-copy/ui/msg"
+	"easy-copy/ui"
 	"os"
 	"path/filepath"
 )
 
 var Done = false
+
+type ErrMissingFile struct {
+	Path string
+	Err  error
+}
+
+func (e *ErrMissingFile) Error() string {
+	return "missing " + e.Path + ": " + e.Err.Error()
+}
+
+func (e *ErrMissingFile) Unwrap() error {
+	return e.Err
+}
 
 // Iterate initializes the task manager with the target provided by
 // the flags package. Afterwards, it iterates all sources.
@@ -20,7 +33,7 @@ func Iterate() {
 	for _, p := range flags.Current.Sources() {
 		err := add(&tasks.Path{Base: p, Sub: ""})
 		if err != nil {
-			msg.ErrMissingFile(err, p)
+			ui.Warns <- &ErrMissingFile{p, err}
 		}
 	}
 
