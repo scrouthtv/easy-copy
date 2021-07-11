@@ -1,4 +1,3 @@
  - moving
- - overwriting
  - symlinks
  - organize the packages

@@ -49,6 +49,17 @@ func PopPendingConflict() *Task {
 	return &pop
 }
 
+func ReadPendingConflict() *Task {
+	lock.Lock()
+	defer lock.Unlock()
+	if len(pendingConflicts) == 0 {
+		return nil
+	}
+
+	read := pendingConflicts[0]
+	return &read
+}
+
 func PushPendingConflict(t Task) {
 	lock.Lock()
 	pendingConflicts = append(pendingConflicts, t)

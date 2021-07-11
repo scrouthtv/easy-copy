@@ -113,7 +113,7 @@ func printOperation() {
 }
 
 func printConflict() {
-	c := tasks.PopPendingConflict()
+	c := tasks.ReadPendingConflict() // only pop when user answered
 	if c == nil {
 		return
 	}
@@ -158,6 +158,7 @@ func printConflict() {
 	case 'q':
 		os.Exit(0)
 	}
+	tasks.PopPendingConflict()
 }
 
 /**
