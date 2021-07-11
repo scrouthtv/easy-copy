@@ -1,11 +1,16 @@
 package main
 
 import (
+	"easy-copy/color"
 	"easy-copy/flags"
+	"easy-copy/input"
 	"easy-copy/progress"
+	"easy-copy/tasks"
 	"easy-copy/ui"
 	"fmt"
 	"math"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -47,7 +52,7 @@ func drawLoop() {
 			lines++
 		}
 
-		//printConflict()
+		printConflict()
 
 		time.Sleep(redrawSpeed * time.Millisecond)
 	}
@@ -107,84 +112,70 @@ func printOperation() {
 	fmt.Print(" remaining")
 }
 
-/*
 func printConflict() {
-	if len(piledConflicts) > 0 {
-		filesLock.RLock()
-		conflictID := piledConflicts[0]
-		conflict := fileOrder[conflictID]
-		cTarget := filepath.Join(targets[conflict],
-			filepath.Base(conflict))
-		filesLock.RUnlock()
+	c := tasks.PopPendingConflict()
+	if c == nil {
+		return
+	}
 
-		fmt.Print(color.FGColors.Yellow, color.Text.Bold)
-		fmt.Print(conflict)
-		fmt.Print(color.Text.Reset, color.FGColors.Magenta)
-		fmt.Print(" already exists in ")
-		fmt.Print(color.FGColors.Yellow, color.Text.Bold)
-		fmt.Print(filepath.Dir(cTarget))
-		fmt.Println(color.Text.Reset + color.FGColors.Magenta)
-		lines++
+	conflict := c.Source
+	conflict = filepath.Base(conflict)
 
-		fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All")
-		lines++
 
-		fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
-		fmt.Println(color.Text.Reset)
-		lines++
+	fmt.Print(color.FGColors.Yellow, color.Text.Bold)
+	fmt.Print(conflict)
+	fmt.Print(color.Text.Reset, color.FGColors.Magenta)
+	fmt.Print(" already exists in ")
+	fmt.Print(color.FGColors.Yellow, color.Text.Bold)
+	fmt.Print(filepath.Dir(c.Dest))
+	fmt.Println(color.Text.Reset + color.FGColors.Magenta)
+	lines++
 
-		in := input.GetChoice("saovirq")
+	fmt.Println("[S]kip | Skip [A]ll | [O]verwrite | O[v]erwrite All")
+	lines++
 
-		switch in {
-		case 's':
-			filesLock.Lock()
-			piledConflicts = piledConflicts[1:]
-			filesLock.Unlock()
-			skipFile(cTarget)
-		case 'o':
-			filesLock.Lock()
-			pendingConflicts = append(pendingConflicts, conflictID)
-			piledConflicts = piledConflicts[1:]
-			filesLock.Unlock()
-		case 'a':
-			onExistingFile = 0 // skip all
+	fmt.Print("[I]nfo |      [R]ename target     | [Q]uit")
+	fmt.Println(color.Text.Reset)
+	lines++
 
-			filesLock.Lock()
-			piledConflicts = nil
-			filesLock.Unlock()
-		case 'v':
-			onExistingFile = 1 // overwrite all
+	in := input.GetChoice("saovirq")
 
-			filesLock.Lock()
-			pendingConflicts = append(pendingConflicts, piledConflicts...)
-			piledConflicts = nil
-			filesLock.Unlock()
-		case 'i':
-			panic("not supported")
-		case 'r':
-			panic("not supported")
-		case 'q':
-			os.Exit(0)
-		}
+	switch in {
+	case 's':
+		skipFile(c.Source)
+	case 'o':
+		tasks.PushSolvedConflict(*c)
+	case 'a':
+		flags.Current.SetOnConflict(flags.ConflictSkip)
+		tasks.ClearPendingConflicts()
+	case 'v':
+		flags.Current.SetOnConflict(flags.ConflictOverwrite)
+		tasks.SolveAllConflicts()
+	case 'i':
+		panic("not supported")
+	case 'r':
+		panic("not supported")
+	case 'q':
+		os.Exit(0)
 	}
 }
 
 /**
  * Add the file size to done_size and 1 to done_amount.
-*/ /*
+*/
 func skipFile(path string) {
 	stat, err := os.Lstat(path)
 
 	if err != nil {
-		doneSize += 0
+		progress.DoneSize += 0
 	} else if stat.Mode().IsRegular() {
-		doneSize += uint64(stat.Size())
+		progress.DoneSize += uint64(stat.Size())
 	} else if stat.Mode()&os.ModeSymlink != 0 {
-		doneSize += uint64(symlinkSize)
+		progress.DoneSize += uint64(progress.SymlinkSize)
 	}
 
-	doneAmount++
-}*/
+	progress.DoneAmount++
+}
 
 func printSummary() {
 	if flags.Current.Verbosity() <= flags.VerbCrit {

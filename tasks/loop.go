@@ -7,6 +7,7 @@ import (
 	"easy-copy/progress"
 	"easy-copy/ui"
 	"os"
+	"time"
 )
 
 func CopyLoop() {
@@ -27,8 +28,14 @@ func CopyLoop() {
 			t := PopTask()
 			work(t, flags.Current.OnConflict())
 		default:
+			if len(pendingConflicts) > 0 {
+				lock.Unlock()
+				continue
+			}
+
 			lock.Unlock()
 			if progress.IteratorDone {
+				time.Sleep(1 * time.Minute)
 				progress.CopyDone = true
 			}
 		}

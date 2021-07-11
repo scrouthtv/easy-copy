@@ -58,3 +58,7 @@ func (s *settingsImpl) DoLSColors() bool {
 func (s *settingsImpl) Dryrun() bool {
 	return s.dryrun
 }
+
+func (s *settingsImpl) SetOnConflict(c flags.Conflict) {
+	s.onConflict = c
+}

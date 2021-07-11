@@ -10,7 +10,8 @@ func VerbFlags() {
 		fmt.Print(color.FGColors.Green)
 		fmt.Println(" Verbose:", Current.Verbosity())
 		fmt.Println(" Overwrite Mode:", Current.OnConflict())
-		fmt.Print(" Follow symlinks: ", "todo")
+		fmt.Println(" Follow symlinks:", Current.OnSymlink())
+		fmt.Print(" Dryrun: ", Current.Dryrun())
 		fmt.Println(color.Text.Reset)
 	}
 }

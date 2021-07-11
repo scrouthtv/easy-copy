@@ -13,6 +13,8 @@ type Settings interface {
 	OnSymlink() Symlink
 	DoLSColors() bool
 	Dryrun() bool
+
+	SetOnConflict(Conflict)
 }
 
 var Current Settings

@@ -37,9 +37,16 @@ func PopTask() *Task {
 	return &Task{Source: next.AsAbs(), Dest: destFor(&next)}
 }
 
-func PopPendingConflict() Task {
-	// TODO impl
-	return Task{}
+func PopPendingConflict() *Task {
+	lock.Lock()
+	defer lock.Unlock()
+	if len(pendingConflicts) == 0 {
+		return nil
+	}
+
+	pop := pendingConflicts[0]
+	pendingConflicts = pendingConflicts[1:]
+	return &pop
 }
 
 func PushPendingConflict(t Task) {
@@ -48,13 +55,42 @@ func PushPendingConflict(t Task) {
 	lock.Unlock()
 }
 
+func ClearPendingConflicts() {
+	lock.Lock()
+	pendingConflicts = nil
+	lock.Unlock()
+}
+
+// SolveAllConflicts marks all conflicts as solved,
+// which means that all conflicts that have been found
+// so far will be overwritten.
+func SolveAllConflicts() {
+	lock.Lock()
+	solvedConflicts = append(solvedConflicts, pendingConflicts...)
+	pendingConflicts = nil
+	lock.Unlock()
+}
+
 func PopSolvedConflict() *Task {
 	lock.Lock()
+	defer lock.Unlock()
+
+	if len(solvedConflicts) == 0 {
+		return nil
+	}
+
 	pop := solvedConflicts[0]
 	solvedConflicts = solvedConflicts[1:]
-	lock.Unlock()
-
 	return &pop
+}
+
+// PushSolvedConflict marks the conflict as solved
+// which means that the already existing file will
+// be overwritten.
+func PushSolvedConflict(t Task) {
+	lock.Lock()
+	solvedConflicts = append(solvedConflicts, t)
+	lock.Unlock()
 }
 
 func AddTask(p *Path) {

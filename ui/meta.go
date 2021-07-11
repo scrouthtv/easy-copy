@@ -6,5 +6,5 @@ const (
 	EasyCopyName string = "EasyCopy"
 
 	// EasyCopyVersion is the version of the program.
-	EasyCopyVersion string = "0.4.5"
+	EasyCopyVersion string = "0.5.0"
 )
