@@ -57,7 +57,7 @@ func add(p *tasks.Path) error {
 
 	switch {
 	case info.IsDir():
-		tasks.AddFolder(p.Sub)
+		tasks.AddFolder(filepath.Join(filepath.Base(p.Base), p.Sub))
 		progress.FullSize += uint64(progress.FolderSize)
 		return addAllInFolder(p)
 	case info.Mode().IsRegular():

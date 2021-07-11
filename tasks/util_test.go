@@ -13,12 +13,4 @@ func TestRemoveFirst(t *testing.T) {
 		t.Errorf("removing first from %s gave %s, expected %s",
 			f, removeFirst(f), exp)
 	}
-
-	f = "a"
-	exp = "a"
-
-	if removeFirst(f) != exp {
-		t.Errorf("removing first from %s gave %s, expected %s",
-			f, removeFirst(f), exp)
-	}
 }

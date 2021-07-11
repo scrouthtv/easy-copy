@@ -210,7 +210,7 @@ func printSummary() {
 	if progress.FullAmount == 1 {
 		fmt.Print("1 file in ")
 	} else {
-		fmt.Print(strconv.FormatUint(progress.FullAmount, 9))
+		fmt.Print(strconv.FormatUint(progress.DoneAmount, 9))
 		fmt.Print(" files in ")
 	}
 

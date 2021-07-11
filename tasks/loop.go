@@ -103,6 +103,8 @@ func work(t *Task, onconflict flags.Conflict) {
 	case flags.ModeRemove:
 		files.Syncdel(&[]string{t.Source})
 	}
+
+	progress.DoneAmount++
 }
 
 type ErrCreatingFolder struct {

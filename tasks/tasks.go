@@ -1,6 +1,8 @@
 package tasks
 
 import (
+	"easy-copy/flags"
+	"easy-copy/progress"
 	"fmt"
 	"path/filepath"
 )
@@ -24,7 +26,11 @@ func Setup(base string, cloneFolders bool) {
 	targetBase = base
 	createFoldersInTarget = cloneFolders
 
-	AddFolder(base)
+	addFolder(base)
+
+	if flags.Current.Verbosity() >= flags.VerbDebug {
+		fmt.Println("create folders in target:", cloneFolders)
+	}
 }
 
 // PopTask pops the next available task from the task list.
@@ -105,6 +111,8 @@ func PushSolvedConflict(t Task) {
 }
 
 func AddTask(p *Path) {
+	progress.FullAmount++
+
 	lock.Lock()
 	sources = append(sources, *p)
 	lock.Unlock()
@@ -115,25 +123,38 @@ func AddFolder(folder string) {
 		return
 	}
 
-	lock.Lock()
-	folders = append(folders, folder)
-	lock.Unlock()
+	if !createFoldersInTarget && filepath.Dir(folder) == "." {
+		// don't recreate root folders
+		return
+	}
+
+	if !createFoldersInTarget {
+		folder = removeFirst(folder)
+	}
+
+	folder = filepath.Join(targetBase, folder)
+
+	addFolder(folder)
 }
 
-func destForFolder(f string) string {
-	if createFoldersInTarget {
-		return filepath.Join(targetBase, f)
-	} else {
-		return filepath.Join(targetBase, removeFirst(f))
-	}
+func addFolder(f string) {
+	lock.Lock()
+	folders = append(folders, f)
+	lock.Unlock()
 }
 
 func destFor(p *Path) string {
 	if createFoldersInTarget {
-		return filepath.Join(targetBase, p.Sub)
+		return filepath.Join(targetBase, filepath.Base(p.Base), p.Sub)
 	} else {
-		return filepath.Join(targetBase, removeFirst(p.Sub))
+		return filepath.Join(targetBase, p.Sub)
 	}
+}
+
+func Flen() int {
+	lock.RLock()
+	defer lock.RUnlock()
+	return len(folders)
 }
 
 func PrintTasks() {
@@ -147,7 +168,7 @@ func PrintTasks() {
 
 	fmt.Println("Need to create these folders:")
 	for _, folder := range folders {
-		fmt.Printf(" - %s\n", destForFolder(folder))
+		fmt.Printf(" - %s\n", folder)
 	}
 
 	lock.RUnlock()
