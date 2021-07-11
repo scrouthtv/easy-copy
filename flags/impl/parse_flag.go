@@ -76,6 +76,8 @@ func (s *settingsImpl) parseFlag(prefix string, flag string) {
 		s.dryrun = true
 
 		ui.Infos <- &InfoDryrun{}
+	case "parallel":
+		s.parallel = true
 	default:
 		ui.Warns <- &ErrUnknownOption{prefix + flag}
 	}

@@ -9,10 +9,9 @@ import (
 	"easy-copy/tasks"
 	"easy-copy/ui"
 	"easy-copy/ui/handler"
+	"os"
 	"time"
 )
-
-var nodelete []string
 
 func main() {
 	go handler.Handle()
@@ -30,6 +29,11 @@ func main() {
 		flags.VerbFlags()
 	}
 
+	if flags.Current.Parallel() {
+		runParallel()
+		return
+	}
+
 	//go setOptimalBuffersize()
 
 	progress.Start = time.Now()
@@ -43,5 +47,14 @@ func main() {
 
 	tasks.CopyLoop()
 
+	printSummary()
+}
+
+func runParallel() {
+	iterator.Iterate()
+	println("confirm?")
+	buf := make([]byte, 8)
+	os.Stdin.Read(buf) // wait for confirmation on task list
+	tasks.CopyLoop()
 	printSummary()
 }

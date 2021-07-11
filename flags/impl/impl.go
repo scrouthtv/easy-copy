@@ -12,6 +12,7 @@ type settingsImpl struct {
 	onSymlink  flags.Symlink
 	doLScolors bool
 	dryrun     bool
+	parallel   bool
 }
 
 func New() flags.Settings {
@@ -57,6 +58,10 @@ func (s *settingsImpl) DoLSColors() bool {
 
 func (s *settingsImpl) Dryrun() bool {
 	return s.dryrun
+}
+
+func (s *settingsImpl) Parallel() bool {
+	return s.parallel
 }
 
 func (s *settingsImpl) SetOnConflict(c flags.Conflict) {

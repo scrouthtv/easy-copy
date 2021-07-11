@@ -11,7 +11,7 @@ func VerbFlags() {
 		fmt.Println(" Verbose:", Current.Verbosity())
 		fmt.Println(" Overwrite Mode:", Current.OnConflict())
 		fmt.Println(" Follow symlinks:", Current.OnSymlink())
-		fmt.Print(" Dryrun: ", Current.Dryrun())
-		fmt.Println(color.Text.Reset)
+		fmt.Println(" Dryrun:", Current.Dryrun())
+		fmt.Println(" Parallel:", Current.Parallel(), color.Text.Reset)
 	}
 }
