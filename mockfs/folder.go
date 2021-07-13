@@ -2,7 +2,6 @@ package mockfs
 
 import "io"
 import "io/fs"
-import "os"
 import "syscall"
 import "time"
 
@@ -47,7 +46,7 @@ func (f *MockFolder) Chdir() error {
 	return &ErrOperationNotSupported{Op: "chdir"}
 }
 
-func (f *MockFolder) Chmod(mode os.FileMode) error {
+func (f *MockFolder) Chmod(mode fs.FileMode) error {
 	return nil
 }
 
@@ -75,8 +74,8 @@ func (f *MockFolder) ReadAt(b []byte, off int64) (int, error) {
 	return 0, &ErrNotAFile{Path: f.name}
 }
 
-func (f *MockFolder) ReadDir(count int) ([]os.DirEntry, error) {
-	var entries = []os.DirEntry{}
+func (f *MockFolder) ReadDir(count int) ([]fs.DirEntry, error) {
+	var entries = []fs.DirEntry{}
 	
 	if count == 0 {
 		next := f.next()
@@ -99,8 +98,8 @@ func (f *MockFolder) ReadFrom(r io.Reader) (int64, error) {
 	return 0, &ErrNotAFile{Path: f.name}
 }
 
-func (f *MockFolder) Readdir(count int) ([]os.FileInfo, error) {
-	var entries = []os.FileInfo{}
+func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
+	var entries = []fs.FileInfo{}
 	
 	if count == 0 {
 		next = f.next()
@@ -155,7 +154,7 @@ func (f *MockFolder) SetWriteDeadline(t time.Time) error {
 	return nil
 }
 
-func (f *MockFolder) Stat() (os.FileInfo, error) {
+func (f *MockFolder) Stat() (fs.FileInfo, error) {
 	return f, nil
 }
 
@@ -195,7 +194,7 @@ func (f *MockFolder) Size() int64 {
 	return size
 }
 
-func (f *MockFolder) Mode() os.FileMode {
+func (f *MockFolder) Mode() fs.FileMode {
 	return 0o755
 }
 
