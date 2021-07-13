@@ -2,7 +2,9 @@ package mockfs
 
 import (
 	"io"
+	"io/fs"
 	"os"
+	"syscall"
 	"time"
 )
 
@@ -66,7 +68,7 @@ func (f *MockFile) ReadAt(b []byte, off int64) (int, error) {
 	return n, nil
 }
 
-func (f *MockFile) ReadDir(count int) ([]os.FileInfo, error) {
+func (f *MockFile) ReadDir(count int) ([]os.DirEntry, error) {
 	return nil, &ErrNotADirectory{f.name}
 }
 
@@ -78,7 +80,7 @@ func (f *MockFile) Readdir(count int) ([]os.FileInfo, error) {
 	return nil, &ErrNotADirectory{f.name}
 }
 
-func (f *MockFile) Readdirames(count int) ([]os.FileInfo, error) {
+func (f *MockFile) Readdirnames(count int) ([]string, error) {
 	return nil, &ErrNotADirectory{f.name}
 }
 
@@ -117,7 +119,7 @@ func (f *MockFile) Sync() error {
 	return nil
 }
 
-func (f *MockFile) SyscallConn() (interface{}, error) {
+func (f *MockFile) SyscallConn() (syscall.RawConn, error) {
 	return nil, nil
 }
 
@@ -175,4 +177,13 @@ func (f *MockFile) IsDir() bool {
 
 func (f *MockFile) Sys() interface{} {
 	return nil
+}
+
+// implementation of fs.DirEntry
+func (f *MockFile) Info() (fs.FileInfo, error) {
+	return f, nil
+}
+
+func (f *MockFile) Type() fs.FileMode {
+	return 0
 }
