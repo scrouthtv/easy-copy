@@ -2,6 +2,7 @@ package mockfs
 
 import (
 	"io"
+	"io/fs"
 	"os"
 	"syscall"
 	"time"
@@ -22,9 +23,9 @@ type File interface {
 	Name() string
 	Read(b []byte) (n int, err error)
 	ReadAt(b []byte, off int64) (n int, err error)
-	ReadDir(n int) (fi []os.DirEntry, err error)
+	ReadDir(n int) (fi []fs.DirEntry, err error)
 	ReadFrom(r io.Reader) (n int64, err error)
-	Readdir(n int) (fi []os.FileInfo, err error)
+	Readdir(n int) (fi []fs.FileInfo, err error)
 	Readdirnames(n int) (names []string, err error)
 	Seek(offset int64, whence int) (int64, error)
 	SetDeadline(timeout time.Time) error
