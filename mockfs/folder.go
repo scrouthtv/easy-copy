@@ -102,15 +102,15 @@ func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
 	var entries = []fs.FileInfo{}
 	
 	if count == 0 {
-		next = f.next()
+		next := f.next()
 		
 		for next != nil {
 			entries = append(entries, next)	
-			next := f.next()
+			next = f.next()
 		}
 	} else {
 		for i := 0; i < count; i++ {
-			next = f.next()
+			next := f.next()
 			entries = append(entries, next)	
 		}
 	}
@@ -126,7 +126,7 @@ func (f *MockFolder) Readdirnames(count int) ([]string, error) {
 		
 		for next != nil {
 			entries = append(entries, next.Name())
-			next := f.next()
+			next = f.next()
 		}
 	} else {
 		for i := 0; i < count; i++ {
