@@ -3,7 +3,6 @@ package mockfs
 import (
 	"io"
 	"io/fs"
-	"os"
 	"syscall"
 	"time"
 )
@@ -19,7 +18,7 @@ func (f *MockFile) Chdir() error {
 	return &ErrOperationNotSupported{Op: "chdir"}
 }
 
-func (f *MockFile) Chmod(mode os.FileMode) error {
+func (f *MockFile) Chmod(mode fs.FileMode) error {
 	return nil
 }
 
@@ -68,7 +67,7 @@ func (f *MockFile) ReadAt(b []byte, off int64) (int, error) {
 	return n, nil
 }
 
-func (f *MockFile) ReadDir(count int) ([]os.DirEntry, error) {
+func (f *MockFile) ReadDir(count int) ([]fs.DirEntry, error) {
 	return nil, &ErrNotADirectory{f.name}
 }
 
@@ -76,7 +75,7 @@ func (f *MockFile) ReadFrom(r io.Reader) (int64, error) {
 	return 0, nil // FIXME what does this do?
 }
 
-func (f *MockFile) Readdir(count int) ([]os.FileInfo, error) {
+func (f *MockFile) Readdir(count int) ([]fs.FileInfo, error) {
 	return nil, &ErrNotADirectory{f.name}
 }
 
@@ -111,7 +110,7 @@ func (f *MockFile) SetWriteDeadline(t time.Time) error {
 	return nil
 }
 
-func (f *MockFile) Stat() (os.FileInfo, error) {
+func (f *MockFile) Stat() (fs.FileInfo, error) {
 	return f, nil
 }
 
@@ -163,7 +162,7 @@ func (f *MockFile) Size() int64 {
 	return int64(len(f.contents))
 }
 
-func (f *MockFile) Mode() os.FileMode {
+func (f *MockFile) Mode() fs.FileMode {
 	return 0o644
 }
 
