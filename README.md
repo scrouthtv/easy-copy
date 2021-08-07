@@ -2,7 +2,7 @@
 [![Current version badge](https://img.shields.io/github/v/tag/scrouthtv/easy-copy)](https://github.com/scrouthtv/easy-copy/releases/)
 
 # easy-copy
-Aims to provide a user-friendly &amp; fast alternative to cp, mv and rf.
+Aims to provide a user-friendly &amp; fast alternative to cp and mv.
 
 ![gif of easy-copy moving a folder](./.github/docs/demo01.gif)
 
