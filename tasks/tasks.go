@@ -37,6 +37,7 @@ func Setup(base string, cloneFolders bool) {
 func PopTask() *Task {
 	lock.Lock()
 	if len(sources) == 0 {
+		lock.Unlock()
 		return nil
 	}
 
