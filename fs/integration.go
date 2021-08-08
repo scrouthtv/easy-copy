@@ -24,7 +24,7 @@ func (s SysInt) Stat(name string) (os.FileInfo, error) {
 	return os.Stat(name)
 }
 
-func (s SysInt) LStat(name string) (fs.FileInfo, error) {
+func (s SysInt) Lstat(name string) (fs.FileInfo, error) {
 	return os.Lstat(name)
 }
 
