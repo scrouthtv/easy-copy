@@ -27,3 +27,5 @@ build/
 
 # cross-compiler for osx:
 osxcross/
+
+coverage.out

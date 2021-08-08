@@ -86,6 +86,28 @@ func TestResolve(t *testing.T) {
 		t.Error("/foo/a Got wrong file")
 	}
 
+	openf, err := fs.Open("/foo/a")
+	if err != nil {
+		t.Error("/foo/a", err)
+	}
+	if openf != a {
+		t.Error("/foo/a Got wrong file")
+	}
+	statf, err := fs.Stat("/foo/a")
+	if err != nil {
+		t.Error("/foo/a", err)
+	}
+	if statf != a {
+		t.Error("/foo/a Got wrong file")
+	}
+	lstatf, err := fs.Lstat("/foo/a")
+	if err != nil {
+		t.Error("/foo/a", err)
+	}
+	if lstatf != a {
+		t.Error("/foo/a Got wrong file")
+	}
+
 	f, err = fs.Resolve("/bar/")
 	if err != nil {
 		t.Error("/bar/", err)

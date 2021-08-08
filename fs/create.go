@@ -13,7 +13,6 @@ func CreateFS(list []string) *MockFS {
 	fs := NewFs()
 
 	for _, line := range list {
-		println("creating", line+":")
 		create(fs, line)
 	}
 
@@ -26,8 +25,6 @@ func create(fs *MockFS, line string) {
 	}
 
 	lastfolder := line[len(line)-1] == filepath.Separator
-	println(string(line[len(line)-1]), string(filepath.Separator))
-	println(lastfolder)
 	pp, rest, _ := fs.Root.resolve(filepath.Clean(line))
 	if rest == "" {
 		return

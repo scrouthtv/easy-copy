@@ -10,11 +10,16 @@ func TestCreate(t *testing.T) {
 		"foo/bar/a",
 		"foo/bar/c",
 		"foo/q",
+		"foo/q/qwertz",
+		"foo/",
 		"a",
 		"baz/",
+		"",
 	}
 
 	fs := CreateFS(create)
+
+	var _ Integration = fs
 
 	is := fs.Tree()
 

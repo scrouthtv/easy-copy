@@ -24,6 +24,18 @@ func (f *MockFS) Resolve(path string) (MockEntry, error) {
 	}
 }
 
+func (f *MockFS) Open(name string) (File, error) {
+	return f.Resolve(name)
+}
+
+func (f *MockFS) Stat(name string) (fs.FileInfo, error) {
+	return f.Resolve(name)
+}
+
+func (f *MockFS) Lstat(name string) (fs.FileInfo, error) {
+	return f.Resolve(name)
+}
+
 func (f *MockFS) Tree() []string {
 	return f.Root.tree(0)
 }
