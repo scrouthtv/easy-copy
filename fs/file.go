@@ -3,6 +3,7 @@ package fs
 import (
 	"io"
 	"io/fs"
+	"strconv"
 	"syscall"
 	"time"
 )
@@ -92,7 +93,7 @@ func (f *MockFile) Seek(offset int64, whence int) (int64, error) {
 	case io.SeekEnd:
 		f.position = len(f.contents) + int(offset)
 	default:
-		return 0, &ErrOperationNotSupported{Op: "seek, whence: " + string(whence)}
+		return 0, &ErrOperationNotSupported{Op: "seek, whence: " + strconv.Itoa(whence)}
 	}
 
 	return int64(f.position), nil

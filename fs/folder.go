@@ -1,9 +1,11 @@
 package fs
 
-import "io"
-import "io/fs"
-import "syscall"
-import "time"
+import (
+	"io"
+	"io/fs"
+	"syscall"
+	"time"
+)
 
 type MockFolder struct {
 	name       string
@@ -16,17 +18,17 @@ type MockFolder struct {
 // and advances the iterator by 1. If no more elements are available,
 // nil is returned.
 func (f *MockFolder) next() MockEntry {
-	if f.itpos >= len(f.subfolders) + len(f.files) {
+	if f.itpos >= len(f.subfolders)+len(f.files) {
 		return nil
 	}
-	
+
 	defer func() { f.itpos++ }()
-	
+
 	if f.itpos < len(f.subfolders) {
 		return f.subfolders[f.itpos]
 	}
-	
-	return f.files[f.itpos - len(f.subfolders)]
+
+	return f.files[f.itpos-len(f.subfolders)]
 }
 
 // walk calls the consumer on every file in this folder and subfolders.
@@ -34,10 +36,18 @@ func (f *MockFolder) walk(consumer func(f *MockFile)) {
 	for _, sub := range f.subfolders {
 		sub.walk(consumer)
 	}
-	
+
 	for _, file := range f.files {
 		consumer(file)
 	}
+}
+
+func (f *MockFolder) AddFolder(folder *MockFolder) {
+	f.subfolders = append(f.subfolders, folder)
+}
+
+func (f *MockFolder) AddFile(file *MockFile) {
+	f.files = append(f.files, file)
 }
 
 // implementation of File
@@ -76,21 +86,21 @@ func (f *MockFolder) ReadAt(b []byte, off int64) (int, error) {
 
 func (f *MockFolder) ReadDir(count int) ([]fs.DirEntry, error) {
 	var entries = []fs.DirEntry{}
-	
+
 	if count == 0 {
 		next := f.next()
-		
+
 		for next != nil {
-			entries = append(entries, next)	
+			entries = append(entries, next)
 			next = f.next()
 		}
 	} else {
 		for i := 0; i < count; i++ {
 			next := f.next()
-			entries = append(entries, next)	
+			entries = append(entries, next)
 		}
 	}
-	
+
 	return entries, nil
 }
 
@@ -100,30 +110,30 @@ func (f *MockFolder) ReadFrom(r io.Reader) (int64, error) {
 
 func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
 	var entries = []fs.FileInfo{}
-	
+
 	if count == 0 {
 		next := f.next()
-		
+
 		for next != nil {
-			entries = append(entries, next)	
+			entries = append(entries, next)
 			next = f.next()
 		}
 	} else {
 		for i := 0; i < count; i++ {
 			next := f.next()
-			entries = append(entries, next)	
+			entries = append(entries, next)
 		}
 	}
-	
+
 	return entries, nil
 }
 
 func (f *MockFolder) Readdirnames(count int) ([]string, error) {
 	var entries = []string{}
-	
+
 	if count == 0 {
 		next := f.next()
-		
+
 		for next != nil {
 			entries = append(entries, next.Name())
 			next = f.next()
@@ -134,7 +144,7 @@ func (f *MockFolder) Readdirnames(count int) ([]string, error) {
 			entries = append(entries, next.Name())
 		}
 	}
-	
+
 	return entries, nil
 }
 
@@ -186,11 +196,11 @@ func (f *MockFolder) WriteString(s string) (int, error) {
 
 func (f *MockFolder) Size() int64 {
 	var size int64 = 0
-	
+
 	f.walk(func(f *MockFile) {
 		size += f.Size()
 	})
-	
+
 	return size
 }
 
@@ -201,13 +211,13 @@ func (f *MockFolder) Mode() fs.FileMode {
 // ModTime returns the newest Mod Time of all files in this folder and subfolders.
 func (f *MockFolder) ModTime() time.Time {
 	var modTime time.Time
-	
+
 	f.walk(func(f *MockFile) {
 		if f.ModTime().After(modTime) { // this works bc the null value for time.Time is 1.1.1
 			modTime = f.ModTime()
 		}
 	})
-	
+
 	return modTime
 }
 
