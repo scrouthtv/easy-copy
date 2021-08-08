@@ -1,6 +1,52 @@
 package fs
 
-import "testing"
+import (
+	"path/filepath"
+	"testing"
+)
+
+func TestPartResolve(t *testing.T) {
+	fs := NewFs()
+	foo := NewFolder("foo")
+	bar := NewFolder("bar")
+	fs.Root.AddFolder(foo)
+	fs.Root.AddFolder(bar)
+
+	baz := NewFolder("baz")
+	bar.AddFolder(baz)
+
+	a, b, c, d, e := NewFile("a"), NewFile("b"), NewFile("c"), NewFile("d"), NewFile("e")
+	foo.AddFile(a)
+	bar.AddFile(b)
+	baz.AddFile(c)
+	baz.AddFile(d)
+	fs.Root.AddFile(e)
+
+	tree := fs.Tree()
+	for _, l := range tree {
+		t.Log(l)
+	}
+
+	_, part, _ := fs.Root.resolve(filepath.Clean("bar/baz/c"))
+	if part != "" {
+		t.Error("Expected part to be empty, is", part)
+	}
+
+	_, part, _ = fs.Root.resolve(filepath.Clean("foo/bar/a"))
+	if part != "bar/a" {
+		t.Error("Expected part to be 'a', is", part)
+	}
+
+	_, part, _ = fs.Root.resolve(filepath.Clean("bar/quz/f"))
+	if part != "quz/f" {
+		t.Error("Expected part to be 'quz/f', is", part)
+	}
+
+	_, part, _ = fs.Root.resolve(filepath.Clean("g"))
+	if part != "g" {
+		t.Error("Expected part to be 'g', is", part)
+	}
+}
 
 func TestResolve(t *testing.T) {
 	fs := NewFs()

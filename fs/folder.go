@@ -44,7 +44,13 @@ func (f *MockFolder) walk(consumer func(f *MockFile)) {
 	}
 }
 
-func (f *MockFolder) resolve(path string) (MockEntry, error) {
+// resolve recursively searches for the given path in this folder
+// It returns the last subfolder that is found and optionally
+// the subpath that couldn't be found and an error
+// explaining why.
+//
+// The path must be separated with filepath.Separator.
+func (f *MockFolder) resolve(path string) (MockEntry, string, error) {
 	base := path
 	rest := ""
 	idx := strings.IndexRune(path, filepath.Separator)
@@ -56,7 +62,7 @@ func (f *MockFolder) resolve(path string) (MockEntry, error) {
 	for _, sub := range f.subfolders {
 		if sub.Name() == base {
 			if rest == "" {
-				return sub, nil
+				return sub, "", nil
 			}
 
 			return sub.resolve(rest)
@@ -66,14 +72,14 @@ func (f *MockFolder) resolve(path string) (MockEntry, error) {
 	for _, file := range f.files {
 		if file.Name() == base {
 			if rest == "" {
-				return file, nil
+				return file, "", nil
 			}
 
-			return nil, &ErrNotADirectory{Path: path}
+			return file, rest, &ErrNotADirectory{Path: path}
 		}
 	}
 
-	return nil, &ErrFileNotFound{Path: path}
+	return f, path, &ErrFileNotFound{Path: path}
 }
 
 func (f *MockFolder) AddFolder(folder *MockFolder) {

@@ -13,7 +13,12 @@ type MockFS struct {
 
 func (f *MockFS) Resolve(path string) (MockEntry, error) {
 	if path[0] == '/' {
-		return f.Root.resolve(filepath.Clean(path[1:]))
+		f, _, err := f.Root.resolve(filepath.Clean(path[1:]))
+		if err != nil {
+			return nil, err
+		}
+
+		return f, nil
 	} else {
 		return nil, &ErrFileNotFound{path}
 	}
