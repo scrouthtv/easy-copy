@@ -36,6 +36,10 @@ func Setup(base string, cloneFolders bool) {
 // PopTask pops the next available task from the task list.
 func PopTask() *Task {
 	lock.Lock()
+	if len(sources) == 0 {
+		return nil
+	}
+
 	next := sources[0]
 	sources = sources[1:]
 	lock.Unlock()
