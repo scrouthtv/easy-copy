@@ -1,4 +1,4 @@
-package mockfs
+package fs
 
 import "io"
 import "io/fs"

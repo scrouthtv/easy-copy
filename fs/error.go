@@ -1,4 +1,4 @@
-package mockfs
+package fs
 
 type ErrOperationNotSupported struct {
 	Op string
