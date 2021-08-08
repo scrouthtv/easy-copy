@@ -17,9 +17,17 @@ func (e *ErrNotADirectory) Error() string {
 }
 
 type ErrNotAFile struct {
-	Path string	
+	Path string
 }
 
 func (e *ErrNotAFile) Error() string {
 	return "not a file: " + e.Path
+}
+
+type ErrFileNotFound struct {
+	Path string
+}
+
+func (e *ErrFileNotFound) Error() string {
+	return "file not found: " + e.Path
 }

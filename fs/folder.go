@@ -3,6 +3,8 @@ package fs
 import (
 	"io"
 	"io/fs"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -40,6 +42,38 @@ func (f *MockFolder) walk(consumer func(f *MockFile)) {
 	for _, file := range f.files {
 		consumer(file)
 	}
+}
+
+func (f *MockFolder) resolve(path string) (MockEntry, error) {
+	base := path
+	rest := ""
+	idx := strings.IndexRune(path, filepath.Separator)
+	if idx != -1 {
+		base = path[:idx]
+		rest = path[idx+1:]
+	}
+
+	for _, sub := range f.subfolders {
+		if sub.Name() == base {
+			if rest == "" {
+				return sub, nil
+			}
+
+			return sub.resolve(rest)
+		}
+	}
+
+	for _, file := range f.files {
+		if file.Name() == base {
+			if rest == "" {
+				return file, nil
+			}
+
+			return nil, &ErrNotADirectory{Path: path}
+		}
+	}
+
+	return nil, &ErrFileNotFound{Path: path}
 }
 
 func (f *MockFolder) AddFolder(folder *MockFolder) {

@@ -2,12 +2,21 @@ package fs
 
 import (
 	"io/fs"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 type MockFS struct {
 	Root *MockFolder
+}
+
+func (f *MockFS) Resolve(path string) (MockEntry, error) {
+	if path[0] == '/' {
+		return f.Root.resolve(filepath.Clean(path[1:]))
+	} else {
+		return nil, &ErrFileNotFound{path}
+	}
 }
 
 func (f *MockFS) Tree() []string {
