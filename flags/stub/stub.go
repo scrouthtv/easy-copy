@@ -2,52 +2,58 @@ package stub
 
 import "easy-copy/flags"
 
-type stubImpl struct {}
-
-func New() flags.Settings {
-	return &stubImpl{}
+type StubImpl struct {
+	v flags.Verbose
 }
 
-func (s *stubImpl) ParseLine() {}
+func New() *StubImpl {
+	return &StubImpl{v: flags.VerbDebug}
+}
 
-func (s *stubImpl) LoadConfig() error {
+func (s *StubImpl) ParseLine() {}
+
+func (s *StubImpl) LoadConfig() error {
 	return nil
 }
 
-func (s *stubImpl) Sources() []string {
+func (s *StubImpl) Sources() []string {
 	return nil
 }
 
-func (s *stubImpl) Target() string {
+func (s *StubImpl) Target() string {
 	return ""
 }
 
-func (s *stubImpl) Mode() flags.Mode {
+func (s *StubImpl) Mode() flags.Mode {
 	return flags.ModeCopy
 }
 
-func (s *stubImpl) Verbosity() flags.Verbose {
-	return flags.VerbDebug
+func (s *StubImpl) Verbosity() flags.Verbose {
+	return s.v
 }
 
-func (s *stubImpl) OnConflict() flags.Conflict {
+func (s *StubImpl) SetVerbosity(v flags.Verbose) {
+	s.v = v
+}
+
+func (s *StubImpl) OnConflict() flags.Conflict {
 	return flags.ConflictAsk
 }
 
-func (s *stubImpl) OnSymlink() flags.Symlink {
+func (s *StubImpl) OnSymlink() flags.Symlink {
 	return flags.SymlinkIgnore
 }
 
-func (s *stubImpl) DoLSColors() bool {
+func (s *StubImpl) DoLSColors() bool {
 	return true
 }
 
-func (s *stubImpl) Dryrun() bool {
+func (s *StubImpl) Dryrun() bool {
 	return true
 }
 
-func (s *stubImpl) Parallel() bool {
+func (s *StubImpl) Parallel() bool {
 	return true
 }
 
-func (s *stubImpl) SetOnConflict(c flags.Conflict) {}
+func (s *StubImpl) SetOnConflict(c flags.Conflict) {}
