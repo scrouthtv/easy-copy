@@ -80,7 +80,25 @@ func TestIterateMultiFolders(t *testing.T) {
 		t.Error(err)
 	}
 
-	tasks.PrintTasks()
+	if testing.Verbose() {
+		tasks.PrintTasks()
+	}
+
+	shouldTasks := []tasks.Task{
+		{Source: "/foo/sub/q", Dest: "/baz/foo/sub/q"},
+		{Source: "/foo/a", Dest: "/baz/foo/a"},
+		{Source: "/foo/b", Dest: "/baz/foo/b"},
+		{Source: "/quz/c", Dest: "/baz/quz/c"},
+		{Source: "/quz/d", Dest: "/baz/quz/d"},
+	}
+
+	shouldFolders := []string{
+		"/baz",
+		"/baz/foo", "/baz/foo/sub",
+		"/baz/quz", "/baz/quz/empty",
+	}
+
+	cmpTasks(t, shouldTasks, shouldFolders)
 }
 
 func TestIterateFile(t *testing.T) {
