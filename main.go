@@ -10,6 +10,7 @@ import (
 	"easy-copy/ui"
 	"easy-copy/ui/handler"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -22,7 +23,8 @@ func main() {
 
 	flags.Current.LoadConfig()
 
-	flags.Current.ParseLine()
+	line := strings.Join(os.Args, " ")
+	flags.Current.ParseLine(line)
 
 	if flags.Current.Verbosity() >= flags.VerbInfo {
 		ui.PrintVersion()
