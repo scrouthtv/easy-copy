@@ -9,14 +9,14 @@ func (fs *MockFS) Equal(other *MockFS) bool {
 }
 
 func (fs *MockFS) equal(a, b *MockFolder) bool {
-	if len(b.subfolders) != len(a.subfolders) {
+	if len(a.subfolders) != len(b.subfolders) {
 		return false
 	}
-	if len(b.files) != len(a.files) {
+	if len(a.files) != len(b.files) {
 		return false
 	}
 
-	for _, Asub := range b.subfolders {
+	for _, Asub := range a.subfolders {
 		_, Bsub, err := b.getSubfolder(Asub.Name())
 		if err != nil {
 			return false
@@ -27,7 +27,7 @@ func (fs *MockFS) equal(a, b *MockFolder) bool {
 		}
 	}
 
-	for _, Afile := range b.files {
+	for _, Afile := range a.files {
 		_, Bfile, err := b.getFile(Afile.Name())
 		if err != nil {
 			return false
