@@ -37,8 +37,9 @@ func TestCreateSingleFile(t *testing.T) {
 		"foo/baz/",
 	})
 
-	if !is.Equal(should) {
-		t.Error("FS are not equal:")
+	ok, bad := is.Equal(should)
+	if !ok {
+		t.Error("FS are not equal:", bad)
 	}
 
 	t.Log("should:")

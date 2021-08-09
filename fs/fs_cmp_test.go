@@ -56,23 +56,45 @@ func TestEqualFS(t *testing.T) {
 		"foo/x",
 	})
 
-	if !a.Equal(b) {
-		t.Error("a != b")
+	ok, bad := a.Equal(b)
+	if !ok {
+		t.Error("a != b, failed at", bad)
 	}
 
-	if a.Equal(c) {
+	ok, bad = a.Equal(c)
+	if ok {
 		t.Error("a == c")
 	}
-	if a.Equal(d) {
+	if bad != "/foo" {
+		t.Error("wrong bad position:", bad, "should be /foo")
+	}
+
+	ok, bad = a.Equal(d)
+	if ok {
 		t.Error("a == d")
 	}
-	if a.Equal(e) {
+	if bad != "/bar" {
+		t.Error("wrong bad position:", bad, "should be /bar")
+	}
+
+	ok, bad = a.Equal(e)
+	if ok {
 		t.Error("a == e")
 	}
-	if a.Equal(f) {
+	if bad != "/" {
+		t.Error("wrong bad position:", bad, "should be /")
+	}
+
+	ok, bad = a.Equal(f)
+	if ok {
 		t.Error("a == f")
 	}
-	if a.Equal(g) {
+	if bad != "/bar" {
+		t.Error("wrong bad position:", bad, "should be /bar")
+	}
+
+	ok, _ = a.Equal(g)
+	if ok {
 		t.Error("a == g")
 	}
 }
