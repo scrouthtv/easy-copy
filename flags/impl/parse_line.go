@@ -36,12 +36,6 @@ func (s *settingsImpl) isStopFlag(arg string) {
 	case "v", "version":
 		ui.PrintVersion()
 		os.Exit(0)
-	case "copying":
-		ui.ShowCopying()
-		os.Exit(0)
-	case "warranty":
-		ui.ShowWarranty()
-		os.Exit(0)
 	case "colortest":
 		ui.ShowColortest()
 		os.Exit(0)
