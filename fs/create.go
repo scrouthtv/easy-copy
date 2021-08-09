@@ -26,8 +26,8 @@ func create(fs *MockFS, line string) {
 
 	lastfolder := line[len(line)-1] == filepath.Separator
 
-	pp, rest, _ := fs.Root.resolve(filepath.Clean(line))
-	if rest == "" {
+	pp, rest, err := fs.Root.resolve(filepath.Clean(line))
+	if err == nil && rest == "" {
 		return
 	}
 

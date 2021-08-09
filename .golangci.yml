@@ -22,11 +22,6 @@ linters-settings:
   gocritic:
   godot:
     comments: all
-  gomnd:
-    settings:
-      mnd:
-        checks: argument, case, condition, operation, return, assign
-        ignored-numbers: 0,1,2,10,16,1000
   lll:
     line-length: 120
   misspell:
@@ -40,4 +35,4 @@ linters-settings:
 
 linters:
   enable-all: true
-  disable: nlreturn,nolintlint,tparallel,testpackage,gci,scopelint,gochecknoglobals,interfacer,maligned,golint,dupl,gochecknoinits,goconst
+  disable: nlreturn,nolintlint,tparallel,testpackage,gci,scopelint,gochecknoglobals,interfacer,maligned,golint,dupl,gochecknoinits,goconst,gomnd

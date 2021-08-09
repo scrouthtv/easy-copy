@@ -29,24 +29,40 @@ func TestPartResolve(t *testing.T) {
 		t.Log(l)
 	}
 
-	_, part, _ := fs.Root.resolve(filepath.Clean("bar/baz/c"))
+	_, part, err := fs.Root.resolve(filepath.Clean("bar/baz/c"))
 	if part != "" {
 		t.Error("Expected part to be empty, is", part)
 	}
 
-	_, part, _ = fs.Root.resolve(filepath.Clean("foo/bar/a"))
+	if err != nil {
+		t.Error("Expected no error, got", err)
+	}
+
+	_, part, err = fs.Root.resolve(filepath.Clean("foo/bar/a"))
 	if part != "bar/a" {
 		t.Error("Expected part to be 'a', is", part)
 	}
 
-	_, part, _ = fs.Root.resolve(filepath.Clean("bar/quz/f"))
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+
+	_, part, err = fs.Root.resolve(filepath.Clean("bar/quz/f"))
 	if part != "quz/f" {
 		t.Error("Expected part to be 'quz/f', is", part)
 	}
 
-	_, part, _ = fs.Root.resolve(filepath.Clean("g"))
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+
+	_, part, err = fs.Root.resolve(filepath.Clean("g"))
 	if part != "g" {
 		t.Error("Expected part to be 'g', is", part)
+	}
+
+	if err == nil {
+		t.Error("Expected error, got nil")
 	}
 }
 

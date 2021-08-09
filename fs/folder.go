@@ -88,14 +88,14 @@ func (f *MockFolder) resolve(path string) (MockEntry, string, error) {
 }
 
 func (f *MockFolder) RemoveSub(name string) error {
-	idx, _, _ := f.getSubfolder(name)
-	if idx != -1 {
+	idx, _, err := f.getSubfolder(name)
+	if err == nil && idx != -1 {
 		f.removeSubFolder(idx)
 		return nil
 	}
 
-	idx, _, _ = f.getFile(name)
-	if idx != -1 {
+	idx, _, err = f.getFile(name)
+	if err == nil && idx != -1 {
 		f.removeFile(idx)
 		return nil
 	}
