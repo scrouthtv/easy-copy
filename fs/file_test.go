@@ -16,9 +16,11 @@ func TestRead(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if n != 3 {
 		t.Error("Read wrong number of bytes:", n, "expected: 3")
 	}
+
 	if string(buf) != "foo" {
 		t.Error("Read wrong contents:", string(buf), "expected: foo")
 	}
@@ -27,6 +29,7 @@ func TestRead(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf) != "oob" {
 		t.Error("ReadAt wrong contents:", string(buf), "expected: oob")
 	}
@@ -37,6 +40,7 @@ func TestRead(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf[:3]) != "bar" {
 		t.Error("Read wrong contents:", string(buf), "expected: bar")
 	}
@@ -45,6 +49,7 @@ func TestRead(t *testing.T) {
 	if !errors.Is(err, io.EOF) {
 		t.Error("Read wrong error:", err, "expected: io.EOF")
 	}
+
 	if n != 0 {
 		t.Error("Read wrong number of bytes:", n, "expected: 0")
 	}
@@ -55,10 +60,12 @@ func TestSeek(t *testing.T) {
 	f.contents = []byte("foobarbaz")
 
 	buf := make([]byte, 3)
+
 	_, err := f.Read(buf)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf) != "foo" {
 		t.Error("Read wrong contents:", string(buf), "expected: foo")
 	}
@@ -67,6 +74,7 @@ func TestSeek(t *testing.T) {
 	if n != 1 {
 		t.Error("Seek wrong number of bytes:", n, "expected: 1")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -75,6 +83,7 @@ func TestSeek(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf) != "oob" {
 		t.Error("Read wrong contents:", string(buf), "expected: oob")
 	}
@@ -83,6 +92,7 @@ func TestSeek(t *testing.T) {
 	if n != 6 {
 		t.Error("Seek wrong number of bytes:", n, "expected: 6")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -91,6 +101,7 @@ func TestSeek(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf) != "baz" {
 		t.Error("Read wrong contents:", string(buf), "expected: baz")
 	}
@@ -99,6 +110,7 @@ func TestSeek(t *testing.T) {
 	if n != 7 {
 		t.Error("Seek wrong number of bytes:", n, "expected: 7")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -107,11 +119,13 @@ func TestSeek(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(buf[:read]) != "az" {
 		t.Error("Read wrong contents:", string(buf[:read]), "expected: az")
 	}
 
 	_, err = f.Seek(0, io.SeekStart+io.SeekCurrent+io.SeekEnd)
+
 	var errOpNotSupported error = &ErrOperationNotSupported{}
 	if !errors.As(err, &errOpNotSupported) {
 		t.Error("Wrong error:", err)
@@ -125,9 +139,11 @@ func TestWrite(t *testing.T) {
 	if n != 6 {
 		t.Error("Write wrong number of bytes:", n, "expected: 6")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qwertz" {
 		t.Error("Write wrong contents:", string(f.contents), "expected: qwertz")
 	}
@@ -136,6 +152,7 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qbartz" {
 		t.Error("WriteAt wrong contents:", string(f.contents), "expected: qbartz")
 	}
@@ -144,6 +161,7 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qbartzhehe" {
 		t.Error("Write wrong contents:", string(f.contents), "expected: qbartzhehe")
 	}
@@ -152,6 +170,7 @@ func TestWrite(t *testing.T) {
 	if seek != 7 {
 		t.Error("Seek wrong number of bytes:", seek, "expected: 7")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -160,6 +179,7 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qbartzhfoo" {
 		t.Error("Write wrong contents:", string(f.contents), "expected: qbartzhfoo")
 	}
@@ -168,6 +188,7 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qba" {
 		t.Error("Truncate wrong contents:", string(f.contents), "expected: qba")
 	}
@@ -180,9 +201,11 @@ func TestWriteString(t *testing.T) {
 	if n != 6 {
 		t.Error("Write wrong number of bytes:", n, "expected: 6")
 	}
+
 	if err != nil {
 		t.Error(err)
 	}
+
 	if string(f.contents) != "qwertz" {
 		t.Error("Write wrong contents:", string(f.contents), "expected: qwertz")
 	}
@@ -196,9 +219,11 @@ func TestFolderRW(t *testing.T) {
 	if n != 0 {
 		t.Error("Write wrong number of bytes:", n, "expected: 0")
 	}
+
 	if !errors.As(err, &errNotAFile) {
 		t.Error("Wrong error:", err)
 	}
+
 	if err.Error() != "not a file: test" {
 		t.Error("Wrong error message:", err, "expected not a file: test")
 	}
@@ -207,6 +232,7 @@ func TestFolderRW(t *testing.T) {
 	if n != 0 {
 		t.Error("Read wrong number of bytes:", n, "expected: 0")
 	}
+
 	if !errors.As(err, &errNotAFile) {
 		t.Error("Wrong error:", err)
 	}

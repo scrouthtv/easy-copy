@@ -13,9 +13,9 @@ type MockFS struct {
 	Root *MockFolder
 }
 
-func (f *MockFS) Resolve(path string) (MockEntry, error) {
+func (fs *MockFS) Resolve(path string) (MockEntry, error) {
 	if path[0] == '/' {
-		f, _, err := f.Root.resolve(filepath.Clean(path[1:]))
+		f, _, err := fs.Root.resolve(filepath.Clean(path[1:]))
 		if err != nil {
 			errFNF := &ErrFileNotFound{}
 			if errors.As(err, &errFNF) {
@@ -28,14 +28,14 @@ func (f *MockFS) Resolve(path string) (MockEntry, error) {
 
 		return f, nil
 	} else {
-		return nil, &ErrFileNotFound{path}
+		return nil, &ErrFileNotFound{Path: path}
 	}
 }
 
 // Rewind rewinds all foldder iterators to the beginning.
 // This is required after subdirectories on a folder have been read.
-func (f *MockFS) Rewind() {
-	f.Root.walkF(func(folder *MockFolder) {
+func (fs *MockFS) Rewind() {
+	fs.Root.walkF(func(folder *MockFolder) {
 		folder.itpos = 0
 	})
 }
@@ -53,7 +53,7 @@ func (fs *MockFS) Create(path string) (common.File, error) {
 	if rest == filepath.Base(path) {
 		paren, ok := f.(*MockFolder)
 		if !ok {
-			return nil, &ErrNotADirectory{}
+			return nil, &ErrNotADirectory{Path: path}
 		}
 
 		file := NewFile(filepath.Base(path))
@@ -61,7 +61,7 @@ func (fs *MockFS) Create(path string) (common.File, error) {
 
 		return file, nil
 	} else {
-		return nil, &ErrFileNotFound{path}
+		return nil, &ErrFileNotFound{Path: path}
 	}
 }
 
@@ -73,6 +73,7 @@ func (fs *MockFS) MkdirAll(path string, mode fs.FileMode) (err error) {
 	}
 
 	create(fs, path)
+
 	return nil
 }
 
@@ -97,14 +98,13 @@ func (fs *MockFS) parentFolder(path string) (*MockFolder, string, error) {
 	}
 
 	parenEntry, rest, err := fs.Root.resolve(paren[:idx])
-
 	if err != nil {
 		return nil, "", err
 	}
 
 	parenFolder, ok := parenEntry.(*MockFolder)
 	if !ok {
-		return nil, "", &ErrFileNotFound{path}
+		return nil, "", &ErrFileNotFound{Path: path}
 	}
 
 	return parenFolder, rest, nil
@@ -149,6 +149,7 @@ func (f *MockFolder) tree(depth int) []string {
 		s = append(s, prefix+sub.Name()+"/")
 		s = append(s, sub.tree(depth+1)...)
 	}
+
 	for i, file := range f.files {
 		if i == len(f.files)-1 {
 			prefix = p + "└──"

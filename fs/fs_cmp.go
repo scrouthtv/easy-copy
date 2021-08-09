@@ -10,15 +10,16 @@ import "path/filepath"
 // a file is returned.
 // If files only differ, the first non-matching file path is returned.
 func (fs *MockFS) Equal(other *MockFS) (bool, string) {
-	return fs.equal(fs.Root, other.Root, "/")
+	return fs.equal(fs.Root, other.Root, "")
 }
 
 func (fs *MockFS) equal(a, b *MockFolder, prefix string) (bool, string) {
-	prefix = prefix + a.Name()
+	prefix += a.Name() + string(filepath.Separator)
 
 	if len(a.subfolders) != len(b.subfolders) {
 		return false, prefix
 	}
+
 	if len(a.files) != len(b.files) {
 		return false, prefix
 	}
@@ -26,7 +27,7 @@ func (fs *MockFS) equal(a, b *MockFolder, prefix string) (bool, string) {
 	for _, Asub := range a.subfolders {
 		_, Bsub, err := b.getSubfolder(Asub.Name())
 		if err != nil {
-			return false, prefix + string(filepath.Separator) + Asub.Name()
+			return false, prefix + Asub.Name() + string(filepath.Separator)
 		}
 
 		ok, badpath := fs.equal(Asub, Bsub, prefix)
@@ -38,18 +39,18 @@ func (fs *MockFS) equal(a, b *MockFolder, prefix string) (bool, string) {
 	for _, Afile := range a.files {
 		_, Bfile, err := b.getFile(Afile.Name())
 		if err != nil {
-			return false, prefix + string(filepath.Separator) + Afile.Name()
+			return false, prefix + Afile.Name()
 		}
 
-		if !fs.file_equal(Afile, Bfile) {
-			return false, prefix + string(filepath.Separator) + Afile.Name()
+		if !fs.fileEqual(Afile, Bfile) {
+			return false, prefix + Afile.Name()
 		}
 	}
 
 	return true, ""
 }
 
-func (fs *MockFS) file_equal(a, b *MockFile) bool {
+func (fs *MockFS) fileEqual(a, b *MockFile) bool {
 	return a.Name() == b.Name() &&
 		string(a.contents) == string(b.contents)
 }

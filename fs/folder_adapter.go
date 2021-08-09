@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// implementation of File
+// implementation of File.
 
 func (f *MockFolder) Chdir() error {
 	return &ErrOperationNotSupported{Op: "chdir"}
@@ -42,7 +42,7 @@ func (f *MockFolder) ReadAt(b []byte, off int64) (int, error) {
 }
 
 func (f *MockFolder) ReadDir(count int) ([]fs.DirEntry, error) {
-	var entries = []fs.DirEntry{}
+	entries := []fs.DirEntry{}
 
 	if count <= 0 {
 		next := f.next()
@@ -66,7 +66,7 @@ func (f *MockFolder) ReadFrom(r io.Reader) (int64, error) {
 }
 
 func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
-	var entries = []fs.FileInfo{}
+	entries := []fs.FileInfo{}
 
 	if count <= 0 {
 		next := f.next()
@@ -86,7 +86,7 @@ func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
 }
 
 func (f *MockFolder) Readdirnames(count int) ([]string, error) {
-	var entries = []string{}
+	entries := []string{}
 
 	if count <= 0 {
 		next := f.next()
@@ -106,7 +106,7 @@ func (f *MockFolder) Readdirnames(count int) ([]string, error) {
 }
 
 func (f *MockFolder) Seek(offset int64, whence int) (int64, error) {
-	return 0, &ErrNotAFile{f.name}
+	return 0, &ErrNotAFile{Path: f.name}
 }
 
 func (f *MockFolder) SetDeadline(t time.Time) error {
@@ -134,22 +134,22 @@ func (f *MockFolder) SyscallConn() (syscall.RawConn, error) {
 }
 
 func (f *MockFolder) Truncate(size int64) error {
-	return &ErrNotAFile{f.name}
+	return &ErrNotAFile{Path: f.name}
 }
 
 func (f *MockFolder) Write(b []byte) (int, error) {
-	return 0, &ErrNotAFile{f.name}
+	return 0, &ErrNotAFile{Path: f.name}
 }
 
 func (f *MockFolder) WriteAt(b []byte, off int64) (int, error) {
-	return 0, &ErrNotAFile{f.name}
+	return 0, &ErrNotAFile{Path: f.name}
 }
 
 func (f *MockFolder) WriteString(s string) (int, error) {
-	return 0, &ErrNotAFile{f.name}
+	return 0, &ErrNotAFile{Path: f.name}
 }
 
-// implementation of fs.FileInfo
+// implementation of fs.FileInfo.
 
 func (f *MockFolder) Size() int64 {
 	var size int64 = 0
@@ -186,7 +186,8 @@ func (f *MockFolder) Sys() interface{} {
 	return nil
 }
 
-// implementation of fs.DirEntry
+// implementation of fs.DirEntry.
+
 func (f *MockFolder) Info() (fs.FileInfo, error) {
 	return f, nil
 }

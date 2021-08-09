@@ -22,10 +22,12 @@ func TestCreateSingleFile(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = is.MkdirAll("/foo/baz", 0o755)
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = is.MkdirAll("/foo/", 0o755)
 	if err != nil {
 		t.Error(err)

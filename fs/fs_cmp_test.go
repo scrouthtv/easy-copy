@@ -72,22 +72,25 @@ func TestEqualFSMissing(t *testing.T) {
 	if ok {
 		t.Error("a == c")
 	}
-	if bad != "/foo" {
-		t.Error("wrong bad position:", bad, "should be /foo")
+
+	if bad != "/foo/" {
+		t.Error("wrong bad position:", bad, "should be /foo/")
 	}
 
 	ok, bad = a.Equal(d)
 	if ok {
 		t.Error("a == d")
 	}
-	if bad != "/bar" {
-		t.Error("wrong bad position:", bad, "should be /bar")
+
+	if bad != "/bar/" {
+		t.Error("wrong bad position:", bad, "should be /bar/")
 	}
 
 	ok, bad = a.Equal(e)
 	if ok {
 		t.Error("a == e")
 	}
+
 	if bad != "/" {
 		t.Error("wrong bad position:", bad, "should be /")
 	}
@@ -116,8 +119,9 @@ func TestEqualFSExtra(t *testing.T) {
 	if ok {
 		t.Error("a == f")
 	}
-	if bad != "/bar" {
-		t.Error("wrong bad position:", bad, "should be /bar")
+
+	if bad != "/bar/" {
+		t.Error("wrong bad position:", bad, "should be /bar/")
 	}
 }
 
@@ -151,6 +155,7 @@ func TestEqualFSRenamed(t *testing.T) {
 	if ok {
 		t.Error("a == g")
 	}
+
 	if bad != "/bar/c" {
 		t.Error("wrong bad position:", bad, "should be /bar/c")
 	}
@@ -159,7 +164,8 @@ func TestEqualFSRenamed(t *testing.T) {
 	if ok {
 		t.Error("a == h")
 	}
-	if bad != "/foo/empty" {
-		t.Error("wrong bad position:", bad, "should be /foo/empty")
+
+	if bad != "/foo/empty/" {
+		t.Error("wrong bad position:", bad, "should be /foo/empty/")
 	}
 }

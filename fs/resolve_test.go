@@ -10,6 +10,7 @@ func TestPartResolve(t *testing.T) {
 	fs := NewFs()
 	foo := NewFolder("foo")
 	bar := NewFolder("bar")
+
 	fs.Root.AddFolder(foo)
 	fs.Root.AddFolder(bar)
 
@@ -53,6 +54,7 @@ func TestResolve(t *testing.T) {
 	fs := NewFs()
 	foo := NewFolder("foo")
 	bar := NewFolder("bar")
+
 	fs.Root.AddFolder(foo)
 	fs.Root.AddFolder(bar)
 
@@ -75,6 +77,7 @@ func TestResolve(t *testing.T) {
 	if err != nil {
 		t.Error("/bar/baz/c", err)
 	}
+
 	if f != c {
 		t.Error("/bar/baz/c Got wrong file")
 	}
@@ -83,6 +86,7 @@ func TestResolve(t *testing.T) {
 	if err != nil {
 		t.Error("/foo/a", err)
 	}
+
 	if f != a {
 		t.Error("/foo/a Got wrong file")
 	}
@@ -91,20 +95,25 @@ func TestResolve(t *testing.T) {
 	if err != nil {
 		t.Error("/foo/a", err)
 	}
+
 	if openf != a {
 		t.Error("/foo/a Got wrong file")
 	}
+
 	statf, err := fs.Stat("/foo/a")
 	if err != nil {
 		t.Error("/foo/a", err)
 	}
+
 	if statf != a {
 		t.Error("/foo/a Got wrong file")
 	}
+
 	lstatf, err := fs.Lstat("/foo/a")
 	if err != nil {
 		t.Error("/foo/a", err)
 	}
+
 	if lstatf != a {
 		t.Error("/foo/a Got wrong file")
 	}
@@ -113,19 +122,23 @@ func TestResolve(t *testing.T) {
 	if err != nil {
 		t.Error("/bar/", err)
 	}
+
 	if f != bar {
 		t.Error("/bar/ Got wrong file")
 	}
 
 	f, err = fs.Resolve("/this/file/does/not/exist")
+
 	errFileNotFound := &ErrFileNotFound{}
 	if !errors.As(err, &errFileNotFound) {
 		t.Error("Wrong error:", err)
 	}
+
 	if err.Error() != "file not found: /this/file/does/not/exist" {
 		t.Error("Bad error message:", err.Error())
 		t.Log("Expected message: ", "file not found: /this/file/does/not/exist")
 	}
+
 	if f != nil {
 		t.Error("Got a file")
 	}

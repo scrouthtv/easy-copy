@@ -51,6 +51,7 @@ func (f *MockFile) Read(b []byte) (int, error) {
 
 	copy(b, f.contents[f.position:f.position+n])
 	f.position += n
+
 	return n, nil
 }
 
@@ -65,11 +66,12 @@ func (f *MockFile) ReadAt(b []byte, off int64) (int, error) {
 	}
 
 	copy(b, f.contents[off:int(off)+n])
+
 	return n, nil
 }
 
 func (f *MockFile) ReadDir(count int) ([]fs.DirEntry, error) {
-	return nil, &ErrNotADirectory{f.name}
+	return nil, &ErrNotADirectory{Path: f.name}
 }
 
 func (f *MockFile) ReadFrom(r io.Reader) (int64, error) {
@@ -77,11 +79,11 @@ func (f *MockFile) ReadFrom(r io.Reader) (int64, error) {
 }
 
 func (f *MockFile) Readdir(count int) ([]fs.FileInfo, error) {
-	return nil, &ErrNotADirectory{f.name}
+	return nil, &ErrNotADirectory{Path: f.name}
 }
 
 func (f *MockFile) Readdirnames(count int) ([]string, error) {
-	return nil, &ErrNotADirectory{f.name}
+	return nil, &ErrNotADirectory{Path: f.name}
 }
 
 func (f *MockFile) Seek(offset int64, whence int) (int64, error) {
@@ -129,6 +131,7 @@ func (f *MockFile) Truncate(size int64) error {
 	}
 
 	f.contents = f.contents[:size]
+
 	return nil
 }
 
@@ -163,7 +166,7 @@ func (f *MockFile) WriteString(s string) (int, error) {
 	return f.Write([]byte(s))
 }
 
-// implementation of fs.FileInfo
+// implementation of fs.FileInfo.
 
 func (f *MockFile) Size() int64 {
 	return int64(len(f.contents))
@@ -185,7 +188,8 @@ func (f *MockFile) Sys() interface{} {
 	return nil
 }
 
-// implementation of fs.DirEntry
+// implementation of fs.DirEntry.
+
 func (f *MockFile) Info() (fs.FileInfo, error) {
 	return f, nil
 }

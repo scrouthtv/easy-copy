@@ -58,6 +58,7 @@ func (f *MockFolder) resolve(path string) (MockEntry, string, error) {
 	base := path
 	rest := ""
 	idx := strings.IndexRune(path, filepath.Separator)
+
 	if idx != -1 {
 		base = path[:idx]
 		rest = path[idx+1:]

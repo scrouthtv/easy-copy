@@ -9,6 +9,7 @@ func TestTree(t *testing.T) {
 	fs := NewFs()
 	foo := NewFolder("foo")
 	bar := NewFolder("bar")
+
 	fs.Root.AddFolder(foo)
 	fs.Root.AddFolder(bar)
 
