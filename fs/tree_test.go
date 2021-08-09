@@ -43,21 +43,24 @@ func TestTree(t *testing.T) {
 	if !reflect.DeepEqual(is, should) {
 		t.Error("different tree:")
 
-		if len(is) == len(should) {
+		switch {
+		case len(is) == len(should):
 			for i, v := range is {
 				t.Log(v, "\t\t\t", should[i])
 			}
-		} else if len(is) < len(should) {
+		case len(is) < len(should):
 			for i, v := range is {
 				t.Log(v, "\t\t\t", should[i])
 			}
+
 			for i := len(is); i < len(should); i++ {
 				t.Log(should[i])
 			}
-		} else {
+		default:
 			for i, v := range should {
 				t.Log(is[i], "\t\t\t", v)
 			}
+
 			for i := len(should); i < len(is); i++ {
 				t.Log(is[i])
 			}

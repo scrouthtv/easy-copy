@@ -124,21 +124,23 @@ func (f *MockFolder) getFile(name string) (int, *MockFile, error) {
 }
 
 func (f *MockFolder) removeSubFolder(idx int) {
-	if idx == 0 {
+	switch idx {
+	case 0:
 		f.subfolders = f.subfolders[1:]
-	} else if idx == len(f.subfolders)-1 {
+	case len(f.subfolders) - 1:
 		f.subfolders = f.subfolders[:len(f.subfolders)-1]
-	} else {
+	default:
 		f.subfolders = append(f.subfolders[:idx], f.subfolders[idx+1:]...)
 	}
 }
 
 func (f *MockFolder) removeFile(idx int) {
-	if idx == 0 {
+	switch idx {
+	case 0:
 		f.files = f.files[1:]
-	} else if idx == len(f.files)-1 {
+	case len(f.files) - 1:
 		f.files = f.files[:len(f.files)-1]
-	} else {
+	default:
 		f.files = append(f.files[:idx], f.files[idx+1:]...)
 	}
 }

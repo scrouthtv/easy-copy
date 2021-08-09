@@ -134,7 +134,7 @@ func (fs *MockFS) Tree() []string {
 }
 
 func (f *MockFolder) tree(depth int) []string {
-	var s []string
+	s := make([]string, 0, 2*len(f.subfolders)+len(f.files))
 
 	p := strings.Repeat("│  ", depth)
 	var prefix string
