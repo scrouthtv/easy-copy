@@ -5,6 +5,7 @@ import (
 	"easy-copy/flags/stub"
 	"easy-copy/fs"
 	"easy-copy/tasks"
+	"easy-copy/ui"
 	"flag"
 	"log"
 	"os"
@@ -32,16 +33,26 @@ func TestMain(m *testing.M) {
 		cfg.SetVerbosity(flags.VerbCrit)
 	}
 
+	errExit := 0
+
+	go func() {
+		for {
+			err := <-ui.Warns
+			errExit = 125
+			log.Println("Got an error:", err)
+		}
+	}()
+
 	exit := m.Run()
 
-	if exit != 0 || testing.Verbose() {
+	if exit|errExit != 0 || testing.Verbose() {
 		tree := fs.Tree()
 		for _, l := range tree {
 			log.Println(l)
 		}
 	}
 
-	os.Exit(exit)
+	os.Exit(exit | errExit)
 }
 
 func TestIterateFolder(t *testing.T) {
