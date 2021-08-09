@@ -3,14 +3,13 @@ package common
 import (
 	"io"
 	"io/fs"
-	"os"
 	"syscall"
 	"time"
 )
 
 type File interface {
 	Chdir() error
-	Chmod(mode os.FileMode) error
+	Chmod(mode fs.FileMode) error
 	Chown(uid, gid int) error
 	Close() error
 	Fd() uintptr
@@ -25,7 +24,7 @@ type File interface {
 	SetDeadline(timeout time.Time) error
 	SetReadDeadline(timeout time.Time) error
 	SetWriteDeadline(timeout time.Time) error
-	Stat() (os.FileInfo, error)
+	Stat() (fs.FileInfo, error)
 	Sync() error
 	SyscallConn() (syscall.RawConn, error)
 	Truncate(size int64) error
