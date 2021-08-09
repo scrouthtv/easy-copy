@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 )
 
-var opener fs.Integration
+var Opener fs.Integration
 
 func init() {
-	opener = fs.SysInt{}
+	Opener = fs.SysInt{}
 }
 
 type ErrMissingFile struct {
@@ -51,12 +51,12 @@ func shouldCreateFolders() bool {
 		return true
 	}
 
-	_, err := opener.Open(flags.Current.Target())
+	_, err := Opener.Open(flags.Current.Target())
 	return err == nil // if target already exists, create folders inside it
 }
 
 func add(p *tasks.Path) error {
-	info, err := opener.Lstat(p.AsAbs())
+	info, err := Opener.Lstat(p.AsAbs())
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func add(p *tasks.Path) error {
 
 // addAllInFolder creates tasks for all files in the specified folder.
 func addAllInFolder(folder *tasks.Path) error {
-	f, err := opener.Open(folder.AsAbs())
+	f, err := Opener.Open(folder.AsAbs())
 	if err != nil {
 		return err
 	}

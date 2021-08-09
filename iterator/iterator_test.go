@@ -24,7 +24,7 @@ func TestMain(m *testing.M) {
 		"quz/empty/",
 		"bar.txt",
 	})
-	opener = fs
+	Opener = fs
 
 	cfg := stub.New()
 	flags.Current = cfg
@@ -56,7 +56,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestIterateFolder(t *testing.T) {
-	opener.(*fs.MockFS).Rewind()
+	Opener.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", false)
 
@@ -81,7 +81,7 @@ func TestIterateFolder(t *testing.T) {
 }
 
 func TestIterateMultiFolders(t *testing.T) {
-	opener.(*fs.MockFS).Rewind()
+	Opener.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", true)
 
@@ -96,7 +96,7 @@ func TestIterateMultiFolders(t *testing.T) {
 	}
 
 	if testing.Verbose() {
-		for _, l := range opener.(*fs.MockFS).Tree() {
+		for _, l := range Opener.(*fs.MockFS).Tree() {
 			log.Println(l)
 		}
 
@@ -142,7 +142,7 @@ func TestIterateFile(t *testing.T) {
 }
 
 func TestIterateEmptyFolder(t *testing.T) {
-	opener.(*fs.MockFS).Rewind()
+	Opener.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", true)
 
