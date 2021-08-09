@@ -44,6 +44,14 @@ func (f *MockFolder) walk(consumer func(f *MockFile)) {
 	}
 }
 
+func (f *MockFolder) walkF(consumer func(f *MockFolder)) {
+	consumer(f)
+
+	for _, sub := range f.subfolders {
+		sub.walkF(consumer)
+	}
+}
+
 // resolve recursively searches for the given path in this folder
 // It returns the last subfolder that is found and optionally
 // the subpath that couldn't be found and an error
@@ -127,7 +135,7 @@ func (f *MockFolder) ReadAt(b []byte, off int64) (int, error) {
 func (f *MockFolder) ReadDir(count int) ([]fs.DirEntry, error) {
 	var entries = []fs.DirEntry{}
 
-	if count == 0 {
+	if count <= 0 {
 		next := f.next()
 
 		for next != nil {
@@ -151,7 +159,7 @@ func (f *MockFolder) ReadFrom(r io.Reader) (int64, error) {
 func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
 	var entries = []fs.FileInfo{}
 
-	if count == 0 {
+	if count <= 0 {
 		next := f.next()
 
 		for next != nil {
@@ -171,7 +179,7 @@ func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
 func (f *MockFolder) Readdirnames(count int) ([]string, error) {
 	var entries = []string{}
 
-	if count == 0 {
+	if count <= 0 {
 		next := f.next()
 
 		for next != nil {

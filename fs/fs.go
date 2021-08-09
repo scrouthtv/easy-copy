@@ -24,6 +24,13 @@ func (f *MockFS) Resolve(path string) (MockEntry, error) {
 	}
 }
 
+// Rewind rewinds all foldder iterators to the beginning.
+func (f *MockFS) Rewind() {
+	f.Root.walkF(func(folder *MockFolder) {
+		folder.itpos = 0
+	})
+}
+
 func (f *MockFS) Open(name string) (File, error) {
 	return f.Resolve(name)
 }
@@ -36,6 +43,7 @@ func (f *MockFS) Lstat(name string) (fs.FileInfo, error) {
 	return f.Resolve(name)
 }
 
+// Tree returns a string representation of the folder structure.
 func (f *MockFS) Tree() []string {
 	return f.Root.tree(0)
 }
