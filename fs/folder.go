@@ -1,12 +1,8 @@
 package fs
 
 import (
-	"io"
-	"io/fs"
 	"path/filepath"
 	"strings"
-	"syscall"
-	"time"
 )
 
 type MockFolder struct {
@@ -90,198 +86,66 @@ func (f *MockFolder) resolve(path string) (MockEntry, string, error) {
 	return f, path, &ErrFileNotFound{Path: path}
 }
 
+func (f *MockFolder) RemoveSub(name string) error {
+	idx, _, _ := f.getSubfolder(name)
+	if idx != -1 {
+		f.removeSubFolder(idx)
+		return nil
+	}
+
+	idx, _, _ = f.getFile(name)
+	if idx != -1 {
+		f.removeFile(idx)
+		return nil
+	}
+
+	return &ErrFileNotFound{Path: name}
+}
+
+func (f *MockFolder) getSubfolder(name string) (int, *MockFolder, error) {
+	for i, sub := range f.subfolders {
+		if sub.Name() == name {
+			return i, sub, nil
+		}
+	}
+
+	return -1, nil, &ErrFileNotFound{Path: name}
+}
+
+func (f *MockFolder) getFile(name string) (int, *MockFile, error) {
+	for i, v := range f.files {
+		if v.Name() == name {
+			return i, v, nil
+		}
+	}
+
+	return -1, nil, &ErrFileNotFound{Path: name}
+}
+
+func (f *MockFolder) removeSubFolder(idx int) {
+	if idx == 0 {
+		f.subfolders = f.subfolders[1:]
+	} else if idx == len(f.subfolders)-1 {
+		f.subfolders = f.subfolders[:len(f.subfolders)-1]
+	} else {
+		f.subfolders = append(f.subfolders[:idx], f.subfolders[idx+1:]...)
+	}
+}
+
+func (f *MockFolder) removeFile(idx int) {
+	if idx == 0 {
+		f.files = f.files[1:]
+	} else if idx == len(f.files)-1 {
+		f.files = f.files[:len(f.files)-1]
+	} else {
+		f.files = append(f.files[:idx], f.files[idx+1:]...)
+	}
+}
+
 func (f *MockFolder) AddFolder(folder *MockFolder) {
 	f.subfolders = append(f.subfolders, folder)
 }
 
 func (f *MockFolder) AddFile(file *MockFile) {
 	f.files = append(f.files, file)
-}
-
-// implementation of File
-
-func (f *MockFolder) Chdir() error {
-	return &ErrOperationNotSupported{Op: "chdir"}
-}
-
-func (f *MockFolder) Chmod(mode fs.FileMode) error {
-	return nil
-}
-
-func (f *MockFolder) Chown(uid, gid int) error {
-	return nil
-}
-
-func (f *MockFolder) Close() error {
-	return nil
-}
-
-func (f *MockFolder) Fd() uintptr {
-	return 7 // FIXME: this is a placeholder
-}
-
-func (f *MockFolder) Name() string {
-	return f.name
-}
-
-func (f *MockFolder) Read(b []byte) (int, error) {
-	return 0, &ErrNotAFile{Path: f.name}
-}
-
-func (f *MockFolder) ReadAt(b []byte, off int64) (int, error) {
-	return 0, &ErrNotAFile{Path: f.name}
-}
-
-func (f *MockFolder) ReadDir(count int) ([]fs.DirEntry, error) {
-	var entries = []fs.DirEntry{}
-
-	if count <= 0 {
-		next := f.next()
-
-		for next != nil {
-			entries = append(entries, next)
-			next = f.next()
-		}
-	} else {
-		for i := 0; i < count; i++ {
-			next := f.next()
-			entries = append(entries, next)
-		}
-	}
-
-	return entries, nil
-}
-
-func (f *MockFolder) ReadFrom(r io.Reader) (int64, error) {
-	return 0, &ErrNotAFile{Path: f.name}
-}
-
-func (f *MockFolder) Readdir(count int) ([]fs.FileInfo, error) {
-	var entries = []fs.FileInfo{}
-
-	if count <= 0 {
-		next := f.next()
-
-		for next != nil {
-			entries = append(entries, next)
-			next = f.next()
-		}
-	} else {
-		for i := 0; i < count; i++ {
-			next := f.next()
-			entries = append(entries, next)
-		}
-	}
-
-	return entries, nil
-}
-
-func (f *MockFolder) Readdirnames(count int) ([]string, error) {
-	var entries = []string{}
-
-	if count <= 0 {
-		next := f.next()
-
-		for next != nil {
-			entries = append(entries, next.Name())
-			next = f.next()
-		}
-	} else {
-		for i := 0; i < count; i++ {
-			next := f.next()
-			entries = append(entries, next.Name())
-		}
-	}
-
-	return entries, nil
-}
-
-func (f *MockFolder) Seek(offset int64, whence int) (int64, error) {
-	return 0, &ErrNotAFile{f.name}
-}
-
-func (f *MockFolder) SetDeadline(t time.Time) error {
-	return nil
-}
-
-func (f *MockFolder) SetReadDeadline(t time.Time) error {
-	return nil
-}
-
-func (f *MockFolder) SetWriteDeadline(t time.Time) error {
-	return nil
-}
-
-func (f *MockFolder) Stat() (fs.FileInfo, error) {
-	return f, nil
-}
-
-func (f *MockFolder) Sync() error {
-	return nil
-}
-
-func (f *MockFolder) SyscallConn() (syscall.RawConn, error) {
-	return nil, nil
-}
-
-func (f *MockFolder) Truncate(size int64) error {
-	return &ErrNotAFile{f.name}
-}
-
-func (f *MockFolder) Write(b []byte) (int, error) {
-	return 0, &ErrNotAFile{f.name}
-}
-
-func (f *MockFolder) WriteAt(b []byte, off int64) (int, error) {
-	return 0, &ErrNotAFile{f.name}
-}
-
-func (f *MockFolder) WriteString(s string) (int, error) {
-	return 0, &ErrNotAFile{f.name}
-}
-
-// implementation of fs.FileInfo
-
-func (f *MockFolder) Size() int64 {
-	var size int64 = 0
-
-	f.walk(func(f *MockFile) {
-		size += f.Size()
-	})
-
-	return size
-}
-
-func (f *MockFolder) Mode() fs.FileMode {
-	return 0o755
-}
-
-// ModTime returns the newest Mod Time of all files in this folder and subfolders.
-func (f *MockFolder) ModTime() time.Time {
-	var modTime time.Time
-
-	f.walk(func(f *MockFile) {
-		if f.ModTime().After(modTime) { // this works bc the null value for time.Time is 1.1.1
-			modTime = f.ModTime()
-		}
-	})
-
-	return modTime
-}
-
-func (f *MockFolder) IsDir() bool {
-	return true
-}
-
-func (f *MockFolder) Sys() interface{} {
-	return nil
-}
-
-// implementation of fs.DirEntry
-func (f *MockFolder) Info() (fs.FileInfo, error) {
-	return f, nil
-}
-
-func (f *MockFolder) Type() fs.FileMode {
-	return fs.ModeDir
 }

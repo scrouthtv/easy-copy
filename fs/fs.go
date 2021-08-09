@@ -39,21 +39,97 @@ func (f *MockFS) Rewind() {
 	})
 }
 
-func (f *MockFS) Open(name string) (common.File, error) {
-	return f.Resolve(name)
+func (fs *MockFS) Open(name string) (common.File, error) {
+	return fs.Resolve(name)
 }
 
-func (f *MockFS) Stat(name string) (fs.FileInfo, error) {
-	return f.Resolve(name)
+func (fs *MockFS) Create(path string) (common.File, error) {
+	f, rest, err := fs.Root.resolve(filepath.Clean(path)[1:])
+	if err == nil {
+		return f, nil
+	}
+
+	if rest == filepath.Base(path) {
+		paren, ok := f.(*MockFolder)
+		if !ok {
+			return nil, &ErrNotADirectory{}
+		}
+
+		file := NewFile(filepath.Base(path))
+		paren.AddFile(file)
+
+		return file, nil
+	} else {
+		return nil, &ErrFileNotFound{path}
+	}
 }
 
-func (f *MockFS) Lstat(name string) (fs.FileInfo, error) {
-	return f.Resolve(name)
+func (fs *MockFS) MkdirAll(path string, mode fs.FileMode) (err error) {
+	// TODO mode is currently ignored
+	path = filepath.Clean(path[1:])
+	if path[len(path)-1] != filepath.Separator {
+		path += string(filepath.Separator)
+	}
+
+	create(fs, path)
+	return nil
+}
+
+func (fs *MockFS) Stat(name string) (fs.FileInfo, error) {
+	return fs.Resolve(name)
+}
+
+func (fs *MockFS) Lstat(name string) (fs.FileInfo, error) {
+	return fs.Resolve(name)
+}
+
+func (fs *MockFS) parentFolder(path string) (*MockFolder, string, error) {
+	paren := filepath.Clean(path)
+	idx := strings.LastIndex(paren, string(filepath.Separator))
+
+	if idx <= 0 {
+		return fs.Root, "", nil
+	}
+
+	if idx == len(paren)-1 {
+		idx = strings.LastIndex(paren[:len(paren)-1], string(filepath.Separator))
+	}
+
+	parenEntry, rest, err := fs.Root.resolve(paren[:idx])
+
+	if err != nil {
+		return nil, "", err
+	}
+
+	parenFolder, ok := parenEntry.(*MockFolder)
+	if !ok {
+		return nil, "", &ErrFileNotFound{path}
+	}
+
+	return parenFolder, rest, nil
+}
+
+func (fs *MockFS) Rename(old, new string) error {
+	return nil // TODO
+}
+
+func (fs *MockFS) RemoveAll(path string) error {
+	if path == "" || path == "/" {
+		fs.Root = NewFolder("")
+		return nil
+	}
+
+	parenFolder, rest, err := fs.parentFolder(path)
+	if err != nil {
+		return err
+	}
+
+	return parenFolder.RemoveSub(rest)
 }
 
 // Tree returns a string representation of the folder structure.
-func (f *MockFS) Tree() []string {
-	return f.Root.tree(0)
+func (fs *MockFS) Tree() []string {
+	return fs.Root.tree(0)
 }
 
 func (f *MockFolder) tree(depth int) []string {
