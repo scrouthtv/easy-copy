@@ -2,15 +2,14 @@ package impl
 
 import (
 	"easy-copy/config"
-	"os"
 	"strings"
 )
 
 // LoadConfig checks if the config file should be read
 // (e.g. option no-config is not present),
 // and reads it if we want to.
-func (s *settingsImpl) LoadConfig() error {
-	for _, arg := range os.Args {
+func (s *settingsImpl) LoadConfig(args []string) error {
+	for _, arg := range args {
 		if arg == "--no-config" {
 			return nil
 		} else if arg == "--" {

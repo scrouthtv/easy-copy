@@ -2,7 +2,7 @@ package impl
 
 import (
 	"easy-copy/ui"
-	"os"
+	"os" // only for os.Exit()
 	"strings"
 )
 

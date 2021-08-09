@@ -12,7 +12,7 @@ func New() *StubImpl {
 
 func (s *StubImpl) ParseLine(line string) {}
 
-func (s *StubImpl) LoadConfig() error {
+func (s *StubImpl) LoadConfig(args []string) error {
 	return nil
 }
 

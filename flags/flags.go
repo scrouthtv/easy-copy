@@ -2,7 +2,7 @@ package flags
 
 type Settings interface {
 	ParseLine(line string)
-	LoadConfig() error
+	LoadConfig([]string) error
 
 	Sources() []string
 	Target() string
