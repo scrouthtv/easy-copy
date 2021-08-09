@@ -6,6 +6,7 @@ import (
 	"easy-copy/ui"
 )
 
+// Handle handles all errors that occured asynchronously.
 func Handle() {
 	for !progress.CopyDone {
 		select {
