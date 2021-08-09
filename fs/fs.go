@@ -33,6 +33,7 @@ func (f *MockFS) Resolve(path string) (MockEntry, error) {
 }
 
 // Rewind rewinds all foldder iterators to the beginning.
+// This is required after subdirectories on a folder have been read.
 func (f *MockFS) Rewind() {
 	f.Root.walkF(func(folder *MockFolder) {
 		folder.itpos = 0

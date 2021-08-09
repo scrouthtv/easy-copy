@@ -1,5 +1,7 @@
 package fs
 
+import "path/filepath"
+
 // Equal compares if fs and other
 // contain the same file paths
 // and those files have the same contents.
@@ -24,7 +26,7 @@ func (fs *MockFS) equal(a, b *MockFolder, prefix string) (bool, string) {
 	for _, Asub := range a.subfolders {
 		_, Bsub, err := b.getSubfolder(Asub.Name())
 		if err != nil {
-			return false, prefix + Asub.Name()
+			return false, prefix + string(filepath.Separator) + Asub.Name()
 		}
 
 		ok, badpath := fs.equal(Asub, Bsub, prefix)
@@ -36,11 +38,11 @@ func (fs *MockFS) equal(a, b *MockFolder, prefix string) (bool, string) {
 	for _, Afile := range a.files {
 		_, Bfile, err := b.getFile(Afile.Name())
 		if err != nil {
-			return false, prefix
+			return false, prefix + string(filepath.Separator) + Afile.Name()
 		}
 
 		if !fs.file_equal(Afile, Bfile) {
-			return false, prefix
+			return false, prefix + string(filepath.Separator) + Afile.Name()
 		}
 	}
 
