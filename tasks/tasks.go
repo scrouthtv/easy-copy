@@ -7,13 +7,17 @@ import (
 	"path/filepath"
 )
 
-var targetBase string
-var createFoldersInTarget bool
+var (
+	targetBase            string
+	createFoldersInTarget bool
+)
 
-var lock *LoggedLock = newLock()
-var sources []Path
-var pendingConflicts, solvedConflicts []Task
-var folders []string
+var (
+	lock                              *LoggedLock = newLock()
+	sources                           []Path
+	pendingConflicts, solvedConflicts []Task
+	folders                           []string
+)
 
 type Task struct {
 	Source string

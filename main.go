@@ -36,7 +36,7 @@ func main() {
 		return
 	}
 
-	//go setOptimalBuffersize()
+	// go setOptimalBuffersize()
 
 	progress.Start = time.Now()
 

@@ -12,8 +12,10 @@ type Info interface {
 	Required() flags.Verbose
 }
 
-var Infos = make(chan Info, 8)
-var Warns = make(chan error, 8)
+var (
+	Infos = make(chan Info, 8)
+	Warns = make(chan error, 8)
+)
 
 func Error(err error) {
 	fmt.Println(color.FGColors.Red + "error: " + err.Error() + color.Text.Reset)

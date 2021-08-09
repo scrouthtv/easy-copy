@@ -121,7 +121,6 @@ func printConflict() {
 	conflict := c.Source
 	conflict = filepath.Base(conflict)
 
-
 	fmt.Print(color.FGColors.Yellow, color.Text.Bold)
 	fmt.Print(conflict)
 	fmt.Print(color.Text.Reset, color.FGColors.Magenta)
@@ -163,7 +162,7 @@ func printConflict() {
 
 /**
  * Add the file size to done_size and 1 to done_amount.
-*/
+ */
 func skipFile(path string) {
 	stat, err := os.Lstat(path)
 
