@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"easy-copy/common"
 	"errors"
 	"io/fs"
 	"path/filepath"
@@ -38,7 +39,7 @@ func (f *MockFS) Rewind() {
 	})
 }
 
-func (f *MockFS) Open(name string) (File, error) {
+func (f *MockFS) Open(name string) (common.File, error) {
 	return f.Resolve(name)
 }
 
@@ -86,7 +87,7 @@ func (f *MockFolder) tree(depth int) []string {
 
 // MockEntry groups all information about a file.
 type MockEntry interface {
-	File
+	common.File
 	fs.FileInfo
 	fs.DirEntry
 }

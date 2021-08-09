@@ -1,19 +1,13 @@
 package iterator
 
 import (
+	"easy-copy/common"
 	"easy-copy/flags"
-	"easy-copy/fs"
 	"easy-copy/progress"
 	"easy-copy/tasks"
 	"easy-copy/ui"
 	"path/filepath"
 )
-
-var Opener fs.Integration
-
-func init() {
-	Opener = fs.SysInt{}
-}
 
 type ErrMissingFile struct {
 	Path string
@@ -51,12 +45,12 @@ func shouldCreateFolders() bool {
 		return true
 	}
 
-	_, err := Opener.Open(flags.Current.Target())
+	_, err := common.FileAdapter.Open(flags.Current.Target())
 	return err == nil // if target already exists, create folders inside it
 }
 
 func add(p *tasks.Path) error {
-	info, err := Opener.Lstat(p.AsAbs())
+	info, err := common.FileAdapter.Lstat(p.AsAbs())
 	if err != nil {
 		return err
 	}
@@ -78,7 +72,7 @@ func add(p *tasks.Path) error {
 
 // addAllInFolder creates tasks for all files in the specified folder.
 func addAllInFolder(folder *tasks.Path) error {
-	f, err := Opener.Open(folder.AsAbs())
+	f, err := common.FileAdapter.Open(folder.AsAbs())
 	if err != nil {
 		return err
 	}
@@ -91,7 +85,7 @@ func addAllInFolder(folder *tasks.Path) error {
 }
 
 // walk runs the given function for all files in the folder.
-func walk(base fs.File, consumer func(string)) error {
+func walk(base common.File, consumer func(string)) error {
 	files, err := base.Readdirnames(0)
 	if err != nil {
 		return err

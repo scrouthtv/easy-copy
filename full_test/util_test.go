@@ -1,6 +1,7 @@
 package full_test
 
 import (
+	"easy-copy/common"
 	"easy-copy/flags"
 	"easy-copy/flags/impl"
 	"easy-copy/fs"
@@ -37,7 +38,7 @@ func (test *TestSetup) Run(t *testing.T) {
 		}
 	}()
 
-	iterator.Opener = test.is
+	common.FileAdapter = test.is
 
 	flags.Current = impl.New()
 

@@ -1,6 +1,7 @@
 package iterator
 
 import (
+	"easy-copy/common"
 	"easy-copy/flags"
 	"easy-copy/flags/stub"
 	"easy-copy/fs"
@@ -24,7 +25,7 @@ func TestMain(m *testing.M) {
 		"quz/empty/",
 		"bar.txt",
 	})
-	Opener = fs
+	common.FileAdapter = fs
 
 	cfg := stub.New()
 	flags.Current = cfg
@@ -56,7 +57,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestIterateFolder(t *testing.T) {
-	Opener.(*fs.MockFS).Rewind()
+	common.FileAdapter.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", false)
 
@@ -81,7 +82,7 @@ func TestIterateFolder(t *testing.T) {
 }
 
 func TestIterateMultiFolders(t *testing.T) {
-	Opener.(*fs.MockFS).Rewind()
+	common.FileAdapter.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", true)
 
@@ -96,7 +97,7 @@ func TestIterateMultiFolders(t *testing.T) {
 	}
 
 	if testing.Verbose() {
-		for _, l := range Opener.(*fs.MockFS).Tree() {
+		for _, l := range common.FileAdapter.(*fs.MockFS).Tree() {
 			log.Println(l)
 		}
 
@@ -142,7 +143,7 @@ func TestIterateFile(t *testing.T) {
 }
 
 func TestIterateEmptyFolder(t *testing.T) {
-	Opener.(*fs.MockFS).Rewind()
+	common.FileAdapter.(*fs.MockFS).Rewind()
 
 	tasks.Setup("/baz", true)
 

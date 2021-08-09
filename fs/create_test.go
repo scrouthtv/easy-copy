@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"easy-copy/common"
 	"reflect"
 	"testing"
 )
@@ -19,7 +20,7 @@ func TestCreate(t *testing.T) {
 
 	fs := CreateFS(create)
 
-	var _ Integration = fs
+	var _ common.IFileAdapter = fs
 
 	is := fs.Tree()
 

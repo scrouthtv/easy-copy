@@ -1,4 +1,4 @@
-package fs
+package common
 
 import (
 	"io"
@@ -7,26 +7,6 @@ import (
 	"syscall"
 	"time"
 )
-
-type Integration interface {
-	Open(string) (File, error)
-	Stat(string) (fs.FileInfo, error)
-	Lstat(string) (fs.FileInfo, error)
-}
-
-type SysInt struct{}
-
-func (s SysInt) Open(name string) (File, error) {
-	return os.Open(name)
-}
-
-func (s SysInt) Stat(name string) (os.FileInfo, error) {
-	return os.Stat(name)
-}
-
-func (s SysInt) Lstat(name string) (fs.FileInfo, error) {
-	return os.Lstat(name)
-}
 
 type File interface {
 	Chdir() error
