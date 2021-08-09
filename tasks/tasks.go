@@ -26,6 +26,11 @@ func Setup(base string, cloneFolders bool) {
 	targetBase = base
 	createFoldersInTarget = cloneFolders
 
+	sources = nil
+	pendingConflicts = nil
+	solvedConflicts = nil
+	folders = nil
+
 	addFolder(base)
 
 	if flags.Current.Verbosity() >= flags.VerbDebug {
