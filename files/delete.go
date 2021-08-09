@@ -1,10 +1,10 @@
 package files
 
 import (
+	"easy-copy/common"
 	"easy-copy/flags"
 	"easy-copy/progress"
 	"easy-copy/ui"
-	"os"
 )
 
 type ErrDeletingFile struct {
@@ -29,7 +29,7 @@ func Syncdel(files *[]string) {
 		progress.CurrentFile = path
 
 		if !isnodelete(path) && !flags.Current.Dryrun() {
-			err = os.RemoveAll(path)
+			err = common.FileAdapter.RemoveAll(path)
 
 			if err != nil {
 				ui.Warns <- &ErrDeletingFile{path, err}

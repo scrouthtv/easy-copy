@@ -1,13 +1,13 @@
 package files
 
 import (
+	"easy-copy/common"
 	"easy-copy/flags"
 	"easy-copy/progress"
 	"easy-copy/ui"
 	"errors"
 	"fmt"
 	"io"
-	"os"
 )
 
 var buf []byte = make([]byte, 32678)
@@ -44,7 +44,7 @@ func (i *InfoStartCopy) Required() flags.Verbose {
 
 // copyFile copies the openend source file to the already
 // created dest file.
-func CopyFile(source *os.File, dest *os.File) error {
+func CopyFile(source common.File, dest common.File) error {
 	var readAmount, writtenAmount int
 	var err error
 
