@@ -17,6 +17,10 @@ func TestTree(t *testing.T) {
 	bar.AddFolder(baz)
 
 	a, b, c, d, e := NewFile("a"), NewFile("b"), NewFile("c"), NewFile("d"), NewFile("e")
+	a.contents = []byte("this is a")
+	b.contents = []byte("i am b")
+	c.contents = []byte("guess i'm c")
+
 	foo.AddFile(a)
 	bar.AddFile(b)
 	baz.AddFile(c)
@@ -30,12 +34,12 @@ func TestTree(t *testing.T) {
 
 	should := []string{
 		"├──foo/",
-		"│  └──a",
+		"│  └──a : this is a",
 		"├──bar/",
 		"│  ├──baz/",
-		"│  │  ├──c",
+		"│  │  ├──c : guess i'm c",
 		"│  │  └──d",
-		"│  └──b",
+		"│  └──b : i am b",
 		"├──empty/",
 		"└──e",
 	}

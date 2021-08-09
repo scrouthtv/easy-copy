@@ -72,7 +72,7 @@ func (fs *MockFS) MkdirAll(path string, mode fs.FileMode) (err error) {
 		path += string(filepath.Separator)
 	}
 
-	create(fs, path)
+	create(fs, path, "")
 
 	return nil
 }
@@ -157,7 +157,11 @@ func (f *MockFolder) tree(depth int) []string {
 			prefix = p + "├──"
 		}
 
-		s = append(s, prefix+file.Name())
+		if len(file.contents) > 0 {
+			s = append(s, prefix+file.Name()+" : "+string(file.contents))
+		} else {
+			s = append(s, prefix+file.Name())
+		}
 	}
 
 	return s

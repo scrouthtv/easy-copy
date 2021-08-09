@@ -13,20 +13,26 @@ func CreateFS(list []string) *MockFS {
 	fs := NewFs()
 
 	for _, line := range list {
-		create(fs, line)
+
+		params := strings.Split(line, " : ")
+		if len(params) == 1 {
+			create(fs, params[0], "")
+		} else {
+			create(fs, params[0], params[1])
+		}
 	}
 
 	return fs
 }
 
-func create(fs *MockFS, line string) {
-	if line == "" {
+func create(fs *MockFS, path string, content string) {
+	if path == "" {
 		return
 	}
 
-	lastfolder := line[len(line)-1] == filepath.Separator
+	lastfolder := path[len(path)-1] == filepath.Separator
 
-	pp, rest, err := fs.Root.resolve(filepath.Clean(line))
+	pp, rest, err := fs.Root.resolve(filepath.Clean(path))
 	if err == nil && rest == "" {
 		return
 	}
