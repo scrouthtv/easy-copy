@@ -45,6 +45,8 @@ func TestMain(m *testing.M) {
 }
 
 func TestIterateFolder(t *testing.T) {
+	opener.(*fs.MockFS).Rewind()
+
 	tasks.Setup("/baz", false)
 
 	err := add(&tasks.Path{Base: "/foo", Sub: ""})
@@ -68,6 +70,8 @@ func TestIterateFolder(t *testing.T) {
 }
 
 func TestIterateMultiFolders(t *testing.T) {
+	opener.(*fs.MockFS).Rewind()
+
 	tasks.Setup("/baz", true)
 
 	err := add(&tasks.Path{Base: "/foo", Sub: ""})
@@ -81,6 +85,10 @@ func TestIterateMultiFolders(t *testing.T) {
 	}
 
 	if testing.Verbose() {
+		for _, l := range opener.(*fs.MockFS).Tree() {
+			log.Println(l)
+		}
+
 		tasks.PrintTasks()
 	}
 
@@ -109,5 +117,15 @@ func TestIterateFile(t *testing.T) {
 		t.Error(err)
 	}
 
-	tasks.PrintTasks()
+	if testing.Verbose() {
+		tasks.PrintTasks()
+	}
+
+	shouldTasks := []tasks.Task{
+		{Source: "/bar.txt", Dest: "/baz/bar.txt"},
+	}
+
+	shouldFolders := []string{"/baz"}
+
+	cmpTasks(t, shouldTasks, shouldFolders)
 }

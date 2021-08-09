@@ -61,6 +61,8 @@ func add(p *tasks.Path) error {
 		return err
 	}
 
+	println("adding", p.AsAbs())
+
 	switch {
 	case info.IsDir():
 		tasks.AddFolder(filepath.Join(filepath.Base(p.Base), p.Sub))
