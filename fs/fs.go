@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"errors"
 	"io/fs"
 	"path/filepath"
 	"strings"
@@ -15,6 +16,12 @@ func (f *MockFS) Resolve(path string) (MockEntry, error) {
 	if path[0] == '/' {
 		f, _, err := f.Root.resolve(filepath.Clean(path[1:]))
 		if err != nil {
+			errFNF := &ErrFileNotFound{}
+			if errors.As(err, &errFNF) {
+				errFNF.Path = "/" + errFNF.Path
+				return nil, errFNF
+			}
+
 			return nil, err
 		}
 

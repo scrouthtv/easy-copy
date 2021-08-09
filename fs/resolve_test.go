@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"errors"
 	"path/filepath"
 	"testing"
 )
@@ -114,5 +115,18 @@ func TestResolve(t *testing.T) {
 	}
 	if f != bar {
 		t.Error("/bar/ Got wrong file")
+	}
+
+	f, err = fs.Resolve("/this/file/does/not/exist")
+	errFileNotFound := &ErrFileNotFound{}
+	if !errors.As(err, &errFileNotFound) {
+		t.Error("Wrong error:", err)
+	}
+	if err.Error() != "file not found: /this/file/does/not/exist" {
+		t.Error("Bad error message:", err.Error())
+		t.Log("Expected message: ", "file not found: /this/file/does/not/exist")
+	}
+	if f != nil {
+		t.Error("Got a file")
 	}
 }

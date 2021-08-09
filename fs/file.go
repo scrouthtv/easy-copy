@@ -16,7 +16,7 @@ type MockFile struct {
 }
 
 func (f *MockFile) Chdir() error {
-	return &ErrOperationNotSupported{Op: "chdir"}
+	return &ErrNotADirectory{Path: f.name}
 }
 
 func (f *MockFile) Chmod(mode fs.FileMode) error {
@@ -132,13 +132,17 @@ func (f *MockFile) Truncate(size int64) error {
 	return nil
 }
 
+// Write overwrites the len(b) bytes starting at the current seek position.
 func (f *MockFile) Write(b []byte) (int, error) {
 	if f.position >= len(f.contents) {
 		f.contents = append(f.contents, b...)
 	} else {
-		f.contents = append(f.contents[:f.position], b...) // TODO should this overwrite f.contents[f.position:]?
-		f.position += len(b)
+		rest := f.contents[f.position+len(b):]
+		f.contents = append(f.contents[:f.position], b...)
+		f.contents = append(f.contents, rest...)
 	}
+
+	f.position += len(b)
 
 	return len(b), nil
 }
@@ -147,7 +151,9 @@ func (f *MockFile) WriteAt(b []byte, off int64) (int, error) {
 	if off >= int64(len(f.contents)) {
 		f.contents = append(f.contents, b...)
 	} else {
+		rest := f.contents[int(off)+len(b):]
 		f.contents = append(f.contents[:off], b...)
+		f.contents = append(f.contents, rest...)
 	}
 
 	return len(b), nil
