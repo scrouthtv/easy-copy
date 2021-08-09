@@ -12,12 +12,12 @@ func (e *ErrEmptySource) Error() string {
 	return "empty source"
 }
 
-func (s *settingsImpl) searchStopFlag() {
-	if len(os.Args) == 1 {
+func (s *settingsImpl) searchStopFlag(args []string) {
+	if len(args) == 1 {
 		return
 	}
 
-	for _, arg := range os.Args[1:] {
+	for _, arg := range args[1:] {
 		if arg == "--" {
 			return
 		} else if strings.HasPrefix(arg, "--") {
@@ -42,14 +42,16 @@ func (s *settingsImpl) isStopFlag(arg string) {
 	}
 }
 
-func (s *settingsImpl) ParseLine() {
-	s.searchStopFlag()
+func (s *settingsImpl) ParseLine(line string) {
+	args := strings.Split(line, " ")
 
-	s.parseMode()
+	s.searchStopFlag(args)
+
+	s.parseMode(args)
 
 	isFiles := false
 
-	for _, arg := range os.Args[2:] {
+	for _, arg := range args[2:] {
 		if isFiles {
 			s.sources = append(s.sources, arg)
 		} else if arg == "--" {
