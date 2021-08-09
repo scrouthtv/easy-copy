@@ -2,7 +2,7 @@ package fs
 
 import "testing"
 
-func TestEqualFS(t *testing.T) {
+func TestEqualFSEqual(t *testing.T) {
 	a := CreateFS([]string{
 		"foo/empty/",
 		"bar/a",
@@ -12,6 +12,33 @@ func TestEqualFS(t *testing.T) {
 		"test.txt",
 	})
 	b := CreateFS([]string{ // same as a
+		"foo/empty/",
+		"bar/a",
+		"bar/b",
+		"bar/c",
+		"foo/x",
+		"test.txt",
+	})
+	c := CreateFS([]string{ // all of the below combined
+		"bar/quz/",
+		"bar/a",
+		"bar/c",
+		"foo/x",
+	})
+
+	ok, bad := a.Equal(b)
+	if !ok {
+		t.Error("a != b, failed at", bad)
+	}
+
+	ok, _ = a.Equal(c)
+	if ok {
+		t.Error("a == c")
+	}
+}
+
+func TestEqualFSMissing(t *testing.T) {
+	a := CreateFS([]string{
 		"foo/empty/",
 		"bar/a",
 		"bar/b",
@@ -40,44 +67,8 @@ func TestEqualFS(t *testing.T) {
 		"bar/c",
 		"foo/x",
 	})
-	f := CreateFS([]string{ // extra /bar/quz/
-		"foo/empty/",
-		"bar/quz/",
-		"bar/a",
-		"bar/b",
-		"bar/c",
-		"foo/x",
-		"test.txt",
-	})
-	g := CreateFS([]string{ // renamed bar/c to bar/d
-		"foo/empty/",
-		"bar/a",
-		"bar/b",
-		"bar/d",
-		"foo/x",
-		"test.txt",
-	})
-	h := CreateFS([]string{ // renamed foo/empty to foo/empti
-		"foo/empti/",
-		"bar/a",
-		"bar/b",
-		"bar/c",
-		"foo/x",
-		"test.txt",
-	})
-	i := CreateFS([]string{ // all of the above
-		"bar/quz/",
-		"bar/a",
-		"bar/c",
-		"foo/x",
-	})
 
-	ok, bad := a.Equal(b)
-	if !ok {
-		t.Error("a != b, failed at", bad)
-	}
-
-	ok, bad = a.Equal(c)
+	ok, bad := a.Equal(c)
 	if ok {
 		t.Error("a == c")
 	}
@@ -100,16 +91,63 @@ func TestEqualFS(t *testing.T) {
 	if bad != "/" {
 		t.Error("wrong bad position:", bad, "should be /")
 	}
+}
 
-	ok, bad = a.Equal(f)
+func TestEqualFSExtra(t *testing.T) {
+	a := CreateFS([]string{
+		"foo/empty/",
+		"bar/a",
+		"bar/b",
+		"bar/c",
+		"foo/x",
+		"test.txt",
+	})
+	f := CreateFS([]string{ // extra /bar/quz/
+		"foo/empty/",
+		"bar/quz/",
+		"bar/a",
+		"bar/b",
+		"bar/c",
+		"foo/x",
+		"test.txt",
+	})
+
+	ok, bad := a.Equal(f)
 	if ok {
 		t.Error("a == f")
 	}
 	if bad != "/bar" {
 		t.Error("wrong bad position:", bad, "should be /bar")
 	}
+}
 
-	ok, bad = a.Equal(g)
+func TestEqualFSRenamed(t *testing.T) {
+	a := CreateFS([]string{
+		"foo/empty/",
+		"bar/a",
+		"bar/b",
+		"bar/c",
+		"foo/x",
+		"test.txt",
+	})
+	g := CreateFS([]string{ // renamed bar/c to bar/d
+		"foo/empty/",
+		"bar/a",
+		"bar/b",
+		"bar/d",
+		"foo/x",
+		"test.txt",
+	})
+	h := CreateFS([]string{ // renamed foo/empty to foo/empti
+		"foo/empti/",
+		"bar/a",
+		"bar/b",
+		"bar/c",
+		"foo/x",
+		"test.txt",
+	})
+
+	ok, bad := a.Equal(g)
 	if ok {
 		t.Error("a == g")
 	}
@@ -124,10 +162,4 @@ func TestEqualFS(t *testing.T) {
 	if bad != "/foo/empty" {
 		t.Error("wrong bad position:", bad, "should be /foo/empty")
 	}
-
-	ok, _ = a.Equal(i)
-	if ok {
-		t.Error("a == i")
-	}
-
 }
