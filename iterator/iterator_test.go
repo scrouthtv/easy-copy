@@ -129,3 +129,24 @@ func TestIterateFile(t *testing.T) {
 
 	cmpTasks(t, shouldTasks, shouldFolders)
 }
+
+func TestIterateEmptyFolder(t *testing.T) {
+	opener.(*fs.MockFS).Rewind()
+
+	tasks.Setup("/baz", true)
+
+	err := add(&tasks.Path{Base: "/quz/empty", Sub: ""})
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testing.Verbose() {
+		tasks.PrintTasks()
+	}
+
+	shouldTasks := []tasks.Task{}
+
+	shouldFolders := []string{"/baz", "/baz/empty"}
+
+	cmpTasks(t, shouldTasks, shouldFolders)
+}
