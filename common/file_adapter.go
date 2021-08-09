@@ -13,8 +13,11 @@ func init() {
 type IFileAdapter interface {
 	Open(string) (File, error)
 	Create(string) (File, error)
+	MkdirAll(string, os.FileMode) error
+
 	Stat(string) (os.FileInfo, error)
 	Lstat(string) (os.FileInfo, error)
+
 	Rename(string, string) error
 	RemoveAll(string) error
 }
@@ -27,6 +30,10 @@ func (s SysFiles) Open(name string) (File, error) {
 
 func (s SysFiles) Create(path string) (File, error) {
 	return os.Create(path)
+}
+
+func (s SysFiles) MkdirAll(path string, mode os.FileMode) error {
+	return os.MkdirAll(path, mode)
 }
 
 func (s SysFiles) Stat(name string) (os.FileInfo, error) {

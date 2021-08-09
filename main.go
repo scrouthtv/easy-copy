@@ -21,7 +21,7 @@ func main() {
 
 	color.Init(color.AutoColors())
 
-	flags.Current.LoadConfig()
+	flags.Current.LoadConfig(os.Args)
 
 	line := strings.Join(os.Args, " ")
 	flags.Current.ParseLine(line)

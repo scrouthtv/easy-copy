@@ -1,12 +1,12 @@
 package tasks
 
 import (
+	"easy-copy/common"
 	"easy-copy/files"
 	"easy-copy/flags"
 	"easy-copy/lscolors"
 	"easy-copy/progress"
 	"easy-copy/ui"
-	"os"
 )
 
 func CopyLoop() {
@@ -67,14 +67,14 @@ func (e *ErrCreatingFile) Unwrap() error {
 }
 
 func work(t *Task, onconflict flags.Conflict) {
-	source, err := os.Open(t.Source)
+	source, err := common.FileAdapter.Open(t.Source)
 	if err != nil {
 		ui.Error(&ErrMissingFile{t.Source, err})
 	}
 
 	defer source.Close()
 
-	_, err = os.Lstat(t.Dest)
+	_, err = common.FileAdapter.Lstat(t.Dest)
 	if err == nil {
 		// dest exists
 		if onconflict == flags.ConflictOverwrite {
@@ -89,7 +89,7 @@ func work(t *Task, onconflict flags.Conflict) {
 
 	switch flags.Current.Mode() {
 	case flags.ModeCopy:
-		dest, err := os.Create(t.Dest) // TODO perms
+		dest, err := common.FileAdapter.Create(t.Dest) // TODO perms
 		if err != nil {
 			ui.Error(&ErrCreatingFile{t.Dest, err})
 		}
@@ -132,7 +132,7 @@ func createFolders(f []string) {
 		}
 
 		if !flags.Current.Dryrun() {
-			err := os.MkdirAll(folder, 0o755)
+			err := common.FileAdapter.MkdirAll(folder, 0o755)
 			if err != nil {
 				ui.Warns <- &ErrCreatingFolder{folder, err}
 			}
