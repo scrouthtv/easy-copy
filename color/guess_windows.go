@@ -1,4 +1,4 @@
-// +build windows,!nocolor
+//go:build !nocolor && windows
 
 package color
 

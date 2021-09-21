@@ -1,5 +1,4 @@
-// +build windows
-// +build !goin
+//go:build !goin && windows
 
 package input
 

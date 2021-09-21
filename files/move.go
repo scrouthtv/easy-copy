@@ -3,6 +3,7 @@ package files
 import (
 	"easy-copy/common"
 	"easy-copy/device"
+	"easy-copy/ui"
 )
 
 func Move(source string, dest string) error {
@@ -31,8 +32,18 @@ func Move(source string, dest string) error {
 }
 
 func isSameDevice(pathA string, pathB string) bool {
-	devA := device.GetDevice(pathA)
-	devB := device.GetDevice(pathB)
+	devA, errA := device.GetDevice(pathA)
+	devB, errB := device.GetDevice(pathB)
+
+	if errA != nil {
+		ui.Warns <- errA
+		return false
+	}
+
+	if errB != nil {
+		ui.Warns <- errB
+		return false
+	}
 
 	return devA.Equal(devB)
 }

@@ -1,5 +1,4 @@
-// +build linux
-// +build !goin
+//go:build !goin && linux
 
 package input
 

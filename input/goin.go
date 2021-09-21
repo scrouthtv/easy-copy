@@ -1,4 +1,4 @@
-// +build goin !windows,!linux,!freebsd,!openbsd,!netbsd,!dragonfly,!darwin
+//go:build goin || (!windows && !linux && !freebsd && !openbsd && !netbsd && !dragonfly && !darwin)
 
 package input
 

@@ -7,8 +7,8 @@ import (
 )
 
 func setOptimalBuffersize() {
-	dev := device.GetDevice(flags.Current.Target())
-	if dev == nil {
+	dev, err := device.GetDevice(flags.Current.Target())
+	if dev == nil || err != nil {
 		return
 	}
 

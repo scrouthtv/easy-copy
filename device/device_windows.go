@@ -13,12 +13,12 @@ type windowsDevice struct {
 	path      string
 }
 
-func GetDevice(path string) Device {
+func GetDevice(path string) (Device, error) {
 	path = filepath.Clean(path)
 
 	//serial
 
-	return &windowsDevice{path: path}
+	return &windowsDevice{path: path}, nil
 }
 
 func (d *windowsDevice) Equal(other Device) bool {

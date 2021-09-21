@@ -1,4 +1,4 @@
-// +build nocolor !windows,!linux,!freebsd,!openbsd,!netbsd,!dragonfly,!darwin
+//go:build nocolor || (!windows && !linux && !freebsd && !openbsd && !netbsd && !dragonfly && !darwin)
 
 package color
 

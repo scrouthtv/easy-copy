@@ -1,5 +1,4 @@
-// +build linux freebsd openbsd netbsd dragonfly darwin
-// +build !goin
+//go:build !goin && (linux || freebsd || openbsd || netbsd || dragonfly || darwin)
 
 package input
 

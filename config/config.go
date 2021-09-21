@@ -1,4 +1,4 @@
-// +build !noconfig
+//go:build !noconfig
 
 package config
 

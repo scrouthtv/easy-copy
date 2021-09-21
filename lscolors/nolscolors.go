@@ -1,4 +1,4 @@
-// +build nocolor nolscolors
+//go:build nocolor || nolscolors
 
 package lscolors
 

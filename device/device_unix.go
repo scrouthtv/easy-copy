@@ -1,10 +1,11 @@
-// +build linux freebsd openbsd netbsd dragonfly darwin
+//go:build linux || freebsd || openbsd || netbsd || dragonfly || darwin
 
 package device
 
 import (
 	"fmt"
 	"os"
+	"easy-copy/ui"
 
 	"golang.org/x/sys/unix"
 )
@@ -16,16 +17,15 @@ type unixDevice struct {
 
 // GetDevice finds the device that hosts the file at the specified path.
 // If an error occurs, it is pushed to the modules' error stack.
-func GetDevice(path string) Device {
+func GetDevice(path string) (Device, error) {
 	var stat unix.Stat_t
 
 	err := unix.Stat(path, &stat)
 	if err != nil {
-		pushError(err)
-		return nil
+		return nil, err
 	}
 
-	return &unixDevice{stat.Dev, path}
+	return &unixDevice{stat.Dev, path}, nil
 }
 
 func (d *unixDevice) Usage() (*SpaceUsage, error) {
@@ -71,7 +71,7 @@ func (d *unixDevice) OptimalBuffersize() int {
 
 	err := unix.Statfs(d.afile, &stat)
 	if err != nil {
-		pushError(err)
+		ui.Warns <- err
 		return 32678
 	}
 
