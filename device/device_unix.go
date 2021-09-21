@@ -28,13 +28,12 @@ func GetDevice(path string) Device {
 	return &unixDevice{stat.Dev, path}
 }
 
-func (d *unixDevice) Usage() SpaceUsage {
+func (d *unixDevice) Usage() (*SpaceUsage, error) {
 	var stat unix.Statfs_t
 
 	err := unix.Statfs(d.afile, &stat)
 	if err != nil {
-		pushError(err)
-		return UnknownUsage
+		return nil, err
 	}
 
 	var free uint64
@@ -44,10 +43,10 @@ func (d *unixDevice) Usage() SpaceUsage {
 		free = stat.Bavail * uint64(stat.Bsize)
 	}
 
-	return SpaceUsage{
+	return &SpaceUsage{
 		Total: stat.Blocks * uint64(stat.Bsize),
 		Free:  free,
-	}
+	}, nil
 }
 
 func isElevated() bool {

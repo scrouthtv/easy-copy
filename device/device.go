@@ -4,7 +4,7 @@ package device
 type Device interface {
 
 	// Usage returns the current space usage of this device.
-	Usage() SpaceUsage
+	Usage() (*SpaceUsage, error)
 
 	// Name returns a user-friendly name for the device.
 	Name() string
@@ -25,7 +25,3 @@ type SpaceUsage struct {
 	Total uint64
 	Free  uint64
 }
-
-// UnknownUsage is returned if the space usage of the requested
-// device could not be determined.
-var UnknownUsage = SpaceUsage{Total: 0, Free: 0}
