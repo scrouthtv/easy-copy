@@ -22,7 +22,7 @@ cp pkg/"easycopy-$VERSION-linux-amd64.tar.zst" out/
 echo ""
 echo "linux/arm"
 rm pkg/* -f
-GOOS=linux GOARCH=arm go build .
+GOOS=linux GOARCH=arm go build -v .
 cp easy-copy pkg/
 cp shared/* pkg/
 cp doc/* pkg/
@@ -37,7 +37,7 @@ cp pkg/"easycopy-$VERSION-linux-arm.tar.zst" out/
 echo ""
 echo "windows/amd64"
 rm pkg/* -f
-GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build .
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -v .
 cp easy-copy.exe pkg/
 cp LICENSE pkg/
 cd pkg/
