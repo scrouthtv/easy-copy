@@ -27,3 +27,5 @@ ec
 build/
 
 coverage.out
+
+pkg/
