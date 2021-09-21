@@ -4,6 +4,7 @@ import (
 	"easy-copy/common"
 	"errors"
 	"io/fs"
+	"log"
 	"path/filepath"
 	"strings"
 	"time"
@@ -41,6 +42,7 @@ func (fs *MockFS) Rewind() {
 }
 
 func (fs *MockFS) Open(name string) (common.File, error) {
+	log.Println("opening", name)
 	return fs.Resolve(name)
 }
 

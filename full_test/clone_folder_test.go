@@ -7,25 +7,26 @@ import (
 
 func TestCloneFolder(t *testing.T) {
 	is := fs.CreateFS([]string{
-		"/foo/a",
-		"/foo/b",
-		"/foo/c",
-		"/foo/sub/empty/",
-		"/foo/sub/x",
+		"foo/a : qwertz",
+		"foo/b",
+		"foo/c : thisisafile",
+		"foo/sub/empty/",
+		"foo/sub/x : x",
 	})
-	line := "cp foo bar"
 	should := fs.CreateFS([]string{
-		"/foo/a",
-		"/foo/b",
-		"/foo/c",
-		"/foo/sub/empty/",
-		"/foo/sub/x",
-		"/bar/a",
-		"/bar/b",
-		"/bar/c",
-		"/bar/sub/empty/",
-		"/bar/sub/x",
+		"foo/a : qwertz",
+		"foo/b",
+		"foo/c : thisisafile",
+		"foo/sub/empty/",
+		"foo/sub/x : x",
+		"bar/a : qwertz",
+		"bar/b",
+		"bar/c : thisisafile",
+		"bar/sub/empty/",
+		"bar/sub/x : x",
 	})
+
+	line := "cp foo bar"
 
 	test := NewTest(line)
 	test.is = is
@@ -37,5 +38,10 @@ func TestCloneFolder(t *testing.T) {
 	tree := is.Tree()
 	for _, v := range tree {
 		t.Log(v)
+	}
+
+	ok, badpath := is.Equal(should)
+	if !ok {
+		t.Error("File System differs:", badpath)
 	}
 }
