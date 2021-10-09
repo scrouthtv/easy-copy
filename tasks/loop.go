@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"log"
 	"easy-copy/common"
 	"easy-copy/files"
 	"easy-copy/flags"
@@ -17,14 +18,29 @@ func CopyLoop() {
 			f := folders
 			folders = make([]string, 0)
 			lock.Unlock()
+
+			if flags.Current.Verbosity() >= flags.VerbDebug {
+				log.Println("creating folders:", f)
+			}
+
 			createFolders(f)
 		case len(solvedConflicts) > 0:
 			lock.Unlock()
 			t := PopSolvedConflict()
+
+			if flags.Current.Verbosity() >= flags.VerbDebug {
+				log.Println("solved conflict:", t)
+			}
+
 			work(t, flags.ConflictOverwrite)
 		case len(sources) > 0:
 			lock.Unlock()
 			t := PopTask()
+
+			if flags.Current.Verbosity() >= flags.VerbDebug {
+				log.Println("basic task:", t)
+			}
+
 			work(t, flags.Current.OnConflict())
 		default:
 			if len(pendingConflicts) > 0 {

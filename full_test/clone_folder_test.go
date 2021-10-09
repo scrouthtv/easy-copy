@@ -35,8 +35,7 @@ func TestCloneFolder(t *testing.T) {
 	test.Run(t)
 
 	t.Log("after copying:")
-	tree := is.Tree()
-	for _, v := range tree {
+	for _, v := range is.Tree() {
 		t.Log(v)
 	}
 

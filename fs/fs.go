@@ -50,7 +50,11 @@ func (fs *MockFS) Open(name string) (common.File, error) {
 }
 
 func (fs *MockFS) Create(path string) (common.File, error) {
-	f, rest, err := fs.Root.resolve(filepath.Clean(path)[1:])
+	if path[0] == '/' {
+		path = path[1:]
+	}
+
+	f, rest, err := fs.Root.resolve(filepath.Clean(path))
 	if err == nil {
 		return f, nil
 	}

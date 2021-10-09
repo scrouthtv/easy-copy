@@ -44,6 +44,8 @@ func (test *TestSetup) Run(t *testing.T) {
 
 	flags.Current.ParseLine("ec " + test.line)
 
+	test.is.Rewind()
 	iterator.Iterate()
+	tasks.PrintTasks()
 	tasks.CopyLoop()
 }
