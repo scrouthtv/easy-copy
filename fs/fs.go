@@ -4,7 +4,6 @@ import (
 	"easy-copy/common"
 	"errors"
 	"io/fs"
-	"log"
 	"path/filepath"
 	"strings"
 	"time"
@@ -14,26 +13,31 @@ type MockFS struct {
 	Root *MockFolder
 }
 
+// Resolve resolves the path.
+// Currently all paths are assumed to either be
+//  a) absolute (incl. leading "/")
+//  b) relative to the root directory (excl. leading "/")
+// This implies that changing the working directory is not supported.
 func (fs *MockFS) Resolve(path string) (MockEntry, error) {
 	if path[0] == '/' {
-		f, _, err := fs.Root.resolve(filepath.Clean(path[1:]))
-		if err != nil {
-			errFNF := &ErrFileNotFound{}
-			if errors.As(err, &errFNF) {
-				errFNF.Path = "/" + errFNF.Path
-				return nil, errFNF
-			}
+		path = path[1:]
+	}
 
-			return nil, err
+	f, _, err := fs.Root.resolve(filepath.Clean(path))
+	if err != nil {
+		errFNF := &ErrFileNotFound{}
+		if errors.As(err, &errFNF) {
+			errFNF.Path = "/" + errFNF.Path
+			return nil, errFNF
 		}
 
-		return f, nil
-	} else {
-		return nil, &ErrFileNotFound{Path: path}
+		return nil, err
 	}
+
+	return f, nil
 }
 
-// Rewind rewinds all foldder iterators to the beginning.
+// Rewind rewinds all folder iterators to the beginning.
 // This is required after subdirectories on a folder have been read.
 func (fs *MockFS) Rewind() {
 	fs.Root.walkF(func(folder *MockFolder) {
@@ -42,7 +46,6 @@ func (fs *MockFS) Rewind() {
 }
 
 func (fs *MockFS) Open(name string) (common.File, error) {
-	log.Println("opening", name)
 	return fs.Resolve(name)
 }
 
@@ -69,7 +72,15 @@ func (fs *MockFS) Create(path string) (common.File, error) {
 
 func (fs *MockFS) MkdirAll(path string, mode fs.FileMode) (err error) {
 	// TODO mode is currently ignored
-	path = filepath.Clean(path[1:])
+
+	if path == "" || path == "/" {
+		return &ErrCreatingDirectory{Path: path, Msg: "empty path"}
+	}
+
+	if path[0] == '/' {
+		path = filepath.Clean(path[1:])
+	}
+
 	if path[len(path)-1] != filepath.Separator {
 		path += string(filepath.Separator)
 	}

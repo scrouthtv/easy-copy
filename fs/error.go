@@ -31,3 +31,12 @@ type ErrFileNotFound struct {
 func (e *ErrFileNotFound) Error() string {
 	return "file not found: " + e.Path
 }
+
+type ErrCreatingDirectory struct {
+	Path string
+	Msg string
+}
+
+func (e *ErrCreatingDirectory) Error() string {
+	return "error creating " + e.Path + ": " + e.Msg
+}
