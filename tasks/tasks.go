@@ -9,7 +9,7 @@ import (
 
 var (
 	targetBase            string
-	createFoldersInTarget bool
+	cloneRoot bool
 )
 
 var (
@@ -28,14 +28,16 @@ type Task struct {
 // and whether to recreate the root folders inside the target.
 func Setup(base string, cloneFolders bool) {
 	targetBase = base
-	createFoldersInTarget = cloneFolders
+	cloneRoot = cloneFolders
 
 	sources = nil
 	pendingConflicts = nil
 	solvedConflicts = nil
 	folders = nil
 
-	addFolder(base)
+	if cloneFolders {
+		addFolder(base)
+	}
 
 	if flags.Current.Verbosity() >= flags.VerbDebug {
 		fmt.Println("create folders in target:", cloneFolders)
@@ -137,12 +139,12 @@ func AddFolder(folder string) {
 		return
 	}
 
-	if !createFoldersInTarget && filepath.Dir(folder) == "." {
+	if !cloneRoot && filepath.Dir(folder) == "." {
 		// don't recreate root folders
 		return
 	}
 
-	if !createFoldersInTarget {
+	if !cloneRoot {
 		folder = removeFirst(folder)
 	}
 
@@ -158,7 +160,7 @@ func addFolder(f string) {
 }
 
 func destFor(p *Path) string {
-	if createFoldersInTarget {
+	if cloneRoot {
 		return filepath.Join(targetBase, filepath.Base(p.Base), p.Sub)
 	} else {
 		return filepath.Join(targetBase, p.Sub)
@@ -180,9 +182,13 @@ func PrintTasks() {
 			filepath.Clean(destFor(&source)))
 	}
 
-	fmt.Println("Need to create these folders:")
-	for _, folder := range folders {
-		fmt.Printf(" - %s\n", folder)
+	if len(folders) == 0 {
+		fmt.Println("No folders to create.")
+	} else {
+		fmt.Println("Need to create these folders:")
+		for _, folder := range folders {
+			fmt.Printf(" - %s\n", folder)
+		}
 	}
 
 	lock.RUnlock()
