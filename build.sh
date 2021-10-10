@@ -2,8 +2,8 @@
 
 VERSION="1.0.0-RC1"
 
-mkdir out -p
-rm out/* -f
+mkdir out pkg -p
+rm out/* pkg/* -f
 
 echo "linux/amd64"
 rm pkg/* -f
