@@ -22,10 +22,21 @@ func NewTest(line string) *TestSetup {
 	return &TestSetup{line: line}
 }
 
+func reset() {
+	progress.IteratorDone = false
+	progress.CopyDone = false
+	progress.DoneAmount = 0
+	progress.FullAmount = 0
+	progress.DoneSize = 0
+	progress.FullSize = 0
+}
+
 // Run runs the software with the arguments in t.line.
 // It fails if a warning occurs.
 func (test *TestSetup) Run(t *testing.T) {
 	t.Helper()
+
+	reset()
 
 	go func() {
 		for !progress.CopyDone {
@@ -46,6 +57,6 @@ func (test *TestSetup) Run(t *testing.T) {
 
 	test.is.Rewind()
 	iterator.Iterate()
-	tasks.PrintTasks()
+	t.Log(" -- Starting loop -- ")
 	tasks.CopyLoop()
 }
