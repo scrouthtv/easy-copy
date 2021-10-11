@@ -2,19 +2,15 @@ package files
 
 import (
 	"easy-copy/common"
-	"easy-copy/device"
-	"easy-copy/ui"
 )
 
 func Move(source string, dest string) error {
-	if isSameDevice(source, dest) {
-		err := common.FileAdapter.Rename(source, dest)
-		if err == nil { // native move successful
-			return nil
-		}
+	err := common.FileAdapter.Rename(source, dest)
+	if err == nil { // native move successful
+		return nil
 	}
 
-	// move "by hand": copy + delete
+	// move "manually": copy + delete
 	s, err := common.FileAdapter.Open(source)
 	if err != nil {
 		return err
@@ -29,21 +25,4 @@ func Move(source string, dest string) error {
 	Syncdel(&[]string{source})
 
 	return nil
-}
-
-func isSameDevice(pathA string, pathB string) bool {
-	devA, errA := device.GetDevice(pathA)
-	devB, errB := device.GetDevice(pathB)
-
-	if errA != nil {
-		ui.Warns <- errA
-		return false
-	}
-
-	if errB != nil {
-		ui.Warns <- errB
-		return false
-	}
-
-	return devA.Equal(devB)
 }
