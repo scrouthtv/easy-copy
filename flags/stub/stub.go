@@ -10,7 +10,7 @@ func New() *StubImpl {
 	return &StubImpl{v: flags.VerbDebug}
 }
 
-func (s *StubImpl) ParseLine(line string) {}
+func (s *StubImpl) ParseLine(args []string) {}
 
 func (s *StubImpl) LoadConfig(args []string) error {
 	return nil

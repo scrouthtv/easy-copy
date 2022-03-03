@@ -29,10 +29,10 @@ func (s *settingsImpl) LoadConfig(args []string) error {
 	return nil
 }
 
-func (s *settingsImpl) parseOption(line string) error {
-	kv := strings.Split(line, "=")
+func (s *settingsImpl) parseOption(opt string) error {
+	kv := strings.Split(opt, "=")
 	if len(kv) != 2 {
-		return &ErrBadConfigLine{line}
+		return &ErrBadConfigLine{opt}
 	}
 
 	s.parseKeyValue(kv[0], kv[1])

@@ -23,8 +23,12 @@ func main() {
 
 	flags.Current.LoadConfig(os.Args)
 
-	line := strings.Join(os.Args, " ")
-	flags.Current.ParseLine(line)
+	args, err := flags.Sep(strings.Join(os.Args, " "))
+	if err != nil {
+		ui.Error(err)
+	}
+
+	flags.Current.ParseLine(args)
 
 	if flags.Current.Verbosity() >= flags.VerbInfo {
 		ui.PrintVersion()

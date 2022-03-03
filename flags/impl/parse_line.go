@@ -42,9 +42,7 @@ func (s *settingsImpl) isStopFlag(arg string) {
 	}
 }
 
-func (s *settingsImpl) ParseLine(line string) {
-	args := strings.Split(line, " ")
-
+func (s *settingsImpl) ParseLine(args []string) {
 	s.searchStopFlag(args)
 
 	s.parseMode(args)
