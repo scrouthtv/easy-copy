@@ -1,1 +1,2 @@
  - symlinks
+ - simplify array comparing for testing

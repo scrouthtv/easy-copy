@@ -1,6 +1,7 @@
 #!/bin/sh
 
-VERSION="1.0.0-RC2"
+VERSION="1.0.0-RC3"
+BINNAME="easycopy"
 
 # Version check
 truever="$(go run . --version)"
@@ -15,7 +16,7 @@ rm out/* -f
 
 echo "linux/amd64"
 rm pkg/* -f
-go build -v -o pkg/easy-copy .
+go build -v -o pkg/$BINNAME .
 cp shared/* pkg/
 cp doc/* pkg/
 cp LICENSE pkg/
@@ -29,7 +30,7 @@ cp pkg/"easycopy-$VERSION-linux-amd64.tar.zst" out/
 echo ""
 echo "linux/arm"
 rm pkg/* -f
-GOOS=linux GOARCH=arm go build -v -o pkg/easy-copy .
+GOOS=linux GOARCH=arm go build -v -o pkg/$BINNAME .
 cp shared/* pkg/
 cp doc/* pkg/
 cp LICENSE pkg/
@@ -43,7 +44,7 @@ cp pkg/"easycopy-$VERSION-linux-arm.tar.zst" out/
 echo ""
 echo "windows/amd64"
 rm pkg/* -f
-GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -v -o pkg/easy-copy.exe.
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -v -o pkg/$BINNAME.exe .
 cp LICENSE pkg/
 cd pkg/
 zip "easycopy-$VERSION-windows-amd64.zip" *

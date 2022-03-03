@@ -53,7 +53,12 @@ func (test *TestSetup) Run(t *testing.T) {
 
 	flags.Current = impl.New()
 
-	flags.Current.ParseLine("ec " + test.line)
+	args, err := flags.Sep("ec " + test.line)
+	if err != nil {
+		ui.Error(err)
+	}
+
+	flags.Current.ParseLine(args)
 
 	test.is.Rewind()
 	iterator.Iterate()
